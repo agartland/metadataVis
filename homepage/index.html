@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>MetaVis: Interactive Exploratory Visualizations </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/homepage.css" rel="stylesheet">
+	<link href="css/checkboxes.css" rel="stylesheet">
+	<link href="css/button.css" rel="stylesheet">
+	<link href="css/upload.css" rel="stylesheet">
+
+	<link href="css/upload.css" rel="stylesheet">
+	<script src="vendor/jquery/jquery.min.js"></script>
+	<script src="js/jquery_upload.js"></script>
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">MetaVis</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">Introduction</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#specifications">Specifications</a>
+            </li>
+			<li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#upload">Visualize your data</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+        <h1>MetaVis: Interactive Exploratory Visualizations</h1>
+        <p class="lead">An in-depth interactive visualization tool whcih integrates metadata to flexibly produce novel insight.</p>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>About MetaVis</h2>
+            <p class="lead">MetaVis is a interactive visualization tool developed for internal Fred Hutch usage to enhance exploratory analysis and provide a wider and cleaner perspective on various problem spaces. The tool includes:</p>
+            <ul>
+              <li>Direct data import through web interface</li>
+              <li>Interactive heatmap with flexible selection options</li>	
+			  <li>Responsive data table population upon heatmap selection</li>
+              <li>Interchangeable colorbar and metadata visualizations</li>
+              <li>Optional data filtering capabilities</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+	  
+	  <!-- Buttons code start from here -->
+<div class="container">
+	<div class="row">
+        <div class="col-lg-8 mx-auto">
+            <p><a href="demo.html" class="btn btn-outlined btn-primary">Example</a></p>
+        </div>
+	</div>
+</div>
+    </section>
+
+    <section id="specifications" class="bg-light">
+      <div class="container">
+		<div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Data Specifications</h2>
+            <p class="lead">For usage, data provided must meet the following specifications:</p>
+			<li> 3 separate .csv files containing base data, row metadata, and column metadata respectively</li>
+			<li> Proper formatting for each file (correct number of rows/columns necessary) </li>
+			<li> For optimum performance, rows/columns should not exceed 300</li>
+			<b></b><br>
+			<hr size=16>
+          </div>
+		</div>
+		<div class="container">
+			<div class="row">
+		      <div class="col-lg-8 mx-auto">
+			    <h5>Data Formatting Examples</h5>
+			  </div>
+			</div>
+			<div class="row">
+			<div class="col-xs mx-5"> </div>
+			<div class="col-xs mx-5"> </div>
+			
+
+			<div class="col-xs px-10 mr-3">
+				<p><a href="data/base_VTN097.csv" class="btn btn-outlined btn-primary">Base Data</a></p>
+			</div>
+			<div class="col-xs mx-3">
+				<p><a href="data/column_metadata_VTN097.csv" class="btn btn-outlined btn-primary">Row metadata</a></p>
+			</div>
+			<div class="col-xs mx-3">
+				<p><a href="data/row_metadata_VTN097.csv" class="btn btn-outlined btn-primary">Column metadata</a></p>
+			</div>
+			</div>
+		</div>
+      </div>
+    </section>
+
+    <section id="upload">
+		
+		  <div class="container">
+		   <div class="row">
+		   <div class="col-lg-8 mx-auto">
+
+			 <h2>Visualize your data</h2>
+			  <p class="lead"> Select files from your computer</p>
+				<form action="/viz" enctype="multipart/form-data" method="post" class="form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">Base data:</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="dataFile">
+                      </div>
+                      <label class="control-label col-sm-5">Row metadata:</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="row_mdFile">
+                      </div>
+                      <label class="control-label col-sm-5">Column metadata:</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="col_mdFile">
+                      </div>                    
+                    </div>
+                    <div class="form-group">        
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                          <label><input type="checkbox" name="standardize" checked> Standardize columns</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                          <label><input type="checkbox" name="impute" checked> Impute missing values (vs. drop)</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                          <label><input type="checkbox" name="static"> Render static image</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label col-sm-5">Clustering options:</label>
+                      <div class="col-sm-offset-2 col-sm-10">
+                          <label class="control-label col-sm-5">Distance metric:</label>
+                          <div class="col-sm-offset-2 col-sm-10">
+                                <select name="metric">
+                                  <option value="euclidean">euclidean</option>
+                                  <option value="correlation">correlation</option>
+                                </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                          <label class="control-label col-sm-15">Hierarchical clustering linkage method:</label>
+                          <div class="col-sm-offset-2 col-sm-10">
+                                <select name="method">
+                                  <option value="complete">complete</option>
+                                  <option value="single">single</option>
+                                  <option value="ward">Ward</option>
+                                  <option value="average">Avg/UPGMA</option>
+                                </select>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      
+                    </div>
+                    
+                    <div class="form-group">        
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <input type="submit" value="Run MetaVis" class="btn btn-outlined btn-primary">
+                      </div>
+                    </div>
+				</form>
+			</div>
+		   </div>
+		   </div>
+    </section>	
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; MetaVis 2017</p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom JavaScript for this theme -->
+    <script src="js/homepage.js"></script>
+    <!-- <script src="js/upload.js"></script> -->
+
+
+  </body>
+
+</html>
