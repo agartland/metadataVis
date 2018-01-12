@@ -1,3 +1,10 @@
+from datetime import date
+from random import randint
+
+from bokeh.models import ColumnDataSource
+from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
+
+
 from bokeh.palettes import Set3
 from bokeh.transform import factor_cmap
 import pandas as pd
@@ -18,6 +25,7 @@ from bokeh.models import (
     FactorRange,
     CategoricalColorMapper,
     WheelZoomTool,
+    Range1d
 )
 
 from metaVis import *
@@ -40,8 +48,17 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
     p = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
 
-    div = Div(text="""<font face="helvetica" size="20">MetaVis</font>""",
-              width=200, height=50)
+    div = Div(text="""
+    <div>
+    <br></br>
+    <font face=helvetica" size = "20"> MetaVis: <span style="font-size:0.75em;"> Interactive Exploratory Visualizations</font>
+    <br></br> <br></br>
+    </div>
+    """,
+              width=1000, height=50)
+
+
+
 
     x_colorbar = _createColorbar(source=sources['measure'],
                                  p=p,
@@ -63,13 +80,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     x_legend = _createLegend(callback=cbDict['m_legend'],
                              source=sources['m_legend'],
-                             mapper=mapper2,
-                             factors=factors)
+                             factors=factors,
+                             title="Column Colorbar")
 
     y_legend = _createLegend(callback=cbDict['p_legend'],
                              source=sources['p_legend'],
-                             mapper=mapper2,
-                             factors=factors)
+                             factors=factors,
+                             title="Row Colorbar")
 
     y_dendrogram = _createDendrogram(rowDend,
                                      size=(400, 75),
@@ -83,14 +100,6 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                      orientation='horizontal')
 
 
-
-    test = Figure(x_range = p.x_range, y_range = (1, 10), plot_width=1000, plot_height=250)
-    test.line(1, 2, line_width=100)
-    test.line(2, 5)
-
-
-
-
     (row_reset_button, col_reset_button, selector,
     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources)
     spacer = _createSpacer(p)
@@ -99,20 +108,31 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     selectors = column(widgetbox(selector, multiselect_toggle))
     legends = column(y_legend, x_legend)
     button_bar = column(widgetbox(reset_button))
-    tab1 = Panel(child=row_table, title="RowTable")
-    tab2 = Panel(child=col_table, title="ColTable")
-    tabs = Tabs(tabs=[tab1, tab2])
-    bar_col = column(row(sources['select_rowbarchart'],
-                     sources['nonselect_rowbarchart']),
-                     row(sources['select_colbarchart'],
-                     sources['nonselect_colbarchart']))
-    #DOES NOT INCLUDE DENDROGRAMS
+
+    data_tab1 = Panel(child=row_table, title="Row Table")
+    data_tab2 = Panel(child=col_table, title="Col Table")
+    table_tabs = widgetbox(Tabs(tabs=[data_tab1, data_tab2]))
+
+    select_rowbar_tab = Panel(child=sources['select_rowbarchart'], title="Selected Rows")
+    nonselect_rowbar_tab = Panel(child=sources['nonselect_rowbarchart'], title="Unselected Rows")
+    select_colbar_tab = Panel(child=sources['select_colbarchart'], title="Selected Cols")
+    nonselect_colbar_tab = Panel(child=sources['nonselect_colbarchart'], title="Unselected Cols")
+
+    barchart_tabs = widgetbox(Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
+
+    # bar_col = column(row(sources['select_rowbarchart'],
+    #                  sources['nonselect_rowbarchart']),
+    #                  row(sources['select_colbarchart'],
+    #                  sources['nonselect_colbarchart']))
+
+    # INCLUDES DENDROGRAMS
     page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends],
-                  [selectors, p_selector, m_selector, button_bar], [bar_col, tabs]])
+                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
-    #               [selectors, p_selector, m_selector, button_bar], [bar_col, tabs]])
+    #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
     return page
 
@@ -152,7 +172,7 @@ def _createHeatmap(cbDict, colors, sources):
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
                y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=900, plot_height=400,
-               tools=[TOOLS, box_select], active_drag=box_select, active_scroll="wheel_zoom",
+               tools=[TOOLS, box_select], active_drag=box_select, active_scroll="wheel_zoom", logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
     # Adjusting plot details
@@ -187,6 +207,7 @@ def _createHeatmap(cbDict, colors, sources):
            )
     return p
 
+
 # PERFORMANCE BOTTLENECK PLEASE FIX
 def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     dend['dcoord'] = [[j * 2.5 - 0.5 for j in i] for i in dend['dcoord']]
@@ -213,7 +234,9 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
                             active_scroll=wz)
 
     dendrogram.toolbar_location = None
-    dendrogram.outline_line_color = None
+    dendrogram.outline_line_color = 'navy'
+    dendrogram.outline_line_alpha = 0.1
+    dendrogram.outline_line_width = 5
     dendrogram.axis.major_tick_line_color = None
     dendrogram.axis.minor_tick_line_color = None
     dendrogram.min_border = 0
@@ -275,14 +298,19 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
     return colorbar
 
 
-def _createLegend(callback, source, mapper, factors):
+def _createLegend(callback, source, factors, title):
     legend_tap = TapTool(callback=callback)
-    legend = Figure(x_range=(-0.25, 3), y_range=(-1, 7), plot_height=200, plot_width=200, tools=[legend_tap, 'ypan'])
-    legend.outline_line_color = None
+    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1), plot_height=200, plot_width=200,
+                    tools=[legend_tap, 'ywheel_pan', 'ypan'],
+                    active_scroll='ywheel_pan')
     legend.toolbar_location = None
     legend.min_border = 0
     legend.grid.grid_line_color = None
     legend.axis.visible = False
+    legend.outline_line_color = 'navy'
+    legend.outline_line_alpha = 0.1
+    legend.outline_line_width = 5
+    legend.title.text_font = "times"
 
     legend.text(source=source, x=0.3, y='factors', text_font_size='9pt', text='names', y_offset=7,
                 selection_text_alpha=1.3, nonselection_text_alpha=0.75)
@@ -291,7 +319,8 @@ def _createLegend(callback, source, mapper, factors):
                 selection_fill_color=factor_cmap('factors', palette=Set3[12], factors=factors),
                 nonselection_fill_color=factor_cmap('factors', palette=Set3[12], factors=factors),
                 selection_fill_alpha=1,
-                nonselection_fill_alpha=0.75
+                nonselection_fill_alpha=0.75,
+                selection_line_color='black'
                 )
     return legend
 

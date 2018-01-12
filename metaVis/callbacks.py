@@ -139,7 +139,6 @@ _js = dict(box_select="""
             for (x = 0; x < reduced_inds.length; x++) {
              metacol.push(measure.data[metacol_name][reduced_inds[x]]);   
             }
-            console.log(metacol);
             for (a = 0; a < metacol.length; a++) {
                 var entry = metacol[a];
                 count_dict[entry] = count_dict[entry] + 1;
@@ -148,7 +147,6 @@ _js = dict(box_select="""
             for (var key in count_dict) {
                 count_list.push(count_dict[key]);
             }
-            console.log("count list ", count_list);
             var nonselect = [];
             select_colbar.data['y'] = count_list;
             console.log("total: ", storage.data['total_colbar']);
@@ -159,8 +157,8 @@ _js = dict(box_select="""
             select_colbar.data['x'] = m_legend.data['names'];
             nonselect_colbar.data['x'] = m_legend.data['names'];
             
-            console.log("nonselect x: ", nonselect_colbar.data['x'], "select x: ", select_colbar.data['x']);
-            console.log("nonselect y: ", nonselect_colbar.data['y'], "select y: ", select_colbar.data['y']);
+            //console.log("nonselect x: ", nonselect_colbar.data['x'], "select x: ", select_colbar.data['x']);
+            //console.log("nonselect y: ", nonselect_colbar.data['y'], "select y: ", select_colbar.data['y']);
 
             // Adding to Feature table
             for (m = 0; m < reduced_inds.length; m++) {
@@ -175,6 +173,7 @@ _js = dict(box_select="""
                 }
                 duplicate = false;
             }
+            console.log("M_Table: ", m_table.data);
             // Updating all sources/data tables
             if (storage.data['multiselect'] == 'True') {
                 source.selected['1d'].indices = inds.concat(inds_in_old_source);
@@ -189,7 +188,6 @@ _js = dict(box_select="""
             source.change.emit();
             p_table.change.emit();
             p_data_table.change.emit();
-            m_table.change.emit();
             m_data_table.change.emit();
         }
 
@@ -540,7 +538,6 @@ _js = dict(box_select="""
     """,
     m_select = """
         var input = cb_obj.value;
-        console.log(input);
         storage.data['m_colname'] = input;
         measure.data['inspect'] = measure.data[input];
         var factor_dict = {};
@@ -581,114 +578,136 @@ _js = dict(box_select="""
         col_xrange.change.emit();
     """,
     p_legend = """
-        var index = p_legend.selected['1d'].indices;
-        var names = p_legend.data['names'];
-        var name = names[index];
-        var selected_inds = [];
-        var colname = storage.data['p_colname'];
-        var row_names = ptid.column_names;
-        for (a = 0; a < row_names.length - 1; a++) {
-            p_table.data[row_names[a]] = [];
+        if (m_legend.selected['1d'].indices.length != 0) {
+            m_legend.selected['1d'].indices = [];
+            m_legend.change.emit();
         }
-        console.log(ptid.data['PtID']);
-        for (i = 0; i < ptid.data[colname].length; i++) {
-            if (ptid.data[colname][i] == name) {
-                selected_inds.push(i);
+        if (p_legend.selected['1d'].indices[0] == storage.data['p_legend_index'][0] && source.selected['1d'].indices.length != 0) {
+            console.log("double tap");
+            source.selected['1d'].indices = [];
+            p_legend.selected['1d'].indices = [];
+            // resetting p_table
+            p_col_names = p_table.column_names;
+            for (i = 0; i < p_col_names.length; i++) {
+                p_table.data[p_col_names[i]] = [];
             }
         }
-        console.log(selected_inds);
-        var len = col.data['feature'].length;
-        var indices = selected_inds.map(function(x) { return x * len; });
-        var inds = [];
-        for (i = 0; i < indices.length; i++) {
-            var min_index = Math.floor(indices[i] / len) * len;
-            var max_index = min_index + len;
-            while (min_index < max_index) {
-                inds.push(min_index);
-                min_index++;
-            }
-        }
-        source.selected['1d'].indices = inds;
-        var sorted_inds = source.selected['1d'].indices.sort(function(a, b) {return a-b});
-        console.log(sorted_inds)
-        min_inds = [];
-        for (i = 0; i < sorted_inds.length; i=i+len) {
-            min_inds.push(sorted_inds[i]);
-        }
-        console.log(min_inds);
-        var row_array = [];
-        for (j = 0; j < min_inds.length; j++) {
-            row_array.push(Math.floor(min_inds[j] / len));
-        }
-        console.log(row_array);
-        // Adding to PtID table
-        for (k = 0; k < row_array.length; k++) {
-            var row = row_array[k];
+        else {
+            var index = p_legend.selected['1d'].indices;
+            var names = p_legend.data['names'];
+            var name = names[index];
+            var selected_inds = [];
+            var colname = storage.data['p_colname'];
             var row_names = ptid.column_names;
-            if (p_table.data[row_names[0]].includes(ptid.data[row_names[0]][row])) {
-                var duplicate = true;   
+            for (a = 0; a < row_names.length - 1; a++) {
+                p_table.data[row_names[a]] = [];
             }
-            if (!duplicate) {
-                for (g = 0; g < row_names.length - 1; g++) {
-                    p_table.data[row_names[g]].push(ptid.data[row_names[g]][row]);
+            for (i = 0; i < ptid.data[colname].length; i++) {
+                if (ptid.data[colname][i] == name) {
+                    selected_inds.push(i);
                 }
             }
-            duplicate = false;
+            var len = col.data['feature'].length;
+            var indices = selected_inds.map(function(x) { return x * len; });
+            var inds = [];
+            for (i = 0; i < indices.length; i++) {
+                var min_index = Math.floor(indices[i] / len) * len;
+                var max_index = min_index + len;
+                while (min_index < max_index) {
+                    inds.push(min_index);
+                    min_index++;
+                }
+            }
+            source.selected['1d'].indices = inds;
+            var sorted_inds = source.selected['1d'].indices.sort(function(a, b) {return a-b});
+            min_inds = [];
+            for (i = 0; i < sorted_inds.length; i=i+len) {
+                min_inds.push(sorted_inds[i]);
+            }
+            var row_array = [];
+            for (j = 0; j < min_inds.length; j++) {
+                row_array.push(Math.floor(min_inds[j] / len));
+            }
+            // Adding to PtID table
+            for (k = 0; k < row_array.length; k++) {
+                var row = row_array[k];
+                var row_names = ptid.column_names;
+                if (p_table.data[row_names[0]].includes(ptid.data[row_names[0]][row])) {
+                    var duplicate = true;   
+                }
+                if (!duplicate) {
+                    for (g = 0; g < row_names.length - 1; g++) {
+                        p_table.data[row_names[g]].push(ptid.data[row_names[g]][row]);
+                    }
+                }
+                duplicate = false;
+            }
+            storage.data['p_legend_index'] = p_legend.selected['1d'].indices;
+            storage.data['m_legend_index'] = [];
         }
         // Fix indices selection
-        // m_legend.selected['1d'].indices = []; 
-        // m_legend.change.emit();
+        source.change.emit();
+        p_legend.change.emit();
         p_table.change.emit();
         p_data_table.change.emit();
-        source.change.emit();
     """,
     m_legend = """
-        var index = m_legend.selected['1d'].indices;
-        console.log(index)
-        var names = m_legend.data['names'];
-        var name = names[index];
-        var selected_inds = [];
-        var col_names = measure.column_names;
-        console.log(col_names)
-        for (b = 0; b < col_names.length - 1; b++) {
-            m_table.data[col_names[b]] = [];
+        if (p_legend.selected['1d'].indices.length != 0) {
+            p_legend.selected['1d'].indices = [];
+            p_legend.change.emit();
         }
-        var colname = storage.data['m_colname'];
-        for (i = 0; i < measure.data[colname].length; i++) {
-            if (measure.data[colname][i] == name) {
-                selected_inds.push(i);
+        if (m_legend.selected['1d'].indices[0] == storage.data['m_legend_index'][0] && source.selected['1d'].indices.length != 0) {
+            source.selected['1d'].indices = [];
+            m_legend.selected['1d'].indices = [];
+            m_col_names = m_table.column_names;
+            for (i = 0; i < m_col_names.length; i++) {
+                m_table.data[m_col_names[i]] = [];
             }
         }
-        console.log(measure.data[colname].length);
-        console.log(selected_inds);
-        var len = col.data['feature'].length;
-        var indices = selected_inds.map(function(x) { return x * len; });
-        var inds = [];
-        for (j = 0; j < indices.length; j++) {
-            var min_index = indices[j] / len
-            while (min_index < source.data['Feature'].length) {
-                inds.push(min_index);
-                min_index += len;
+        else {
+            var index = m_legend.selected['1d'].indices;
+            var names = m_legend.data['names'];
+            var name = names[index];
+            var selected_inds = [];
+            var col_names = measure.column_names;
+            for (b = 0; b < col_names.length - 1; b++) {
+                m_table.data[col_names[b]] = [];
             }
-        }
-        source.selected['1d'].indices = inds;
-        var sorted_inds = source.selected['1d'].indices.sort(function(a, b) {return a-b});
-        min_inds = [];
-        var i = 0;
-        while (sorted_inds[i] < len) {
-            min_inds.push(sorted_inds[i]);
-            i++;
-        }
-        for (j = 0; j < min_inds.length; j++) {
-            var col = min_inds[j];
-            for (k = 0; k < col_names.length - 1; k++) {
-                m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
+            var colname = storage.data['m_colname'];
+            for (i = 0; i < measure.data[colname].length; i++) {
+                if (measure.data[colname][i] == name) {
+                    selected_inds.push(i);
+                }
             }
-        duplicate = false;
+            var len = col.data['feature'].length;
+            var indices = selected_inds.map(function(x) { return x * len; });
+            var inds = [];
+            for (j = 0; j < indices.length; j++) {
+                var min_index = indices[j] / len
+                while (min_index < source.data['Feature'].length) {
+                    inds.push(min_index);
+                    min_index += len;
+                }
+            }
+            source.selected['1d'].indices = inds;
+            var sorted_inds = source.selected['1d'].indices.sort(function(a, b) {return a-b});
+            min_inds = [];
+            var i = 0;
+            while (sorted_inds[i] < len) {
+                min_inds.push(sorted_inds[i]);
+                i++;
+            }
+            for (j = 0; j < min_inds.length; j++) {
+                var col = min_inds[j];
+                for (k = 0; k < col_names.length - 1; k++) {
+                    m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
+                }
+            duplicate = false;
+            }
+            storage.data['m_legend_index'] = m_legend.selected['1d'].indices;
+            storage.data['p_legend_index'] = [];
         }
-        // Fix indices selection
-        // p_legend.selected['1d'].indices = [];
-        // p_legend.change.emit();
+        m_legend.change.emit();
         m_table.change.emit();
         m_data_table.change.emit();
         source.change.emit();

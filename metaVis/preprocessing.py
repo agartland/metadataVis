@@ -52,7 +52,8 @@ def initSources(data, ptid_md, measures_md):
     sources['storage'] = ColumnDataSource(data=dict(PtID=sources['ptid'].data['PtID'], Feature=sources['measure'].data['Feature'],
                                                 mode=['Cross'], indices=[], multiselect=['False'],
                                                 s_rowbar=[], s_colbar=[], total_rowbar=[], total_colbar=[],
-                                                p_colname=[p_default], m_colname=[m_default]))
+                                                p_colname=[p_default], m_colname=[m_default],
+                                                p_legend_index=[], m_legend_index=[]))
     sources['p_legend'] = ColumnDataSource(data=dict(factors=[], names=[]))
     sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[]))
 
@@ -231,7 +232,7 @@ def _createTable(md, md_source):
     for i in range(1, len(col_names)):
         columns.append(TableColumn(field=col_names[i], title=col_names[i], width=100))
     data_table = DataTable(source=md_source, columns=columns, width=(len(col_names)) * 100 + 25,
-                           height=280, fit_columns=False)
+                           height=280, reorderable=False)
     return data_table
 
 def _createBarChart(source, xrange, title):
