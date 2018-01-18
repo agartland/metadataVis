@@ -9,23 +9,25 @@ from bokeh.palettes import Set3
 from bokeh.transform import factor_cmap
 import pandas as pd
 from bokeh.plotting import Figure
-from bokeh.models.widgets import Tabs, Panel, Div
+from bokeh.models.widgets import Tabs, Panel, Div, TextInput
 from bokeh.layouts import layout, column, widgetbox, row
 from bokeh.models import (
-    HoverTool,
+    BasicTicker,
     BoxSelectTool,
+    Button,
+    CategoricalColorMapper,
+    ColorBar,
+    CustomJS,
+    HoverTool,
     TapTool,
     LinearColorMapper,
-    BasicTicker,
     PrintfTickFormatter,
-    ColorBar,
-    Button,
     Select,
     CheckboxGroup,
     FactorRange,
-    CategoricalColorMapper,
-    WheelZoomTool,
-    Range1d
+    Range1d,
+    RadioButtonGroup,
+    WheelZoomTool
 )
 
 from metaVis import *
@@ -46,7 +48,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
         factors.append(str(i))
 
     mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
-    p = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
+    p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
 
     div = Div(text="""
     <div>
@@ -120,13 +122,96 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     barchart_tabs = widgetbox(Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
 
+    # Heatmap Color Selector:
+    callback0 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[0] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback1 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[1] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback2 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[2] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback3 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[3] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback4 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[4] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback5 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[5] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback6 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[6] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback7 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[7] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+    callback8 = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palette = mapper.palette;
+        palette[8] = cb_obj.value;
+        mapper.palette=palette;
+        mapper.change.emit();
+    """)
+
+    in0 = TextInput(callback=callback0, placeholder="Color 1", value="#ffecb3");
+    in1 = TextInput(callback=callback1, placeholder="Color 2", value='#ffeda0');
+    in2 = TextInput(callback=callback2, placeholder="Color 3", value='#fed976');
+    in3 = TextInput(callback=callback3, placeholder="Color 4", value='#feb24c');
+    in4 = TextInput(callback=callback4, placeholder="Color 5", value='#fd8d3c');
+    in5 = TextInput(callback=callback5, placeholder="Color 6", value='#fc4e2a');
+    in6 = TextInput(callback=callback6, placeholder="Color 7", value='#e31a1c');
+    in7 = TextInput(callback=callback7, placeholder="Color 8", value='#bd0026');
+    in8 = TextInput(callback=callback8, placeholder="Color 9", value='#800026');
+
+    # Presets
+    preset_cb = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palettes = [
+         ['#ffecb3','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
+         ["#75968f","#a5bab7","#c9d9d3","#e2e2e2","#dfccce","#ddb7b1","#cc7878","#933b41", "#550b1d"],
+         ['#434268','#c19cd6','#9c9cd6','#9cc3d6','#9cd6bd','#edebaf','#edd0af','#e5c1bc','#ed6a6a']
+         ]
+        mapper.palette = palettes[cb_obj.active];
+        mapper.change.emit();
+    """)
+
+    preset_buttons = RadioButtonGroup(labels=["Palette 1", "Palette 2", "Palette 3"], active=0)
+    preset_buttons.js_on_click(preset_cb)
+    #widgetbox(in0,in1,in2,in3,in4,in5,in6,in7,in8, width=100)
+    cust_tab = Panel(child=widgetbox(in0,in1,in2,in3,in4,in5,in6,in7,in8, width=100), title='Custom Colors', closable=True)
+    preset_tab = Panel(child=preset_buttons, title="test", closable=True)
+
     # bar_col = column(row(sources['select_rowbarchart'],
     #                  sources['nonselect_rowbarchart']),
     #                  row(sources['select_colbarchart'],
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends],
+    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, Tabs(tabs=[cust_tab, preset_tab])],
                   [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
 
@@ -205,7 +290,7 @@ def _createHeatmap(cbDict, colors, sources):
            nonselection_fill_alpha=0.5,
            nonselection_fill_color=color,
            )
-    return p
+    return p, mapper
 
 
 # PERFORMANCE BOTTLENECK PLEASE FIX
