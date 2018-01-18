@@ -203,7 +203,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     preset_buttons.js_on_click(preset_cb)
     #widgetbox(in0,in1,in2,in3,in4,in5,in6,in7,in8, width=100)
     cust_tab = Panel(child=widgetbox(in0,in1,in2,in3,in4,in5,in6,in7,in8, width=100), title='Custom Colors', closable=True)
-    preset_tab = Panel(child=preset_buttons, title="test", closable=True)
+    preset_tab = Panel(child=preset_buttons, title="Presets", closable=True)
 
     # bar_col = column(row(sources['select_rowbarchart'],
     #                  sources['nonselect_rowbarchart']),
