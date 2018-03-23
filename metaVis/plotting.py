@@ -9,23 +9,25 @@ from bokeh.palettes import Set3
 from bokeh.transform import factor_cmap
 import pandas as pd
 from bokeh.plotting import Figure
-from bokeh.models.widgets import Tabs, Panel, Div
+from bokeh.models.widgets import Tabs, Panel, Div, TextInput
 from bokeh.layouts import layout, column, widgetbox, row
 from bokeh.models import (
-    HoverTool,
+    BasicTicker,
     BoxSelectTool,
+    Button,
+    CategoricalColorMapper,
+    ColorBar,
+    CustomJS,
+    HoverTool,
     TapTool,
     LinearColorMapper,
-    BasicTicker,
     PrintfTickFormatter,
-    ColorBar,
-    Button,
     Select,
     CheckboxGroup,
     FactorRange,
-    CategoricalColorMapper,
-    WheelZoomTool,
-    Range1d
+    Range1d,
+    RadioButtonGroup,
+    WheelZoomTool
 )
 
 from metaVis import *
@@ -45,8 +47,8 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     for i in range(12):
         factors.append(str(i))
 
-    mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
-    p = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
+    # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
+    p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
 
     div = Div(text="""
     <div>
@@ -59,34 +61,40 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
 
 
+    x_palette = Set3[12]
+    y_palette = Set3[12]
 
-    x_colorbar = _createColorbar(source=sources['measure'],
+    x_colorbar, x_bar_mapper = _createColorbar(source=sources['measure'],
                                  p=p,
                                  fig_size=(815, 35),
                                  tools='xpan',
                                  rect_dim=('Feature', 0),
                                  rect_size=(1, 3),
                                  orientation='x',
-                                 factors=factors)
+                                 factors=factors,
+                                 palette=x_palette)
 
-    y_colorbar = _createColorbar(source=sources['ptid'],
+    y_colorbar, y_bar_mapper = _createColorbar(source=sources['ptid'],
                                  p=p,
                                  fig_size=(35, 400),
                                  tools='ypan',
                                  rect_dim=(0, 'PtID'),
                                  rect_size=(3, 1),
                                  orientation='y',
-                                 factors=factors)
+                                 factors=factors,
+                                 palette=y_palette)
 
-    x_legend = _createLegend(callback=cbDict['m_legend'],
+    x_legend, x_legend_mapper = _createLegend(callback=cbDict['m_legend'],
                              source=sources['m_legend'],
                              factors=factors,
-                             title="Column Colorbar")
+                             title="Column Colorbar",
+                             palette=x_palette)
 
-    y_legend = _createLegend(callback=cbDict['p_legend'],
+    y_legend, y_legend_mapper = _createLegend(callback=cbDict['p_legend'],
                              source=sources['p_legend'],
                              factors=factors,
-                             title="Row Colorbar")
+                             title="Row Colorbar",
+                             palette=y_palette)
 
     y_dendrogram = _createDendrogram(rowDend,
                                      size=(400, 75),
@@ -120,13 +128,52 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     barchart_tabs = widgetbox(Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
 
+    # Heatmap Density Color Selector:
+    # TODO - Add default coloring if given no input
+    # TODO - Better Names
+    heatmap_color_buttons = [_genColorButton(i, heatmap_mapper, len(colors)) for i in range(len(colors))]
+
+    # Heatmap MetaData Label Color Selector:
+    x_legend_data = sources['m_legend'].data['names']
+    x_legend_buttons = [_genLabelColorButtons(i, x_legend_mapper, x_bar_mapper, len(x_legend_data), x_legend_data[i])
+                       for i in range(len(x_legend_data))]
+
+    y_legend_data = sources['p_legend'].data['names']
+    y_legend_buttons = [_genLabelColorButtons(i, y_legend_mapper, y_bar_mapper, len(y_legend_data), y_legend_data[i])
+                       for i in range(len(y_legend_data))]
+
+
+
+    # Presets
+    preset_cb = CustomJS(args=dict(mapper=heatmap_mapper), code="""
+        palettes = [
+         ['#ffecb3','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
+         ["#75968f","#a5bab7","#c9d9d3","#e2e2e2","#dfccce","#ddb7b1","#cc7878","#933b41", "#550b1d"],
+         ['#434268','#c19cd6','#9c9cd6','#9cc3d6','#9cd6bd','#edebaf','#edd0af','#e5c1bc','#ed6a6a']
+         ]
+        mapper.palette = palettes[cb_obj.active];
+        mapper.change.emit();
+    """)
+
+    preset_buttons = RadioButtonGroup(labels=["Palette 1", "Palette 2", "Palette 3"], active=0)
+    preset_buttons.js_on_click(preset_cb)
+
+    #TODO: "x_color_JS"
+    heatmap_color_tab = Panel(child=widgetbox(heatmap_color_buttons, width=100), title='HeatMap Colors', closable=True)
+    preset_tab = Panel(child=preset_buttons, title="Presets", closable=True)
+    x_legend_tab = Panel(child=widgetbox(x_legend_buttons, width=100), title='X Legend Colors', closable=True)
+    y_legend_tab = Panel(child=widgetbox(y_legend_buttons, width=100), title='Y Legend Colors', closable=True)
+
+    cust_tabs = Tabs(tabs=[heatmap_color_tab, preset_tab, x_legend_tab, y_legend_tab])
+
+
     # bar_col = column(row(sources['select_rowbarchart'],
     #                  sources['nonselect_rowbarchart']),
     #                  row(sources['select_colbarchart'],
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends],
+    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
                   [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
 
@@ -186,6 +233,7 @@ def _createHeatmap(cbDict, colors, sources):
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          formatter=PrintfTickFormatter(format="%f"),
                          label_standoff=1, border_line_color=None, location=(0, 0))
+
     p.add_layout(color_bar, 'right')
 
     # Adding hover functionality
@@ -205,7 +253,7 @@ def _createHeatmap(cbDict, colors, sources):
            nonselection_fill_alpha=0.5,
            nonselection_fill_color=color,
            )
-    return p
+    return p, mapper
 
 
 # PERFORMANCE BOTTLENECK PLEASE FIX
@@ -268,7 +316,7 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     return dendrogram
 
 
-def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation, factors):
+def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation, factors, palette):
     if orientation == 'y':
         colorbar = Figure(
             y_range=p.y_range,
@@ -289,16 +337,18 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
     colorbar.grid.grid_line_color = None
     colorbar.axis.visible = False
 
+    mapper_dict = factor_cmap('inspect', palette=palette, factors=factors)
+
     colorbar.rect(source=source, x=rect_dim[0], y=rect_dim[1], width=rect_size[0], height=rect_size[1], line_color=None,
-                  fill_color=factor_cmap('inspect', palette=Set3[12], factors=factors),
-                  selection_fill_color=factor_cmap('inspect', palette=Set3[12], factors=factors),
-                  nonselection_fill_color=factor_cmap('inspect', palette=Set3[12], factors=factors),
+                  fill_color=mapper_dict,
+                  selection_fill_color=mapper_dict,
+                  nonselection_fill_color=mapper_dict,
                   selection_fill_alpha=1, nonselection_fill_alpha=1, selection_line_alpha=0
                   )
-    return colorbar
+    return colorbar, mapper_dict['transform']
 
 
-def _createLegend(callback, source, factors, title):
+def _createLegend(callback, source, factors, title, palette):
     legend_tap = TapTool(callback=callback)
     legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1), plot_height=200, plot_width=200,
                     tools=[legend_tap, 'ywheel_pan', 'ypan'],
@@ -312,17 +362,20 @@ def _createLegend(callback, source, factors, title):
     legend.outline_line_width = 5
     legend.title.text_font = "times"
 
+    mapper_dict = factor_cmap('factors', palette=palette, factors=factors)
+
     legend.text(source=source, x=0.3, y='factors', text_font_size='9pt', text='names', y_offset=7,
                 selection_text_alpha=1.3, nonselection_text_alpha=0.75)
     legend.rect(source=source, x=0, y='factors', width=0.3, height=0.5, line_color='black',
-                fill_color=factor_cmap('factors', palette=Set3[12], factors=factors),
-                selection_fill_color=factor_cmap('factors', palette=Set3[12], factors=factors),
-                nonselection_fill_color=factor_cmap('factors', palette=Set3[12], factors=factors),
+                fill_color=mapper_dict,
+                selection_fill_color=mapper_dict,
+                nonselection_fill_color=mapper_dict,
                 selection_fill_alpha=1,
                 nonselection_fill_alpha=0.75,
                 selection_line_color='black'
                 )
-    return legend
+
+    return legend, mapper_dict['transform']
 
 def _createSpacer(p):
     spacer = Figure(
@@ -335,3 +388,46 @@ def _createSpacer(p):
     spacer.grid.grid_line_color = None
     spacer.axis.visible = False
     return spacer
+
+# Generates JS callback for changing a color mapper
+# Param:
+# idx - the idx of the respective color mapper.palette to change
+def _colorMapCB(idx):
+    cb = """palette = mapper.palette;
+            palette[""" + str(idx) + """] = cb_obj.value;
+            mapper.change.emit();
+         """
+    return cb
+
+def _twoColorMapCB(idx):
+    cb = """palette_1 = legend_mapper.palette;
+            palette_2 = bar_mapper.palette;
+            palette_1[""" + str(idx) + """] = cb_obj.value;
+            palette_2[""" + str(idx) + """] = cb_obj.value;
+            legend_mapper.change.emit();
+            bar_mapper.change.emit();
+         """
+    return cb
+
+# Generates an input listener for dynamic coloring.
+# Used for dynamic coloring of the heatmap density colors
+# Param:
+# idx - the idx in the mapper palette that the input listener is in charge of
+# mapper - the repsective color mapper with the colors to change
+# num - the total number of buttons
+def _genColorButton(idx, mapper, num, placeholder=None):
+    # Gives listeners in top-down order to match the order of the color bar
+    cb = CustomJS(args=dict(mapper=mapper), code=_colorMapCB(num - 1 - idx))
+    name = "Color " + str(idx + 1)
+    if placeholder is not None:
+        name = placeholder
+    button = TextInput(callback=cb, placeholder=name)
+    return button
+
+def _genLabelColorButtons(idx, legend_mapper, bar_mapper, num, placeholder=None):
+    cb = CustomJS(args=dict(legend_mapper=legend_mapper, bar_mapper=bar_mapper), code=_twoColorMapCB(idx))
+    name = "Color " + str(idx + 1)
+    if placeholder is not None:
+        name = placeholder
+    button = TextInput(callback=cb, placeholder=name)
+    return button
