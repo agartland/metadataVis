@@ -85,27 +85,51 @@ home = homeFolders[homeParam]
 
 longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097fcm_fh_39_single_resp_p.csv'))
 
-longform_df["Measure"] = longform_df['tcellsub'] + '_' + longform_df['cytokine'] + '_' + longform_df['antigen']
+# DATAFRAME CONFIGURATION:
 
-wideform_df = longform_df.pivot_table(index='ptid', columns='Measure', values='pctpos_pos')
+# Base Data
+base_rows = 'ptid'
+base_columns = 'Measure'
+base_values = "pctpos_pos"
 
-ptid_md = pd.DataFrame(data={'PtID': longform_df['ptid'], 'LabID': longform_df['labid'],
-                             'samp_ord': longform_df['samp_ord']},
-                       columns=['PtID', 'LabID', 'samp_ord'])
-ptid_md = ptid_md.drop_duplicates()
+# Row Metadata Table
+rowmeta_index = base_rows
+rowmeta_columns = ['labid', 'samp_ord']
 
-measure_md = pd.DataFrame(data={'Measure': longform_df['Measure'], 'tcellsub': longform_df['tcellsub'],
-                                'cytokine': longform_df['cytokine'], 'antigen': longform_df['antigen']},
-                          columns=['Measure', 'tcellsub', 'cytokine', 'antigen'])
-measure_md = measure_md.drop_duplicates()
+# Column Metadata Table
+colmeta_index = base_columns
+colmeta_columns = ['tcellsub', 'cytokine', 'antigen']
 
-print(wideform_df)
-print(ptid_md)
-print(measure_md)
+def _generateWideform(longform_df):
 
-wideform_df.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'))
-ptid_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'))
-measure_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'))
+    longform_df["Measure"] = longform_df['tcellsub'] + '_' + longform_df['cytokine'] + '_' + longform_df['antigen']
+
+    wideform_df = longform_df.pivot_table(index=base_rows, columns=base_columns, values=base_values)
+
+    rowmeta_dict = {rowmeta_index: longform_df[rowmeta_index]}
+    for entry in rowmeta_columns:
+        rowmeta_dict[entry] = longform_df[entry]
+
+    ptid_md = pd.DataFrame(data=rowmeta_dict,
+                           columns=rowmeta_dict.keys())
+    ptid_md = ptid_md.drop_duplicates()
+
+    colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
+    for entry in colmeta_columns:
+        colmeta_dict[entry] = longform_df[entry]
+    measure_md = pd.DataFrame(data=colmeta_dict,
+                              columns=colmeta_dict.keys())
+    measure_md = measure_md.drop_duplicates()
+
+    return wideform_df, ptid_md, measure_md
+
+# print(wideform_df)
+# print(ptid_md)
+# print(measure_md)
+
+# wideform_df.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'))
+# ptid_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'))
+# measure_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'))
 
 
 
