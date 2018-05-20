@@ -16,19 +16,14 @@ from HeatmapMetaVis import gen_heatmap_html
 # TODO - Popup if file upload is empty; popup for errors
 def _prepArgs(request):
     kwargs = {}
-    # request.write("<html>" + str(request.args) + "<body>")
-    base_data = None
-    row_md = None
-    col_md = None
     for k,v in request.args.iteritems():
-        if k.find('File') >= 0:
+        if k.find('File') >= 0 and request.args[k][0] != '':
             sio = StringIO(unicode(request.args[k][0]))
-            tmp = pd.read_csv(sio, index_col=0)
+            if k.find('longformFile'):
+                tmp = pd.read_csv(sio)
+            else:
+                tmp = pd.read_csv(sio, index_col=0)
             kwargs[k.replace('File', '')] = tmp
-            # if k == "col_mdFile":
-            #      request.write("<html> TEST TEST TEST \n" + str(kwargs["col_md"]) + "<body>")
-
-    # request.write("\n\n\n<html>" + str(kwargs) + "<body>")
     if 'static' in request.args:
         kwargs['static'] = True
     if 'standardize' in request.args:
@@ -36,7 +31,7 @@ def _prepArgs(request):
     kwargs['metric'] = request.args['metric'][0]
     kwargs['method'] = request.args['method'][0]
 
-    key_string = [k for k in kwargs]
+    #key_string = [k for k in kwargs]
     #request.write("<html>" + str(key_string) + "<body>")
     ret_map = gen_heatmap_html(**kwargs)
     if(ret_map['error'] is not None):
@@ -46,7 +41,8 @@ def _prepArgs(request):
     html = ret_map['heatmap_html']
     # html = exampleVis(**kwargs)
     # print(html[:100])
-    request.write(html.encode('utf-8'))
+    # request.write(html.encode('utf-8'))
+    request.write(html)
     return request
 
 class FileUpload(resource.Resource):
