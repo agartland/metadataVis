@@ -9,73 +9,6 @@ from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
 from bokeh.layouts import layout
 from bokeh.models.widgets import MultiSelect, Dropdown
 
-
-'''// helper function
-function addIfMissing(array, value) {
-    var found = false;
-    for(var i = 0; i < array.length; i++)
-        if(array[i] === value)
-            return array;
-    array.push(value);
-    return array;
-}
-
-function restructure(input) {
-    var output = [], headerX = [], headerY = [], xCoor, yCoor;
-
-    // first create non-repeating headers
-    headerX.push(input[0][0]);
-    headerY.push(input[0][0]);
-    for(var i = 1; i < input.length; i++)
-        headerX = addIfMissing(headerX, input[i][0]), headerY = addIfMissing(headerY, input[i][1]);
-
-    // put headers into output array
-    for(var i = 0; i < headerX.length; i++)
-        output.push([headerX[i]]);
-    output[0] = headerY;
-
-    // find correct headers on both axes and input data
-    for(var i = 1; i < input.length; i++) {
-        for(var k = 1; k < headerX.length; k++)
-            if(output[k][0] == input[i][0])
-                xCoor = k;
-        for(var j = 1; j < headerY.length; j++)
-            if(output[0][j] == input[i][1])
-                yCoor = j;
-        output[xCoor][yCoor] = input[i][2];
-    }
-
-    return output;
-}
-
-'''
-
-
-# Test DataSet
-# ptid = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]
-# measure = ["Blue", "Red", "Blue", "Red", "Blue", "Red", "Blue", "Red", "Blue", "Red"]
-# measuremeta = ["A", "B", "A", "B", "A", "B", "A", "B", "A", "B"]
-# ptidmeta = ["Male", "Male", "Female", "Female", "Female", "Female", "Male", "Male", "Male", "Male"]
-# value = random.sample(range(100), 10)
-# d = {'PtID': ptid, 'PatientMD': ptidmeta, 'Measure': measure, 'MeasureMD': measuremeta, 'Value': value}
-#
-# test_longform_df = pd.DataFrame(data=d, columns=['PtID', 'PatientMD', 'Measure', 'MeasureMD', 'Value'])
-#
-#
-# print(test_longform_df)
-#
-# test_wideform_df = test_longform_df.pivot_table(index='PtID', columns='Measure', values='Value')
-#
-# test_ptid_md = pd.DataFrame(data={'PtID': test_longform_df['PtID'], 'Metadata': test_longform_df['PatientMD']}, columns=['PtID', 'Metadata'])
-# test_ptid_md = test_ptid_md.drop_duplicates()
-#
-# test_measure_md = pd.DataFrame(data={'Measure': test_longform_df['Measure'], 'Metadata': test_longform_df['MeasureMD']}, columns=['Measure', 'Metadata'])
-# test_measure_md = test_measure_md.drop_duplicates()
-#
-# print(test_wideform_df)
-# print(test_measure_md)
-# print(test_ptid_md)
-
 if len(sys.argv) > 1:
     homeParam = sys.argv[1]
 else:
@@ -91,23 +24,22 @@ rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
 # DATAFRAME CONFIGURATION:
 
-# Base Data
-base_rows = 'ptid'
-base_columns = 'Feature'
-base_values = 'pctpos_pos'
+def _generateWideform(longform_df, rx=None):
+    base_rows = 'ptid'
+    base_columns = 'Feature'
+    base_values = 'pctpos_pos'
 
-# Row Metadata Table
-rowmeta_index = base_rows
-rowmeta_columns = ['labid', 'samp_ord']
+    # Row Metadata Table
+    rowmeta_index = base_rows
+    rowmeta_columns = ['labid', 'samp_ord']
 
-# Column Metadata Table
-colmeta_index = base_columns
-colmeta_columns = ['tcellsub', 'cytokine', 'antigen']
+    # Column Metadata Table
+    colmeta_index = base_columns
+    colmeta_columns = ['tcellsub', 'cytokine', 'antigen']
 
-id = list(range(1, 76))
-id_list = ['id-{0}'.format(i) for i in id]
+    id = list(range(1, 76))
+    id_list = ['id-{0}'.format(i) for i in id]
 
-def _generateWideform(longform_df):
     longform_df['ptid'] = longform_df['ptid'].astype(str)
     longform_df['ptid'] = longform_df['ptid'].str[:-2]
 
@@ -119,9 +51,12 @@ def _generateWideform(longform_df):
     for entry in rowmeta_columns:
         rowmeta_dict[entry] = longform_df[entry]
 
-    ptid_md = pd.DataFrame(data=rowmeta_dict,
+    if (rx):
+        ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
-    ptid_md = ptid_md.drop_duplicates()
+        ptid_md = ptid_md.drop_duplicates()
+    else:
+        ptid_md = _generatePtidMetadata(rx, wideform_df)
 
     colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
     for entry in colmeta_columns:
@@ -130,13 +65,13 @@ def _generateWideform(longform_df):
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
     measure_md.set_index("Feature", inplace=True)
+    wideform_df['id'] = id_list
+    wideform_df.set_index("id", inplace=True)
+
     return wideform_df, ptid_md, measure_md
 
-wideform_df, ptid_md, measure_md = _generateWideform(longform_df)
 
-print(wideform_df.head())
-
-def _generatePtidMetadata(rx, wideform_df):
+def _generatePtidMetadata(wideform_df, id_list, rx=None):
 
     def binary_search(a, x, lo=0, hi=None):  # can't use a to specify default for hi
         hi = hi if hi is not None else len(a)  # hi defaults to len(a)
@@ -147,9 +82,6 @@ def _generatePtidMetadata(rx, wideform_df):
     rx['TruePtID'] = rx['TruePtID'].str.replace('-', '')
 
     ptid_indices = []
-
-    print(wideform_df.index)
-
 
     for i in range(0, wideform_df.index.size):
         ind = binary_search(rx['TruePtID'].values, wideform_df.index.values[i])
@@ -162,10 +94,6 @@ def _generatePtidMetadata(rx, wideform_df):
     return rx_md
 
 
-rx_ptid_md = _generatePtidMetadata(rx, wideform_df)
-
-wideform_df['id'] = id_list
-wideform_df.set_index("id", inplace=True)
 
 
 
@@ -177,10 +105,6 @@ wideform_df.set_index("id", inplace=True)
 # print(ptid_md)
 # print(measure_md)
 #
-wideform_df.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'))
-rx_ptid_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'))
-measure_md.to_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'))
-
 
 
 
