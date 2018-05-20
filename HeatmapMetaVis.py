@@ -21,7 +21,9 @@ home = homeFolders[homeParam]
 data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
 measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
 ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
-
+# data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'), index_col=0)
+# measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'), index_col=0)
+# ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'), index_col=0)
 
 # ERROR CHECKING
 data_colnames = list(data.columns.values)
@@ -37,7 +39,7 @@ if (data.shape[1] != measures_md.shape[0]):
 if (data.shape[0] != ptid_md.shape[0]):
     print("Error: Number of PtID's in base dataset does not match the number of PtID's in the PtID metadata.")
     print("       Base Data: ", data.shape[0])
-    print("       Measures Metadata: ", ptid_md.shape[0])
+    print("       PtID's Metadata: ", ptid_md.shape[0])
     sys.exit()
 
 if ptid_names != data_rownames:

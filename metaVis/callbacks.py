@@ -94,7 +94,9 @@ _reqSources = {'box_select': ['source',
 
 _js = dict(box_select="""
         var inds_in_source = source.selected['1d'].indices;
+        // sorts the indices found in source
         inds_in_source.sort(function(a, b){return a-b});
+        console.log(inds_in_source);
         var row_names = ptid.column_names;
         var col_names = measure.column_names;
         if (storage.data['multiselect'] == "True") {
@@ -110,9 +112,13 @@ _js = dict(box_select="""
                 m_table.data[col_names[b]] = [];
             }
         }
+        
         var len = col.data['feature'].length; 
+
         var inds = [];
 
+        // COLUMN MODE
+        
         if (storage.data['mode'] == "Column") {
             var reduced_inds = [];
             var count = 0;
@@ -187,16 +193,20 @@ _js = dict(box_select="""
             select_colbar.change.emit();
             source.change.emit();
             p_table.change.emit();
+            m_table.change.emit();
             p_data_table.change.emit();
             m_data_table.change.emit();
         }
-
+        
+        // CROSS MODE
         else if (storage.data['mode'] == "Cross") {
             // Selecting rows
             var row_reduced_inds = [];
-            var count = 0;
+            var count = 1;
+            var i = 0
             var min_ind = inds_in_source[0]; 
-            while (inds_in_source[count] + 50 > min_ind && inds_in_source[count] < min_ind + 50) {
+            while (inds_in_source[i] == inds_in_source[i + 1] - 1) {
+                i++;
                 count++;
             }
             for (k = 0; k < inds_in_source.length; k+=count) {
@@ -333,12 +343,16 @@ _js = dict(box_select="""
             m_data_table.change.emit();
         }
 
+
+        // ROW MODE
         else {
             var reduced_inds = [];
-            var count = 0;
-            var min_ind = inds_in_source[0]; 
-             while (inds_in_source[count] + 50 > min_ind && inds_in_source[count] < min_ind + 50) {
+            var count = 1;
+            var i = 0;
+            var min_ind = inds_in_source[0];
+             while (inds_in_source[i] == inds_in_source[i + 1] - 1) {
                 count++;
+                i++;
             }
             for (k = 0; k < inds_in_source.length; k+=count) {
                 var min_index = Math.floor(inds_in_source[k] / len) * len;

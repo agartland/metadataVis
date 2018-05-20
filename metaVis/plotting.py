@@ -173,13 +173,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
-                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+    # page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
+    #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
 
     # DOES NOT INCLUDE DENDROGRAMS
-    # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
-    #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+    page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
+                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
     return page
 
@@ -238,6 +238,7 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Adding hover functionality
     p.select_one(HoverTool).tooltips = [
+        ("index", "$index"),
         ('Patient ID and Feature', '@PtID, @Feature'),
         ('rate', '@rate')
     ]
@@ -248,7 +249,7 @@ def _createHeatmap(cbDict, colors, sources):
            fill_color=color,
            line_color=None,
            selection_fill_color=color,
-           selection_line_color=None,
+           selection_line_color="black",
            nonselection_line_color=None,
            nonselection_fill_alpha=0.5,
            nonselection_fill_color=color,
