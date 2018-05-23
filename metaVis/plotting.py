@@ -173,13 +173,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    # page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
-    #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
+                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
 
     # DOES NOT INCLUDE DENDROGRAMS
-    page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
-                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+    # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
+    #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
     return page
 
@@ -212,14 +212,14 @@ def _createHeatmap(cbDict, colors, sources):
     feature_list = list(data.columns)
     ptid = list(data.index)
     box_select = BoxSelectTool(callback=cbDict['box_select'])
-    TOOLS = "hover,save,pan,box_zoom,wheel_zoom,reset,zoom_in,zoom_out"
+    TOOLS = "hover,save,pan,box_zoom,reset,zoom_in,zoom_out"
     mapper = LinearColorMapper(palette=colors, low=df.rate.min(), high=df.rate.max())
     color = {'field': 'rate', 'transform': mapper}
 
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
                y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=900, plot_height=400,
-               tools=[TOOLS, box_select], active_drag=box_select, active_scroll="wheel_zoom", logo=None,
+               tools=[TOOLS, box_select], active_drag=box_select, logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
     # Adjusting plot details

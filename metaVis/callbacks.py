@@ -421,11 +421,14 @@ _js = dict(box_select="""
             else {
                 source.selected['1d'].indices = inds;
             }
+            console.log("p_table test: ");
+            console.log(p_table.data);
             nonselect_rowbar.change.emit();
             select_rowbar.change.emit();
             source.change.emit();
             p_table.change.emit();
-            p_data_table.change.emit();
+            console.log(p_data_table);
+            console.log(p_data_table.data);
             m_table.change.emit();
             m_data_table.change.emit();
         }

@@ -14,7 +14,7 @@ def error_check(data, ptid_md, measures_md):
     ptid_names = list(ptid_md.index)
     measures_names = list(measures_md.index)
 
-    if (data.shape[1] != measures_md.shape[0]):
+    if (data.shape[1] - 1 != measures_md.shape[0]):
         error = "<p>Error: Number of measurements in base dataset does not match the number of measurements in the measurement metadata.</br>"
         error += "&emsp;Base Data: " + str(data.shape[1]) + "</br>"
         error += "&emsp;Measures Metadata: " + str(measures_md.shape[0])
@@ -32,7 +32,9 @@ def error_check(data, ptid_md, measures_md):
         return error
 
     if (measures_names != data_colnames):
-        error = "<p>Error: Measures in base dataset do not match measures in measurement metadata.</p>"
+        error = "<p>Error: Measures in base dataset do not match measures in measurement metadata. </br>"
+        error += str(list(measures_names)) + "</br>"
+        error += str(list(data_colnames)) + "</p"
         return error
     return None
 
@@ -88,7 +90,8 @@ if __name__ == '__main__':
     data_rownames = list(data.index)
     ptid_names = list(ptid_md.index)
     measures_names = list(measures_md.index)
-
+    print(measures_names)
+    print(data_colnames)
     if (data.shape[1] != measures_md.shape[0]):
         print("Error: Number of measurements in base dataset does not match the number of measurements in the measurement metadata.")
         print("       Base Data: ", data.shape[1])
