@@ -19,7 +19,7 @@ def _prepArgs(request):
     for k,v in request.args.iteritems():
         if k.find('File') >= 0 and request.args[k][0] != '':
             sio = StringIO(unicode(request.args[k][0]))
-            if k.find('longformFile'):
+            if k.find('longformFile') >= 0:
                 tmp = pd.read_csv(sio)
             else:
                 tmp = pd.read_csv(sio, index_col=0)

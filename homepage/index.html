@@ -65,7 +65,7 @@
             <p class="lead">MetaVis is a interactive visualization tool developed for internal Fred Hutch usage to enhance exploratory analysis and provide a wider and cleaner perspective on various problem spaces. The tool includes:</p>
             <ul>
               <li>Direct data import through web interface</li>
-              <li>Interactive heatmap with flexible selection options</li>	
+              <li>Interactive heatmap with flexible selection options</li>
 			  <li>Responsive data table population upon heatmap selection</li>
               <li>Interchangeable colorbar and metadata visualizations</li>
               <li>Optional data filtering capabilities</li>
@@ -73,7 +73,7 @@
           </div>
         </div>
       </div>
-	  
+
 	  <!-- Buttons code start from here -->
 <div class="container">
 	<div class="row">
@@ -106,7 +106,7 @@
 			<div class="row">
 			<div class="col-xs mx-5"> </div>
 			<div class="col-xs mx-5"> </div>
-			
+
 
 			<div class="col-xs px-10 mr-3">
 				<p><a href="data/base_VTN097.csv" class="btn btn-outlined btn-primary">Base Data</a></p>
@@ -123,7 +123,7 @@
     </section>
 
     <section id="upload">
-		
+
 		  <div class="container">
 		   <div class="row">
 		   <div class="col-lg-8 mx-auto">
@@ -132,6 +132,16 @@
 			  <p class="lead"> Select files from your computer</p>
 				<form action="/viz" enctype="multipart/form-data" method="post" class="form-horizontal">
                     <div class="form-group">
+                    <label class="control-label col-sm-5">Longform Data:</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="longformFile">
+                      </div>
+                    <label class="control-label col-sm-5">RX Data:</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="RXFile">
+                      </div>
+                      </br>
+                      <p class ="lead"> OR </p>
                       <label class="control-label col-sm-2">Base data:</label>
                       <div class="col-sm-8">
                         <input type="file" class="form-control" name="dataFile">
@@ -143,9 +153,9 @@
                       <label class="control-label col-sm-5">Column metadata:</label>
                       <div class="col-sm-8">
                         <input type="file" class="form-control" name="col_mdFile">
-                      </div>                    
+                      </div>
                     </div>
-                    <div class="form-group">        
+                    <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
                           <label><input type="checkbox" name="standardize" checked> Standardize columns</label>
@@ -189,10 +199,10 @@
                     </div>
 
                     <div class="form-group">
-                      
+
                     </div>
-                    
-                    <div class="form-group">        
+
+                    <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <input type="submit" value="Run MetaVis" class="btn btn-outlined btn-primary">
                       </div>
@@ -201,7 +211,7 @@
 			</div>
 		   </div>
 		   </div>
-    </section>	
+    </section>
 
     <!-- Footer -->
     <footer class="py-5 bg-dark">

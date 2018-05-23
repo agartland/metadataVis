@@ -9,18 +9,6 @@ from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
 from bokeh.layouts import layout
 from bokeh.models.widgets import MultiSelect, Dropdown
 
-if len(sys.argv) > 1:
-    homeParam = sys.argv[1]
-else:
-    homeParam = 'mzWork'
-
-homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
-                   afgWork='A:/gitrepo')
-home = homeFolders[homeParam]
-
-longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097fcm_fh_39_single_resp_p.csv'))
-
-rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
 # DATAFRAME CONFIGURATION:
 
@@ -78,6 +66,7 @@ def _generatePtidMetadata(wideform_df, id_list, rx=None):
         pos = bisect_left(a, x, lo, hi)  # find insertion position
         return (pos if pos != hi and a[pos] == x else -1)  # don't walk off the end
 
+    # if (rx):
     rx.rename(columns={'Ptid': 'TruePtID'}, inplace=True)
     rx['TruePtID'] = rx['TruePtID'].str.replace('-', '')
 
@@ -94,7 +83,19 @@ def _generatePtidMetadata(wideform_df, id_list, rx=None):
     return rx_md
 
 
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        homeParam = sys.argv[1]
+    else:
+        homeParam = 'mzWork'
 
+    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+                       afgWork='A:/gitrepo')
+    home = homeFolders[homeParam]
+
+    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097fcm_fh_39_single_resp_p.csv'))
+
+    rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
 
 # for i in wideform_df.index:
@@ -105,8 +106,3 @@ def _generatePtidMetadata(wideform_df, id_list, rx=None):
 # print(ptid_md)
 # print(measure_md)
 #
-
-
-
-
-

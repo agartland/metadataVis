@@ -5,6 +5,7 @@ import sys
 import os.path as op
 from bokeh.io import show, output_file
 from bokeh.embed import file_html
+from LongformReader import _generateWideform
 from metaVis import *
 
 
@@ -14,7 +15,7 @@ def error_check(data, ptid_md, measures_md):
     ptid_names = list(ptid_md.index)
     measures_names = list(measures_md.index)
 
-    if (data.shape[1] - 1 != measures_md.shape[0]):
+    if (data.shape[1] != measures_md.shape[0]):
         error = "<p>Error: Number of measurements in base dataset does not match the number of measurements in the measurement metadata.</br>"
         error += "&emsp;Base Data: " + str(data.shape[1]) + "</br>"
         error += "&emsp;Measures Metadata: " + str(measures_md.shape[0])
@@ -39,9 +40,12 @@ def error_check(data, ptid_md, measures_md):
     return None
 
 def gen_heatmap_html(data=None, row_md=None, col_md=None,
+                     longform=None, rx=None,
                      metric=None, method=None,
                      standardize=True, impute=True, static=False):
     # TODO - Make sure data is submitted in html
+    if (longform is not None and rx is not None):
+        data, row_md, col_md = _generateWideform(longform, rx)
     ret_val = {}
     ret_val['error'] = error_check(data, row_md, col_md)
     if ret_val['error'] is not None:
