@@ -5,8 +5,10 @@ import sys
 import os.path as op
 from bokeh.io import show, output_file
 from bokeh.embed import file_html
+from bokeh.resources import CDN
 from LongformReader import _generateWideform
 from metaVis import *
+
 
 
 def error_check(data, ptid_md, measures_md):
@@ -30,6 +32,8 @@ def error_check(data, ptid_md, measures_md):
 
     if (ptid_names != data_rownames):
         error = "<p>Error: PtID's in base dataset do not match PtID's in PtID metadata.</p>"
+        print(ptid_names)
+        print(data_rownames)
         return error
 
     if (measures_names != data_colnames):

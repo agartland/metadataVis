@@ -21,6 +21,8 @@ def _prepArgs(request):
             sio = StringIO(unicode(request.args[k][0]))
             if k.find('longformFile') >= 0:
                 tmp = pd.read_csv(sio)
+            elif k.find('rx') >= 0:
+                tmp = pd.read_csv(sio)
             else:
                 tmp = pd.read_csv(sio, index_col=0)
             kwargs[k.replace('File', '')] = tmp

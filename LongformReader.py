@@ -39,12 +39,12 @@ def _generateWideform(longform_df, rx=None):
     for entry in rowmeta_columns:
         rowmeta_dict[entry] = longform_df[entry]
 
-    if (rx):
+    if (rx is None):
         ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
         ptid_md = ptid_md.drop_duplicates()
     else:
-        ptid_md = _generatePtidMetadata(rx, wideform_df)
+        ptid_md = _generatePtidMetadata(wideform_df, id_list, rx)
 
     colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
     for entry in colmeta_columns:
