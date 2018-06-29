@@ -223,7 +223,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                     <div class="panel panel-default">
                                         <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
                                             <h4 class="panel-title">
-                                                Selectors
+                                                Histograms
                                                 <span class="pull-right">
                                                     <i class="glyphicon glyphicon-chevron-down"></i>
                                                 </span>
