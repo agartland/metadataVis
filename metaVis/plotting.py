@@ -1,10 +1,16 @@
 from datetime import date
 from random import randint
 
+import io
+import random
+
+from jinja2 import Template
+
+from bokeh.embed import components
 from bokeh.models import ColumnDataSource
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
-
-
+from bokeh.resources import INLINE
+from bokeh.util.browser import view
 from bokeh.palettes import Set3
 from bokeh.transform import factor_cmap
 import pandas as pd
@@ -25,6 +31,7 @@ from bokeh.models import (
     Select,
     CheckboxGroup,
     FactorRange,
+    DataRange1d,
     Range1d,
     RadioButtonGroup,
     WheelZoomTool
@@ -34,8 +41,9 @@ from metaVis import *
 
 __all__ = ['generateLayout']
 
+
 def generateLayout(sources, cbDict, rowDend, colDend):
-    colors =['#ffecb3','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
+    colors = ['#ffecb3', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#bd0026', '#800026']
     data, ptid_md, measures_md = sources['data'], sources['ptid_md'], sources['measures_md']
 
     ptid_list = list(data.index)
@@ -50,51 +58,40 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
     p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
 
-    div = Div(text="""
-    <div>
-    <br></br>
-    <font face=helvetica" size = "20"> MetaVis: <span style="font-size:0.75em;"> Interactive Exploratory Visualizations</font>
-    <br></br> <br></br>
-    </div>
-    """,
-              width=1000, height=50)
-
-
-
     x_palette = Set3[12]
     y_palette = Set3[12]
 
     x_colorbar, x_bar_mapper = _createColorbar(source=sources['measure'],
-                                 p=p,
-                                 fig_size=(815, 35),
-                                 tools='xpan',
-                                 rect_dim=('Feature', 0),
-                                 rect_size=(1, 3),
-                                 orientation='x',
-                                 factors=factors,
-                                 palette=x_palette)
+                                               p=p,
+                                               fig_size=(815, 35),
+                                               tools='xpan',
+                                               rect_dim=('Feature', 0),
+                                               rect_size=(1, 3),
+                                               orientation='x',
+                                               factors=factors,
+                                               palette=x_palette)
 
     y_colorbar, y_bar_mapper = _createColorbar(source=sources['ptid'],
-                                 p=p,
-                                 fig_size=(35, 400),
-                                 tools='ypan',
-                                 rect_dim=(0, 'PtID'),
-                                 rect_size=(3, 1),
-                                 orientation='y',
-                                 factors=factors,
-                                 palette=y_palette)
+                                               p=p,
+                                               fig_size=(35, 400),
+                                               tools='ypan',
+                                               rect_dim=(0, 'PtID'),
+                                               rect_size=(3, 1),
+                                               orientation='y',
+                                               factors=factors,
+                                               palette=y_palette)
 
     x_legend, x_legend_mapper = _createLegend(callback=cbDict['m_legend'],
-                             source=sources['m_legend'],
-                             factors=factors,
-                             title="Column Colorbar",
-                             palette=x_palette)
+                                              source=sources['m_legend'],
+                                              factors=factors,
+                                              title="Column Colorbar",
+                                              palette=x_palette)
 
     y_legend, y_legend_mapper = _createLegend(callback=cbDict['p_legend'],
-                             source=sources['p_legend'],
-                             factors=factors,
-                             title="Row Colorbar",
-                             palette=y_palette)
+                                              source=sources['p_legend'],
+                                              factors=factors,
+                                              title="Row Colorbar",
+                                              palette=y_palette)
 
     y_dendrogram = _createDendrogram(rowDend,
                                      size=(400, 75),
@@ -107,9 +104,8 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                      list=feature_list,
                                      orientation='horizontal')
 
-
     (row_reset_button, col_reset_button, selector,
-    multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources)
+     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources)
     spacer = _createSpacer(p)
     row_table = column(sources['p_data_table'], widgetbox(row_reset_button, width=50))
     col_table = column(sources['m_data_table'], widgetbox(col_reset_button, width=50))
@@ -126,7 +122,8 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     select_colbar_tab = Panel(child=sources['select_colbarchart'], title="Selected Cols")
     nonselect_colbar_tab = Panel(child=sources['nonselect_colbarchart'], title="Unselected Cols")
 
-    barchart_tabs = widgetbox(Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
+    barchart_tabs = widgetbox(
+        Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
 
     # Heatmap Density Color Selector:
     # TODO - Add default coloring if given no input
@@ -135,14 +132,14 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     # Heatmap MetaData Label Color Selector:
     x_legend_data = sources['m_legend'].data['names']
-    x_legend_buttons = [_genLabelColorButtons(i, x_legend_mapper, x_bar_mapper, len(x_legend_data), x_legend_data[i])
-                       for i in range(len(x_legend_data))]
+    x_legend_buttons = [_genLabelColorButtons(i, x_legend_mapper, x_bar_mapper,
+                                              sources['xbar_mapper1'], sources['xbar_mapper2'],
+                                              len(x_legend_data), x_legend_data[i]) for i in range(len(x_legend_data))]
 
     y_legend_data = sources['p_legend'].data['names']
-    y_legend_buttons = [_genLabelColorButtons(i, y_legend_mapper, y_bar_mapper, len(y_legend_data), y_legend_data[i])
-                       for i in range(len(y_legend_data))]
-
-
+    y_legend_buttons = [_genLabelColorButtons(i, y_legend_mapper, y_bar_mapper,
+                                              sources['ybar_mapper1'], sources['ybar_mapper2'],
+                                              len(y_legend_data), y_legend_data[i]) for i in range(len(y_legend_data))]
 
     # Presets
     preset_cb = CustomJS(args=dict(mapper=heatmap_mapper), code="""
@@ -158,14 +155,14 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     preset_buttons = RadioButtonGroup(labels=["Palette 1", "Palette 2", "Palette 3"], active=0)
     preset_buttons.js_on_click(preset_cb)
 
-    #TODO: "x_color_JS"
+    # TODO: "x_color_JS"
     heatmap_color_tab = Panel(child=widgetbox(heatmap_color_buttons, width=100), title='HeatMap Colors', closable=True)
     preset_tab = Panel(child=preset_buttons, title="Presets", closable=True)
     x_legend_tab = Panel(child=widgetbox(x_legend_buttons, width=100), title='X Legend Colors', closable=True)
     y_legend_tab = Panel(child=widgetbox(y_legend_buttons, width=100), title='Y Legend Colors', closable=True)
 
-    cust_tabs = Tabs(tabs=[heatmap_color_tab, preset_tab, x_legend_tab, y_legend_tab])
-
+    # LEGEND TABS DO NOT UPDATE WITH
+    cust_tabs = Tabs(tabs=[heatmap_color_tab, preset_tab])
 
     # bar_col = column(row(sources['select_rowbarchart'],
     #                  sources['nonselect_rowbarchart']),
@@ -173,15 +170,170 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    page = layout([[div], [spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, cust_tabs],
-                  [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
+    page = layout([[spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, reset_button],
+                   [selectors, p_selector, m_selector]])
+    heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
 
+    template = Template("""\
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <title>MetaVis</title>
+            {{ resources }}
+            <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+            <link rel="stylesheet" href="bootstrap/header.css">
+            <link rel="stylesheet" href="bootstrap/sidebar.css">
+            <link rel="stylesheet" href="bootstrap/sidemenu.css">
+            <script src="bootstrap/sidebar.js"></script>
+            <script src="bootstrap/sidemenu.js"></script>
+            <script src="bootstrap/header.js"></script>
+        </head>
+        <body>
+        <nav id="header" class="navbar navbar-fixed-top">
+            <div id="header-container" class="container navbar-container">
+                <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
+                        <div class="navbar-toggler animate">
+                            <span class="menu-icon"></span>
+                        </div>
+                        <ul class=" navbar-menu animate">
+                            <li>
+                                <div class="container2">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
+                                        <h4 class="panel-title">
+                                            Colors
+                                            <span class="pull-right">
+                                                <i class="glyphicon glyphicon-chevron-down"></i>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                    <div id="filterPanel" class="panel-collapse panel-collapse collapse">
+                                        <div class="panel-body">
+                                            {{ plot_div.colors }}
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </li>
+                            <li> 
+                                <div class="container2">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
+                                            <h4 class="panel-title">
+                                                Selectors
+                                                <span class="pull-right">
+                                                    <i class="glyphicon glyphicon-chevron-down"></i>
+                                                </span>
+                                            </h4>
+                                        </div>
+                                        <div id="filterPanel2" class="panel-collapse panel-collapse collapse">
+                                            <div class="panel-body">
+                                                {{ plot_div.bars }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                </nav>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a id="brand" class="navbar-brand" href="#">MetaVis: <span id="brand-span">Interactive Exploratory Visualizations</span> </a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#tutorial">Tutorial</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+            <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
+                <div class="navbar-toggler animate">
+                    <span class="menu-icon"></span>
+                </div>
+                <ul class=" navbar-menu animate">
+                    <li>
+                        <div class="container2">
+                        <div class="panel panel-default">
+                            <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
+                                <h4 class="panel-title">
+                                    Colors
+                                    <span class="pull-right">
+                                        <i class="glyphicon glyphicon-chevron-down"></i>
+                                    </span>
+                                </h4>
+                            </div>
+                            <div id="filterPanel1" class="panel-collapse panel-collapse collapse">
+                                <div class="panel-body">
+                                    {{ plot_div.colors }}
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </li>
+                    <li> 
+                        <div class="container2">
+                            <div class="panel panel-default">
+                                <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
+                                    <h4 class="panel-title">
+                                        Selectors
+                                        <span class="pull-right">
+                                            <i class="glyphicon glyphicon-chevron-down"></i>
+                                        </span>
+                                    </h4>
+                                </div>
+                                <div id="filterPanel3" class="panel-collapse panel-collapse collapse">
+                                    <div class="panel-body">
+                                        {{ plot_div.bars }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </nav><!-- /.navbar -->
+        {{ plot_div.page }}
+        <footer>
+            <p>© 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
+        </footer>
+        {{ plot_script }}
+
+
+        </body>
+    </html>
+    """)
+
+    resources = INLINE.render()
+
+    script, div = components({'page': page, 'colors': cust_tabs, 'bars': barchart_tabs})
+
+    html = template.render(resources=resources,
+                           plot_script=script,
+                           plot_div=div)
+
+    filename = 'heatmaptest.html'
+
+    with io.open(filename, mode='w', encoding='utf-8') as f:
+        f.write(html)
+
+    view(filename)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
     #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
     return page
+
 
 """============================================================================================"""
 
@@ -196,18 +348,15 @@ def _createWidgets(cbDict, sources):
     multiselect_toggle = CheckboxGroup(labels=["multiselect"], callback=cbDict['multiselect_toggle'])
     reset_button = Button(label="Reset", callback=cbDict['reset'], button_type='danger', width=100)
 
-    p_select_opt = list(ptid_md)[1:]
-    p_select_opt.insert(0, "")
-    m_select_opt = list(measures_md)[1:]
-    m_select_opt.insert(0, "")
     p_selector = Select(title="Choose row metadata", options=list(ptid_md)[1:], callback=cbDict['p_select'], width=175)
-    m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=cbDict['m_select'], width=175)
+    m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=cbDict['m_select'],
+                        width=175)
 
     return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector
 
 
 def _createHeatmap(cbDict, colors, sources):
-# Defining tools/colors
+    # Defining tools/colors
     df, data = sources['df'], sources['data']
     feature_list = list(data.columns)
     ptid = list(data.index)
@@ -300,20 +449,20 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
         # PERFORMANCE BOTTLENECK PLEASE FIX
         for xlist, ylist in zip(dend['dcoord'], dend['icoord']):
             dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
-                              selection_line_alpha=1, nonselection_line_alpha=1)
+                            selection_line_alpha=1, nonselection_line_alpha=1)
         # OLD MULTILINE CODE
-        #dendrogram.multi_line(dend['dcoord'], dend['icoord'], color='black',
-                              #selection_color='black', nonselection_color='black',
-                              #selection_line_alpha=1, nonselection_line_alpha=1)
+        # dendrogram.multi_line(dend['dcoord'], dend['icoord'], color='black',
+        # selection_color='black', nonselection_color='black',
+        # selection_line_alpha=1, nonselection_line_alpha=1)
     elif orientation == 'horizontal':
         # PERFORMANCE BOTTLENECK PLEASE FIX
         for xlist, ylist in zip(dend['icoord'], dend['dcoord']):
             dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
-                              selection_line_alpha=1, nonselection_line_alpha=1)
+                            selection_line_alpha=1, nonselection_line_alpha=1)
         # OLD MULTILINE CODE
-        #dendrogram.multi_line(dend['icoord'], dend['dcoord'], color='black',
-                              #selection_color='black', nonselection_color='black',
-                              #selection_line_alpha=1, nonselection_line_alpha=1)
+        # dendrogram.multi_line(dend['icoord'], dend['dcoord'], color='black',
+        # selection_color='black', nonselection_color='black',
+        # selection_line_alpha=1, nonselection_line_alpha=1)
     return dendrogram
 
 
@@ -324,7 +473,6 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
             plot_width=fig_size[0], plot_height=fig_size[1],
             tools=tools
         )
-
     else:
         colorbar = Figure(
             x_range=p.x_range,
@@ -351,7 +499,7 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
 
 def _createLegend(callback, source, factors, title, palette):
     legend_tap = TapTool(callback=callback)
-    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1), plot_height=200, plot_width=200,
+    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1, bounds=(None, 7.5)), plot_height=200, plot_width=200,
                     tools=[legend_tap, 'ywheel_pan', 'ypan'],
                     active_scroll='ywheel_pan')
     legend.toolbar_location = None
@@ -362,7 +510,6 @@ def _createLegend(callback, source, factors, title, palette):
     legend.outline_line_alpha = 0.1
     legend.outline_line_width = 5
     legend.title.text_font = "times"
-
     mapper_dict = factor_cmap('factors', palette=palette, factors=factors)
 
     legend.text(source=source, x=0.3, y='factors', text_font_size='9pt', text='names', y_offset=7,
@@ -378,6 +525,7 @@ def _createLegend(callback, source, factors, title, palette):
 
     return legend, mapper_dict['transform']
 
+
 def _createSpacer(p):
     spacer = Figure(
         x_range=p.x_range,
@@ -390,6 +538,7 @@ def _createSpacer(p):
     spacer.axis.visible = False
     return spacer
 
+
 # Generates JS callback for changing a color mapper
 # Param:
 # idx - the idx of the respective color mapper.palette to change
@@ -400,15 +549,23 @@ def _colorMapCB(idx):
          """
     return cb
 
+
 def _twoColorMapCB(idx):
-    cb = """palette_1 = legend_mapper.palette;
-            palette_2 = bar_mapper.palette;
+    cb = """let palette_1 = legend_mapper.palette;
+            let palette_2 = bar_mapper.palette;
+            let palette_3 = chart_mapper1.palette;
+            let palette_4 = chart_mapper2.palette;
             palette_1[""" + str(idx) + """] = cb_obj.value;
             palette_2[""" + str(idx) + """] = cb_obj.value;
+            palette_3[""" + str(idx) + """] = cb_obj.value;
+            palette_4[""" + str(idx) + """] = cb_obj.value;
             legend_mapper.change.emit();
             bar_mapper.change.emit();
+            chart_mapper1.change.emit();
+            chart_mapper2.change.emit();
          """
     return cb
+
 
 # Generates an input listener for dynamic coloring.
 # Used for dynamic coloring of the heatmap density colors
@@ -425,8 +582,11 @@ def _genColorButton(idx, mapper, num, placeholder=None):
     button = TextInput(callback=cb, placeholder=name)
     return button
 
-def _genLabelColorButtons(idx, legend_mapper, bar_mapper, num, placeholder=None):
-    cb = CustomJS(args=dict(legend_mapper=legend_mapper, bar_mapper=bar_mapper), code=_twoColorMapCB(idx))
+
+def _genLabelColorButtons(idx, legend_mapper, bar_mapper, chart_mapper1, chart_mapper2, num, placeholder=None):
+    cb = CustomJS(args=dict(legend_mapper=legend_mapper, bar_mapper=bar_mapper,
+                            chart_mapper1=chart_mapper1, chart_mapper2=chart_mapper2),
+                  code=_twoColorMapCB(idx))
     name = "Color " + str(idx + 1)
     if placeholder is not None:
         name = placeholder

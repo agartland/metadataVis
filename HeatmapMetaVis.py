@@ -80,7 +80,7 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
@@ -136,7 +136,5 @@ if __name__ == '__main__':
 
     cbDict = initCallbacks(sources)
 
-    layout = generateLayout(sources, cbDict, rowDend, colDend)
+    generateLayout(sources, cbDict, rowDend, colDend)
 
-    output_file('HeatmapMetaVis.html', title='HeatmapMetaVis')
-    show(layout)
