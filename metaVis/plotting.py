@@ -204,7 +204,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                 <div class="panel panel-default">
                                     <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
                                         <h4 class="panel-title">
-                                            Colors
+                                            Color Palette
                                             <span class="pull-right">
                                                 <i class="glyphicon glyphicon-chevron-down"></i>
                                             </span>
@@ -256,51 +256,6 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     </ul>
                 </div><!-- /.nav-collapse -->
             </div><!-- /.container -->
-            <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
-                <div class="navbar-toggler animate">
-                    <span class="menu-icon"></span>
-                </div>
-                <ul class=" navbar-menu animate">
-                    <li>
-                        <div class="container2">
-                        <div class="panel panel-default">
-                            <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
-                                <h4 class="panel-title">
-                                    Colors
-                                    <span class="pull-right">
-                                        <i class="glyphicon glyphicon-chevron-down"></i>
-                                    </span>
-                                </h4>
-                            </div>
-                            <div id="filterPanel1" class="panel-collapse panel-collapse collapse">
-                                <div class="panel-body">
-                                    {{ plot_div.colors }}
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    </li>
-                    <li> 
-                        <div class="container2">
-                            <div class="panel panel-default">
-                                <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
-                                    <h4 class="panel-title">
-                                        Selectors
-                                        <span class="pull-right">
-                                            <i class="glyphicon glyphicon-chevron-down"></i>
-                                        </span>
-                                    </h4>
-                                </div>
-                                <div id="filterPanel3" class="panel-collapse panel-collapse collapse">
-                                    <div class="panel-body">
-                                        {{ plot_div.bars }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
         </nav><!-- /.navbar -->
         {{ plot_div.page }}
         <footer>
