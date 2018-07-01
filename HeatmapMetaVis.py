@@ -2,6 +2,7 @@
 # https://groups.google.com/a/continuum.io/forum/#!searchin/bokeh/selected/bokeh/ft2U4nX4fVo/srBMki9FAQAJ
 import pandas as pd
 import sys
+import io
 import os.path as op
 import MetaVisLauncherConfig as config
 from bokeh.io import show, output_file, save
@@ -71,11 +72,15 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
 
     cbDict = initCallbacks(sources)
 
-    layout = generateLayout(sources, cbDict, rowDend, colDend)
+    html = generateLayout(sources, cbDict, rowDend, colDend)
+
+    # layout = generateLayout(sources, cbDict, rowDend, colDend)
     # TODO - Return html, or generate file?
-    output_file(op.join('tmpdata',config.output_file), title='ServerMetaVis')
-    save(layout)
-    ret_val['html_file'] = config.output_file
+    with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
+        f.write(html)
+
+    # output_file(op.join('tmpdata',config.output_file), title='ServerMetaVis')
+    # save(layout)
     return ret_val
 
 

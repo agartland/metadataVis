@@ -90,11 +90,9 @@ class FileUpload(resource.Resource):
         return redirectHome.render(request)
 
     def _delayedPOSTRender(self, request):
-        #request.write("\n\n\nUpload complete.</body></html>")
         request.finish()
 
     def render_POST(self, request):
-        #request.write('<html><body>')
         d = threads.deferToThread(_handleMetaVis, request)
         d.addCallback(self._delayedPOSTRender)
         d.addErrback(log.err)
