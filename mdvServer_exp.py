@@ -2,50 +2,87 @@ from __future__ import print_function
 from twisted.web import server, resource, static
 from twisted.internet import reactor, endpoints, task, threads
 from twisted.internet.defer import Deferred
-import cgi
 import argparse
 from io import StringIO
 import pandas as pd
 from twisted.web.util import Redirect
 from twisted.web.util import redirectTo
 from twisted.python import log
+import tempfile, os
+import subprocess
+import shutil
 
-#from example_server_plot import exampleVis
 from HeatmapMetaVis import gen_heatmap_html
+import MetaVisLauncherConfig as config
+import MetaVisLauncherConstants as constants
 
 # TODO - Popup if file upload is empty; popup for errors
-def _prepArgs(request):
+# Must call _cleanup_tmp before returning
+def _handleMetaVis(request):
     kwargs = {}
+    tmpdirname = config.tmp_dir
+    if not os.path.exists(tmpdirname):
+        os.makedirs(tmpdirname)
+
+    launcher_args = _prepArgs(request)
+    args = [config.python3_path] + launcher_args
+    output = subprocess.check_output(args)
+
+    # Check for and handle errors
+    if os.path.exists(os.path.join(config.error_dir, config.error_file)):
+        error_file = open(os.path.join(config.error_dir, config.error_file), "r")
+        error = error_file.read()
+        error_file.close()
+        request.write(error)
+        _cleanup_tmp()
+        return request
+
+    output_file = open(os.path.join(tmpdirname, config.output_file), "r")
+    res_html = output_file.read()
+    output_file.close()
+
+    request.write(res_html)
+    _cleanup_tmp()
+    return request
+
+def _prepArgs(request):
+    # See Py3MetaVisLauncher.py for format
+    tmpdirname = config.tmp_dir
+    launcher_args = [''] * constants.REQ_ARG_NUM
+    launcher_args[0] = config.launcher
+    launcher_args[1] = tmpdirname
+
     for k,v in request.args.iteritems():
         if k.find('File') >= 0 and request.args[k][0] != '':
-            sio = StringIO(unicode(request.args[k][0]))
+            filename = str(k.replace('File',''))
             if k.find('longformFile') >= 0:
                 tmp = pd.read_csv(sio)
             elif k.find('rx') >= 0:
                 tmp = pd.read_csv(sio)
-            else:
-                tmp = pd.read_csv(sio, index_col=0)
-            kwargs[k.replace('File', '')] = tmp
-    if 'static' in request.args:
-        kwargs['static'] = True
+            elif k == 'dataFile':
+                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
+                tmpFile.write(request.args[k][0])
+                tmpFile.close()
+                launcher_args[2] = filename
+            elif k == 'row_mdFile':
+                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
+                tmpFile.write(request.args[k][0])
+                tmpFile.close()
+                launcher_args[3] = filename
+            else: # k == 'col_mdFile'
+                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
+                tmpFile.write(request.args[k][0])
+                tmpFile.close()
+                launcher_args[4] = filename
+    launcher_args[5] = '-' + str(request.args['metric'][0])
+    launcher_args[6] = '-' + str(request.args['method'][0])
     if 'standardize' in request.args:
-        kwargs['standardize'] = True
-    kwargs['metric'] = request.args['metric'][0]
-    kwargs['method'] = request.args['method'][0]
-
-    #key_string = [k for k in kwargs]
-    #request.write("<html>" + str(key_string) + "<body>")
-    ret_map = gen_heatmap_html(**kwargs)
-    if(ret_map['error'] is not None):
-        # TODO - More Elegant Error Display
-        request.write("<html>" + ret_map['error'] + "<body>")
-        return request
-    html = ret_map['heatmap_html']
-    # html = exampleVis(**kwargs)
-    # print(html[:100])
-    # request.write(html.encode('utf-8'))
-    request.write(html)
-    return request
+        launcher_args.append('-standardize')
+    if 'impute' in request.args:
+        launcher_args.append('-impute')
+    if 'static' in request.args:
+        launcher_args.append('-static')
+    return launcher_args
 
 class FileUpload(resource.Resource):
     isLeaf = True
@@ -58,7 +95,7 @@ class FileUpload(resource.Resource):
 
     def render_POST(self, request):
         #request.write('<html><body>')
-        d = threads.deferToThread(_prepArgs, request)
+        d = threads.deferToThread(_handleMetaVis, request)
         d.addCallback(self._delayedPOSTRender)
         d.addErrback(log.err)
         return server.NOT_DONE_YET
@@ -71,6 +108,10 @@ class RootResource(resource.Resource):
         return resource.Resource.getChild(self, name, request)
     def render_GET(self, request):
         return redirectHome.render(request)
+
+def _cleanup_tmp():
+    if os.path.exists(config.tmp_dir):
+        shutil.rmtree(config.tmp_dir)
 
 redirectHome = Redirect('home')
 

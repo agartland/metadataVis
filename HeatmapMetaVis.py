@@ -3,11 +3,13 @@
 import pandas as pd
 import sys
 import os.path as op
-from bokeh.io import show, output_file
+import MetaVisLauncherConfig as config
+from bokeh.io import show, output_file, save
 from bokeh.embed import file_html
 from bokeh.resources import CDN
 from LongformReader import _generateWideform
 from metaVis import *
+
 
 
 
@@ -47,7 +49,9 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
                      longform=None, rx=None,
                      metric=None, method=None,
                      standardize=True, impute=True, static=False):
-    # TODO - Make sure data is submitted in html
+    # TODO - Metavis currently does not work without imputing
+    impute=True
+
     if (longform is not None and rx is not None):
         data, row_md, col_md = _generateWideform(longform, rx)
     ret_val = {}
@@ -69,26 +73,34 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
 
     layout = generateLayout(sources, cbDict, rowDend, colDend)
     # TODO - Return html, or generate file?
-    # output_file('ServerMetaVis.html', title='ServerMetaVis')
-    ret_val['heatmap_html'] = file_html(layout, resources=CDN)
+    output_file(op.join('tmpdata',config.output_file), title='ServerMetaVis')
+    save(layout)
+    ret_val['html_file'] = config.output_file
     return ret_val
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        homeParam = sys.argv[1]
-    else:
-        homeParam = 'mzWork'
-
-    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
-                       afgWork='A:/gitrepo')
-    home = homeFolders[homeParam]
+    # if len(sys.argv) > 1:
+    #     homeParam = sys.argv[1]
+    # else:
+    #     homeParam = 'mzWork'
+    #
+    # homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+    #                    afgWork='A:/gitrepo')
+    # home = homeFolders[homeParam]
 
     # Importing files as dataframes
+    #
+    # data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
+    # measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
+    # ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
 
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
-    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
+    #
+    data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
+    measures_md = pd.read_csv(op.join('tmpdata', 'col_md.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join('tmpdata', 'row_md.csv'), index_col=0)
+    #
+
     # data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'), index_col=0)
     # measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'), index_col=0)
     # ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'), index_col=0)
