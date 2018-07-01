@@ -1,0 +1,18 @@
+.panel-collapse-clickable {
+     cursor: pointer;
+}
+
+.container2 {
+    padding: 0px;
+    width: 300px;
+}
+
+.panel {
+    margin-bottom: 0px;
+    border-radius: 0px;
+}
+.panel-default>.panel-heading {
+    color: #fff;
+    background-color: #7892a9;
+    border-color: #7892a9;
+}

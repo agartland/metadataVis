@@ -1,9 +1,11 @@
 import sklearn
+from bokeh.palettes import Set3
 import numpy as np
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import squareform, pdist
 import pandas as pd
-from bokeh.models import TableColumn, DataTable, ColumnDataSource
+from bokeh.transform import factor_cmap
+from bokeh.models import TableColumn, DataTable, ColumnDataSource, HoverTool, FactorRange
 from bokeh.plotting import Figure
 from metaVis import *
 
@@ -53,40 +55,30 @@ def initSources(data, ptid_md, measures_md):
     sources['p_table'] = ColumnDataSource(data={feat: [] for feat in list(ptid_md)})
     sources['m_table'] = ColumnDataSource(data={feat: [] for feat in list(measures_md)})
     sources['storage'] = ColumnDataSource(data=dict(PtID=sources['ptid'].data['PtID'], Feature=sources['measure'].data['Feature'],
-                                                mode=['Cross'], indices=[], multiselect=['False'],
-                                                s_rowbar=[], s_colbar=[], total_rowbar=[], total_colbar=[],
-                                                p_colname=[p_default], m_colname=[m_default],
-                                                p_legend_index=[], m_legend_index=[]))
-    sources['p_legend'] = ColumnDataSource(data=dict(factors=[], names=[]))
-    sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[]))
-
-    sources['ptid'], sources['p_legend'], sources['storage'].data['total_rowbar'] = initSupplementSources(sources['ptid'], sources['p_legend'])
-    sources['measure'], sources['m_legend'], sources['storage'].data['total_colbar'] = initSupplementSources(sources['measure'], sources['m_legend'])
-
-    sources['select_rowbar'] = ColumnDataSource(data=dict(x=[], y=[]))
-    sources['nonselect_rowbar'] = ColumnDataSource(data=dict(x=sources['p_legend'].data['names'],
-                                                             y=sources['storage'].data['total_rowbar']))
-    sources['select_colbar'] = ColumnDataSource(data=dict(x=[], y=[]))
-    sources['nonselect_colbar'] = ColumnDataSource(data=dict(x=sources['m_legend'].data['names'],
-                                                             y=sources['storage'].data['total_colbar']))
-
+                                                    mode=['Cross'], indices=[], multiselect=['False'],
+                                                    s_rowbar=[], s_colbar=[], total_rowbar=[], total_colbar=[],
+                                                    p_colname=[p_default], m_colname=[m_default],
+                                                    p_legend_index=[], m_legend_index=[]))
+    sources['p_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
+                                                     nonsel_count=[], sel_count=[]))
+    sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
+                                                     nonsel_count=[], sel_count=[]))
+    sources['ptid'], sources['p_legend'], sources['storage'].data['total_rowbar'] = initSupplementSources(sources['ptid'], sources['p_legend'], default=p_default)
+    sources['measure'], sources['m_legend'], sources['storage'].data['total_colbar'] = initSupplementSources(sources['measure'], sources['m_legend'], default=m_default)
     sources['p_data_table'] = _createTable(md=ptid_md, md_source=sources['p_table'])
     sources['m_data_table'] = _createTable(md=measures_md, md_source=sources['m_table'])
-    sources['nonselect_rowbarchart'] = _createBarChart(source=sources['nonselect_rowbar'],
-                                                       xrange=sources['p_legend'].data['names'],
-                                                       title='Unselected Row Metadata')
-    sources['row_xrange'] = sources['nonselect_rowbarchart'].x_range
-    sources['select_rowbarchart'] = _createBarChart(source=sources['select_rowbar'],
-                                                    xrange=sources['nonselect_rowbarchart'].x_range,
-                                                    title='Selected Row Metadata')
-
-    sources['nonselect_colbarchart'] = _createBarChart(source=sources['nonselect_colbar'],
-                                                       xrange=sources['m_legend'].data['names'],
-                                                       title='Unselected Column Metadata')
-    sources['col_xrange'] = sources['nonselect_colbarchart'].x_range
-    sources['select_colbarchart'] = _createBarChart(source=sources['select_colbar'],
-                                                    xrange=sources['nonselect_colbarchart'].x_range,
-                                                    title='Selected Column Metadata')
+    sources['select_rowbarchart'], sources['ybar_mapper1'] = _createBarChart(source=sources['p_legend'],
+                                                    title='Selected Row Metadata',
+                                                    sel=True)
+    sources['nonselect_rowbarchart'], sources['ybar_mapper2'] = _createBarChart(source=sources['p_legend'],
+                                                       title='Unselected Row Metadata',
+                                                       sel=False)
+    sources['select_colbarchart'], sources['xbar_mapper1'] = _createBarChart(source=sources['m_legend'],
+                                                    title='Selected Column Metadata',
+                                                    sel=True)
+    sources['nonselect_colbarchart'], sources['xbar_mapper2'] = _createBarChart(source=sources['m_legend'],
+                                                       title='Unselected Column Metadata',
+                                                       sel=False)
     sources['data'] = data
     sources['ptid_md'] = ptid_md
     sources['measures_md'] = measures_md
@@ -205,13 +197,13 @@ def imputeNA(df, method='median', dropThresh=0.):
     return outDf
 
 
-def initSupplementSources(metadata, legend):
+def initSupplementSources(metadata, legend, default):
     factor_dict = {}
     iterator = -1
     key_array = []
     counts = {}
-    for i in range(len(metadata.data['inspect'])):
-        entry = metadata.data['inspect'][i]
+    for i in range(len(metadata.data[default])):
+        entry = metadata.data[default][i]
         if entry not in factor_dict:
             iterator += 1
             factor_dict[entry] = iterator
@@ -225,6 +217,8 @@ def initSupplementSources(metadata, legend):
         legend.data['names'].append(entry)
         legend.data['factors'].append(str(factor_dict[entry]))
     storage = list(counts.values())
+    legend.data['nonsel_count'] = list(counts.values())
+    legend.data['sel_count'] = [0] * len(legend.data['nonsel_count'])
     return metadata, legend, storage
 
 
@@ -234,14 +228,25 @@ def _createTable(md, md_source):
     for i in range(1, len(col_names)):
         columns.append(TableColumn(field=col_names[i], title=col_names[i], width=100))
     data_table = DataTable(source=md_source, columns=columns, width=(len(col_names)) * 100 + 25,
-                           height=280, reorderable=False)
+                           height=180, reorderable=False)
     return data_table
 
-def _createBarChart(source, xrange, title):
-    barchart = Figure(x_range=xrange, y_range=(0, 50), plot_height=250, plot_width=250, title=title, tools="xpan, xwheel_zoom",
-                      active_scroll='xwheel_zoom')
-
-    barchart.vbar(source=source, x='x', top='y', bottom=0, fill_color="#b3de69", width=0.8)
+def _createBarChart(source, title, sel):
+    factors = []
+    for i in range(12):
+        factors.append(str(i))
+    barchart = Figure(x_range=source.data['names'], y_range=(0, 50), plot_height=200, plot_width=200,
+                    tools=['xwheel_zoom', 'xpan', 'hover'],
+                    active_scroll='xwheel_zoom')
+    mapper_dict = factor_cmap('factors', palette=Set3[12], factors=factors)
+    if sel:
+        barchart.vbar(source=source, x='names', top='sel_count', bottom=0, width=0.8, fill_color=mapper_dict,
+                      line_color=None)
+        barchart.select_one(HoverTool).tooltips = '@names: @sel_count'
+    else:
+        barchart.vbar(source=source, x='names', top='nonsel_count', bottom=0, width=0.8, fill_color=mapper_dict,
+                      line_color=None)
+        barchart.select_one(HoverTool).tooltips = '@names: @nonsel_count'
     barchart.toolbar_location = None
 
-    return barchart
+    return barchart, mapper_dict['transform']

@@ -80,14 +80,14 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
 
 
 if __name__ == '__main__':
-    # if len(sys.argv) > 1:
-    #     homeParam = sys.argv[1]
-    # else:
-    #     homeParam = 'mzWork'
-    #
-    # homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
-    #                    afgWork='A:/gitrepo')
-    # home = homeFolders[homeParam]
+    if len(sys.argv) > 1:
+        homeParam = sys.argv[1]
+    else:
+        homeParam = 'mzWork'
+
+    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
+                       afgWork='A:/gitrepo')
+    home = homeFolders[homeParam]
 
     # Importing files as dataframes
     #
@@ -148,7 +148,4 @@ if __name__ == '__main__':
 
     cbDict = initCallbacks(sources)
 
-    layout = generateLayout(sources, cbDict, rowDend, colDend)
-
-    output_file('HeatmapMetaVis.html', title='HeatmapMetaVis')
-    show(layout)
+    generateLayout(sources, cbDict, rowDend, colDend)
