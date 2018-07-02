@@ -33,7 +33,7 @@ body {
 }
 
 #brand-span {
-    font-size: 30px;
+    font-size: 24px;
 }
 
 .navbar-container {
@@ -46,7 +46,7 @@ body {
     box-shadow: 0 0 5px rgba(0,0,0,.8);
 }
 
-.navbar-brand.fixed-theme, #brand-span {
+.navbar-brand.fixed-theme {
     font-size: 18px;
 }
 

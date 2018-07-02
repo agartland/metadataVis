@@ -171,7 +171,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     # INCLUDES DENDROGRAMS
     page = layout([[spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, reset_button],
-                   [selectors, p_selector, m_selector]])
+                   [selectors, p_selector, m_selector], [table_tabs]])
     heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
 
     template = Template("""\
@@ -276,7 +276,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                            plot_script=script,
                            plot_div=div)
 
-    filename = 'heatmaptest.html'
+    filename = 'MetaVis.html'
 
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
@@ -343,7 +343,6 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Adding hover functionality
     p.select_one(HoverTool).tooltips = [
-        ("index", "$index"),
         ('Patient ID and Feature', '@PtID, @Feature'),
         ('rate', '@rate')
     ]
@@ -356,6 +355,7 @@ def _createHeatmap(cbDict, colors, sources):
            selection_fill_color=color,
            selection_line_color="black",
            nonselection_line_color=None,
+           selection_line_alpha=0.2,
            nonselection_fill_alpha=0.5,
            nonselection_fill_color=color,
            )
@@ -455,7 +455,7 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
 
 def _createLegend(callback, source, factors, title, palette):
     legend_tap = TapTool(callback=callback)
-    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1, bounds=(None, 7.5)), plot_height=200, plot_width=200,
+    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1, bounds=(-1, None)), plot_height=200, plot_width=200,
                     tools=[legend_tap, 'ywheel_pan', 'ypan'],
                     active_scroll='ywheel_pan')
     legend.toolbar_location = None

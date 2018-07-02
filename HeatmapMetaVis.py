@@ -86,20 +86,20 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
+    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
     # Importing files as dataframes
     #
-    # data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
-    # measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
-    # ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
+    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
 
     #
-    data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
-    measures_md = pd.read_csv(op.join('tmpdata', 'col_md.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join('tmpdata', 'row_md.csv'), index_col=0)
+    # data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
+    # measures_md = pd.read_csv(op.join('tmpdata', 'col_md.csv'), index_col=0)
+    # ptid_md = pd.read_csv(op.join('tmpdata', 'row_md.csv'), index_col=0)
     #
 
     # data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'), index_col=0)
