@@ -1,14 +1,15 @@
-from __future__ import print_function
 from twisted.web import server, resource, static
 from twisted.internet import reactor, endpoints, task, threads
 from twisted.internet.defer import Deferred
-import argparse
-from io import StringIO
-import pandas as pd
 from twisted.web.util import Redirect
 from twisted.web.util import redirectTo
 from twisted.python import log
-import tempfile, os
+
+from __future__ import print_function
+from io import StringIO
+import argparse
+import pandas as pd
+import tempfile, os, sys
 import subprocess
 import shutil
 
@@ -118,9 +119,14 @@ def _cleanup_tmp():
     if os.path.exists(config.tmp_dir):
         shutil.rmtree(config.tmp_dir)
 
+def _check_ver():
+    if sys.version_info[0] != 2:
+        raise Exception("MetaVisServer must be launched with python 2")
+
 redirectHome = Redirect('home')
 
 if __name__ == '__main__':
+    _check_ver()
     parser = argparse.ArgumentParser(description='Start metadataVis web server.')
     parser.add_argument('--port', metavar='PORT', type=int, default=5097)
     args = parser.parse_args()
