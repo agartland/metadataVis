@@ -25,8 +25,8 @@ def _generateWideform(longform_df, rx=None):
     colmeta_index = base_columns
     colmeta_columns = ['tcellsub', 'cytokine', 'antigen']
 
-    id = list(range(1, 76))
-    id_list = ['id-{0}'.format(i) for i in id]
+    ids = list(range(1, 76))
+    id_list = ['id-{0}'.format(i) for i in ids]
 
     longform_df['ptid'] = longform_df['ptid'].astype(str)
     longform_df['ptid'] = longform_df['ptid'].str[:-2]
@@ -39,9 +39,9 @@ def _generateWideform(longform_df, rx=None):
     for entry in rowmeta_columns:
         rowmeta_dict[entry] = longform_df[entry]
 
-    if (rx is not None):
+    if rx is None:
         ptid_md = pd.DataFrame(data=rowmeta_dict,
-                           columns=rowmeta_dict.keys())
+                               columns=rowmeta_dict.keys())
         ptid_md = ptid_md.drop_duplicates()
     else:
         ptid_md = _generatePtidMetadata(wideform_df, id_list, rx)
@@ -66,7 +66,6 @@ def _generatePtidMetadata(wideform_df, id_list, rx=None):
         pos = bisect_left(a, x, lo, hi)  # find insertion position
         return (pos if pos != hi and a[pos] == x else -1)  # don't walk off the end
 
-    # if (rx):
     rx.rename(columns={'Ptid': 'TruePtID'}, inplace=True)
     rx['TruePtID'] = rx['TruePtID'].str.replace('-', '')
 
@@ -78,8 +77,8 @@ def _generatePtidMetadata(wideform_df, id_list, rx=None):
             ptid_indices.append(ind)
 
     rx_md = rx.iloc[ptid_indices]
-    rx_md['PtID'] = id_list
-    rx_md.set_index('PtID', inplace=True)
+    rx_md['id'] = id_list
+    rx_md.set_index("id", inplace=True)
     return rx_md
 
 
@@ -89,7 +88,7 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
