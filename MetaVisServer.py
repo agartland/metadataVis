@@ -1,3 +1,4 @@
+from __future__ import print_function
 from twisted.web import server, resource, static
 from twisted.internet import reactor, endpoints, task, threads
 from twisted.internet.defer import Deferred
@@ -5,7 +6,6 @@ from twisted.web.util import Redirect
 from twisted.web.util import redirectTo
 from twisted.python import log
 
-from __future__ import print_function
 from io import StringIO
 import argparse
 import pandas as pd
