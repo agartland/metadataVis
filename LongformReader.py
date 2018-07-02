@@ -39,7 +39,7 @@ def _generateWideform(longform_df, rx=None):
     for entry in rowmeta_columns:
         rowmeta_dict[entry] = longform_df[entry]
 
-    if (rx is None):
+    if (rx is not None):
         ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
         ptid_md = ptid_md.drop_duplicates()

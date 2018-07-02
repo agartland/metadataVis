@@ -5,3 +5,4 @@ USAGE = "Usage: " + __file__ + """ <tmpdata dirname>
     [-euclidean | -correlation]
     [-complete | -single | -ward | -average]
     [-standardize -impute -static]"""
+LF_FLAG = '-lf'

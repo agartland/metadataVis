@@ -56,9 +56,16 @@ def _prepArgs(request):
         if k.find('File') >= 0 and request.args[k][0] != '':
             filename = str(k.replace('File',''))
             if k.find('longformFile') >= 0:
-                tmp = pd.read_csv(sio)
+                launcher_args[2] = constants.LF_FLAG
+                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
+                tmpFile.write(request.args[k][0])
+                tmpFile.close()
+                launcher_args[3] = filename
             elif k.find('rx') >= 0:
-                tmp = pd.read_csv(sio)
+                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
+                tmpFile.write(request.args[k][0])
+                tmpFile.close()
+                launcher_args[4] = filename
             elif k == 'dataFile':
                 tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
                 tmpFile.write(request.args[k][0])

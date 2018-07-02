@@ -218,7 +218,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                 </div>
                                 </div>
                             </li>
-                            <li> 
+                            <li>
                                 <div class="container2">
                                     <div class="panel panel-default">
                                         <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
@@ -259,7 +259,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
         </nav><!-- /.navbar -->
         {{ plot_div.page }}
         <footer>
-            <p>© 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
+            <p>(c) 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
         </footer>
         {{ plot_script }}
 
@@ -281,13 +281,14 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
 
-    view(filename)
+    # view(filename)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
     #               [selectors, p_selector, m_selector, button_bar], [barchart_tabs, table_tabs]])
 
-    return page
+    # return page
+    return html
 
 
 """============================================================================================"""
