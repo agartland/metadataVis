@@ -49,7 +49,7 @@ def error_check(data, ptid_md, measures_md):
 # Generates the heatmap html at config.tmp_dir/config.output_file
 def gen_heatmap_html(data=None, row_md=None, col_md=None,
                      longform=None, rx=None,
-                     metric=None, method=None,
+                     metric='euclidean', method='complete',
                      standardize=True, impute=True, static=False):
     # TODO - Metavis currently does not work without imputing
     impute=True

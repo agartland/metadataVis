@@ -58,7 +58,7 @@ dirname = sys.argv[1]
 if sys.argv[2] == '-lf':
     #Longform
     kwargs['longform'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'))
-    kwargs['rx'] =  pd.read_csv(op.join(dirame, sys.argv[4] + '.csv'))
+    kwargs['rx'] =  pd.read_csv(op.join(dirname, sys.argv[4] + '.csv'))
 else:
     kwargs['data'] =  pd.read_csv(op.join(dirname, sys.argv[2] + '.csv'), index_col=0)
     kwargs['row_md'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'), index_col=0)
