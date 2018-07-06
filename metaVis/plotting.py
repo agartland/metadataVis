@@ -276,7 +276,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                            plot_script=script,
                            plot_div=div)
 
-    filename = 'heatmaptest.html'
+    filename = 'MetaVis.html'
 
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
@@ -499,7 +499,6 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Adding hover functionality
     p.select_one(HoverTool).tooltips = [
-        ("index", "$index"),
         ('Patient ID and Feature', '@PtID, @Feature'),
         ('rate', '@rate')
     ]

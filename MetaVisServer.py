@@ -27,24 +27,26 @@ def _handleMetaVis(request):
 
     launcher_args = _prepArgs(request)
     args = [config.python3_path] + launcher_args
-    output = subprocess.check_output(args)
+    return_code = subprocess.call(args)
 
+    if return_code != 0:
+        request.write("Sorry, your files could not be processed at this time.")
+        return _clean_and_return(request)
+        
     # Check for and handle errors
     if os.path.exists(os.path.join(config.error_dir, config.error_file)):
         error_file = open(os.path.join(config.error_dir, config.error_file), "r")
         error = error_file.read()
         error_file.close()
         request.write(error)
-        _cleanup_tmp()
-        return request
+        return _clean_and_return(request)
 
     output_file = open(os.path.join(tmpdirname, config.output_file), "r")
     res_html = output_file.read()
     output_file.close()
 
     request.write(res_html)
-    _cleanup_tmp()
-    return request
+    return _clean_and_return(request)
 
 def _prepArgs(request):
     # See Py3MetaVisLauncher.py for format
@@ -56,31 +58,18 @@ def _prepArgs(request):
     for k,v in request.args.iteritems():
         if k.find('File') >= 0 and request.args[k][0] != '':
             filename = str(k.replace('File',''))
+            with open(os.path.join(tmpdirname, filename + '.csv'), 'w') as tmpFile:
+                tmpFile.write(request.args[k][0])
             if k.find('longformFile') >= 0:
                 launcher_args[2] = constants.LF_FLAG
-                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
-                tmpFile.write(request.args[k][0])
-                tmpFile.close()
                 launcher_args[3] = filename
             elif k.find('rx') >= 0:
-                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
-                tmpFile.write(request.args[k][0])
-                tmpFile.close()
                 launcher_args[4] = filename
             elif k == 'dataFile':
-                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
-                tmpFile.write(request.args[k][0])
-                tmpFile.close()
                 launcher_args[2] = filename
             elif k == 'row_mdFile':
-                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
-                tmpFile.write(request.args[k][0])
-                tmpFile.close()
                 launcher_args[3] = filename
             else: # k == 'col_mdFile'
-                tmpFile = open(os.path.join(tmpdirname, filename + '.csv'), 'w')
-                tmpFile.write(request.args[k][0])
-                tmpFile.close()
                 launcher_args[4] = filename
     launcher_args[5] = '-' + str(request.args['metric'][0])
     launcher_args[6] = '-' + str(request.args['method'][0])
@@ -114,6 +103,10 @@ class RootResource(resource.Resource):
         return resource.Resource.getChild(self, name, request)
     def render_GET(self, request):
         return redirectHome.render(request)
+
+def _clean_and_return(request):
+    _cleanup_tmp()
+    return request
 
 def _cleanup_tmp():
     if os.path.exists(config.tmp_dir):
