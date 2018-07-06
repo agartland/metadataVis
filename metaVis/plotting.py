@@ -171,7 +171,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     # INCLUDES DENDROGRAMS
     page = layout([[spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, reset_button],
-                   [selectors, p_selector, m_selector]])
+                   [selectors, p_selector, m_selector],[table_tabs]])
     heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
 
     template = Template("""\
@@ -281,7 +281,163 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
 
-    # view(filename)
+
+    template2 = Template("""\
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <title>MetaVis</title>
+            {{ resources }}
+            <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+            <link rel="stylesheet" href="bootstrap/header.css">
+            <link rel="stylesheet" href="bootstrap/sidebar.css">
+            <link rel="stylesheet" href="bootstrap/sidemenu.css">
+            <link href="bootstrap/introjs.css" rel="stylesheet">
+            <link href="bootstrap/step.css" rel="stylesheet">
+            <script type="text/javascript" src="bootstrap/intro.js"></script>
+            <script type="text/javascript" src="bootstrap/step.js"></script>
+            <script src="bootstrap/sidebar.js"></script>
+            <script src="bootstrap/sidemenu.js"></script>
+            <script src="bootstrap/header.js"></script>
+        </head>
+        <body>
+        <nav id="header" class="navbar navbar-fixed-top">
+            <div id="header-container" class="container navbar-container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a id="brand" class="navbar-brand" href="#">MetaVis: <span id="brand-span">Interactive Exploratory Visualizations</span> </a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href='javascript:;' onclick="startIntro();">Tutorial</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#javascript:;" onclick="toggleHints();">Toggle Tips</a></li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+        </nav><!-- /.navbar -->
+        <section class='wrapper'> 
+            <div id=spacer> </div>
+            <div class='col-flex'>
+                <div id="x_dend">
+                    {{ plot_div.x_dend }}
+                </div>
+                <div id="x_color">
+                    {{ plot_div.x_color }}
+                </div>
+                <div class='hidden overlay' id='color-q'> 
+                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('2');"/>
+                    <span class="tooltiptext">Colorbars</span>
+                </div>
+            </div>
+        </section>
+        <section class='wrapper'>
+            <div class='hidden overlay' id='dend-q'> 
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('6');"/>
+                <span class="tooltiptext">Dendrograms</span>
+            </div>
+            <div id="y_dend"> 
+                {{ plot_div.y_dend }}
+            </div>
+            <div id="y_color">
+                {{ plot_div.y_color }}
+            </div>
+            <div class='hidden overlay' id='heatmap-q'> 
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('1');"/>
+                <span class="tooltiptext">Heatmap</span>
+            </div>
+            <div id="heatmap"> 
+                {{ plot_div.heatmap }}
+            </div>
+            <div class='col-flex'>
+                <div id='y_leg'>
+                    {{ plot_div.y_leg }}
+                </div>
+                <div id='x_leg'>
+                    {{ plot_div.x_leg }}
+                </div>  
+                <div class='hidden overlay' id='leg-q'> 
+                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('4');"/>
+                    <span class="tooltiptext">Legends</span>
+                </div>
+            </div>
+        </section>
+        <section class='wrapper'> 
+            <div id='selectors'>
+                {{ plot_div.selectors }}
+            </div>
+            <div id='meta-select'>
+                <div id='p_selector'>
+                    {{ plot_div.p_selector }}
+                </div>
+                <div id='m_selector'>
+                    {{ plot_div.m_selector }}
+                </div>
+            </div>
+            <div id='reset'>
+                {{ plot_div.reset }}
+            </div>
+            <div class='hidden overlay' id='sel-q'> 
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('8');"/>
+                <span class="tooltiptext">Selectors</span>
+            </div>
+        </section>
+        <section class="wrapper">
+            <div class='hidden overlay' id='table-q'> 
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('12');"/>
+                <span class="tooltiptext">Data Tables</span>
+            </div>
+            <div id='table-tabs'>
+                {{ plot_div.table_tabs }}
+            </div>
+            <div class='hidden overlay' id='bar-q'> 
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('13');"/>
+                <span class="tooltiptext">Histograms</span>
+            </div>
+            <div id='bar-tabs'>
+                {{ plot_div.bar_tabs }}
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
+        </footer>
+        {{ plot_script }}
+    
+    
+        </body>
+    </html>
+    """)
+
+    resources2 = INLINE.render()
+
+    heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
+
+
+    script2, div2 = components({'heatmap': p, 'y_color': y_colorbar, 'y_dend': y_dendrogram, 'x_dend': x_dendrogram,
+                                'x_leg': x_legend, 'y_leg': y_legend, 'selectors': selectors, 'p_selector': p_selector,
+                                'm_selector': m_selector, 'reset': reset_button, 'bar_tabs': barchart_tabs,
+                                'table_tabs': table_tabs, 'x_color': x_colorbar})
+
+    html = template2.render(resources=resources2,
+                           plot_script=script2,
+                           plot_div=div2)
+
+    filename2 = 'tutorial.html'
+
+    with io.open(filename2, mode='w', encoding='utf-8') as g:
+        g.write(html)
+
+    view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -355,6 +511,7 @@ def _createHeatmap(cbDict, colors, sources):
            line_color=None,
            selection_fill_color=color,
            selection_line_color="black",
+           selection_line_alpha=0.2,
            nonselection_line_color=None,
            nonselection_fill_alpha=0.5,
            nonselection_fill_color=color,
@@ -455,7 +612,7 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
 
 def _createLegend(callback, source, factors, title, palette):
     legend_tap = TapTool(callback=callback)
-    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1, bounds=(None, 7.5)), plot_height=200, plot_width=200,
+    legend = Figure(x_range=(-0.25, 3), y_range=Range1d(7, -1, bounds=(-1, None)), plot_height=200, plot_width=200,
                     tools=[legend_tap, 'ywheel_pan', 'ypan'],
                     active_scroll='ywheel_pan')
     legend.toolbar_location = None
