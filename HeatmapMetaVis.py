@@ -86,7 +86,7 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 

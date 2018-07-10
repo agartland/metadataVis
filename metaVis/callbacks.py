@@ -81,7 +81,10 @@ _reqSources = {'box_select': ['source',
                             'col',
                             'm_table',
                             'm_data_table',
-                            'm_legend']
+                            'm_legend'],
+               'subsel': ['source',
+                          'subsel_source',
+                          'subsel_chart']
                }
 
 _js = dict(box_select="""
@@ -416,11 +419,14 @@ _js = dict(box_select="""
 
     """,
            p_legend="""
-        if (m_legend.selected.indices.length != 0) {
+        if (storage.data['intersect'][0]) {
+            console.log("resetting...");
+            source.selected.indices = [];
+            p_legend.selected.indices = [];
             m_legend.selected.indices = [];
-            m_legend.change.emit();
+            storage.data['intersect'][0] = 0;
         }
-        if (p_legend.selected.indices[0] == storage.data['p_legend_index'][0] && source.selected.indices.length != 0) {
+        else if (p_legend.selected.indices[0] == storage.data['p_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
             p_legend.selected.indices = [];
             // resetting p_table
@@ -430,6 +436,8 @@ _js = dict(box_select="""
             }
         }
         else {
+            storage.data['p_legend_index'] = p_legend.selected.indices;
+            storage.data['m_legend_index'] = [];
             var index = p_legend.selected.indices;
             var names = p_legend.data['names'];
             var name = names[index];
@@ -455,25 +463,38 @@ _js = dict(box_select="""
                     min_index++;
                 }
             }
-            source.selected.indices = inds;
+            let intersect = [];
+            // If this is a filtering selection on a m_legend select
+            if (m_legend.selected.indices.length != 0) {
+                intersect = inds.filter(value => -1 !== source.selected.indices.indexOf(value));
+                source.selected.indices = intersect;
+                storage.data['intersect'][0] = 1;
+            }
+            else {
+                source.selected.indices = inds;      
+                storage.data['intersect'][0] = 0;
+            }
             for (let j = 0; j < reduced_inds.length; j++) {
                 let col = reduced_inds[j];
                 for (let k = 0; k < row_names.length - 1; k++) {
                     p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
                 }
             }
-            storage.data['p_legend_index'] = p_legend.selected.indices;
-            storage.data['m_legend_index'] = [];
         }
+        console.log(storage.data['intersect'][0]);
         source.change.emit();
         p_legend.change.emit();
         p_table.change.emit();
         p_data_table.change.emit();
+        m_legend.change.emit();
     """,
            m_legend="""
-        if (p_legend.selected.indices.length != 0) {
+        if (storage.data['intersect'][0]) {
+            console.log("resetting...");
+            source.selected.indices = [];
             p_legend.selected.indices = [];
-            p_legend.change.emit();
+            m_legend.selected.indices = [];
+            storage.data['intersect'][0] = 0;
         }
         if (m_legend.selected.indices[0] == storage.data['m_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
@@ -484,6 +505,8 @@ _js = dict(box_select="""
             }
         }
         else {
+            storage.data['m_legend_index'] = m_legend.selected.indices;
+            storage.data['p_legend_index'] = [];
             let index = m_legend.selected.indices;
             let names = m_legend.data['names'];
             let name = names[index];
@@ -509,18 +532,40 @@ _js = dict(box_select="""
                     selected_inds[i] += len;
                 }
             }
-            source.selected.indices = inds;
+            let intersect = [];
+            // If this is a filtering selection on a p_legend select
+            if (p_legend.selected.indices.length != 0) {
+                intersect = inds.filter(value => -1 !== source.selected.indices.indexOf(value));
+                source.selected.indices = intersect;
+                storage.data['intersect'][0] = 1;
+            }
+            else {
+                source.selected.indices = inds;      
+                storage.data['intersect'][0] = 0;
+            }
             for (let j = 0; j < reduced_inds.length; j++) {
                 let col = reduced_inds[j];
                 for (let k = 0; k < col_names.length - 1; k++) {
                     m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
                 }
             }
-            storage.data['m_legend_index'] = m_legend.selected.indices;
-            storage.data['p_legend_index'] = [];
         }
+        console.log(storage.data['intersect'][0]);
         m_legend.change.emit();
         m_table.change.emit();
         m_data_table.change.emit();
         source.change.emit();
+        p_legend.change.emit();
+    """,
+           subsel="""
+        let inds = source.selected.indices;
+        console.log(inds);
+        for (let i = 0; i < inds.length; i++) {
+            subsel_source.data['features'].push(source.data['Feature'][[i]]);
+            subsel_source.data['ptids'].push(source.data['PtID'][[i]]);
+            subsel_source.data['rate'].push(source.data['rate'][[i]]);
+        }
+        subsel_source.change.emit();
+        subsel_chart.x_range.factors = subsel_source['features'];
+        subsel_chart.y_range.factors = subsel_source.data['ptids'];
     """)

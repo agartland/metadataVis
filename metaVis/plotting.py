@@ -57,7 +57,6 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
     p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
-
     x_palette = Set3[12]
     y_palette = Set3[12]
 
@@ -111,7 +110,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     col_table = column(sources['m_data_table'], widgetbox(col_reset_button, width=50))
     selectors = column(widgetbox(selector, multiselect_toggle))
     legends = column(y_legend, x_legend)
-    button_bar = column(widgetbox(reset_button))
+    subsel_button = column(widgetbox(reset_button))
 
     data_tab1 = Panel(child=row_table, title="Row Table")
     data_tab2 = Panel(child=col_table, title="Col Table")
@@ -318,7 +317,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
-                        <li><a href='javascript:;' onclick="startIntro();">Tutorial</a></li>
+                        <li><a href='javascript:;' onclick="startIntro();" id="tut"s>Tutorial</a></li>
                         <li><a href="#contact">Contact</a></li>
                         <li><a href="#javascript:;" onclick="toggleHints();">Toggle Tips</a></li>
                     </ul>
@@ -335,14 +334,14 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     {{ plot_div.x_color }}
                 </div>
                 <div class='hidden overlay' id='color-q'> 
-                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('2');"/>
+                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('7');"/>
                     <span class="tooltiptext">Colorbars</span>
                 </div>
             </div>
         </section>
         <section class='wrapper'>
             <div class='hidden overlay' id='dend-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('6');"/>
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('13');"/>
                 <span class="tooltiptext">Dendrograms</span>
             </div>
             <div id="y_dend"> 
@@ -352,13 +351,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 {{ plot_div.y_color }}
             </div>
             <div class='hidden overlay' id='heatmap-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('1');"/>
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('2');"/>
                 <span class="tooltiptext">Heatmap</span>
             </div>
             <div id="heatmap"> 
                 {{ plot_div.heatmap }}
             </div>
-            <div class='col-flex'>
+            <div class='col-flex' id='legs'>
                 <div id='y_leg'>
                     {{ plot_div.y_leg }}
                 </div>
@@ -366,7 +365,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     {{ plot_div.x_leg }}
                 </div>  
                 <div class='hidden overlay' id='leg-q'> 
-                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('4');"/>
+                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('10');"/>
                     <span class="tooltiptext">Legends</span>
                 </div>
             </div>
@@ -387,20 +386,20 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 {{ plot_div.reset }}
             </div>
             <div class='hidden overlay' id='sel-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('8');"/>
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('3');"/>
                 <span class="tooltiptext">Selectors</span>
             </div>
         </section>
         <section class="wrapper">
             <div class='hidden overlay' id='table-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('12');"/>
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('15');"/>
                 <span class="tooltiptext">Data Tables</span>
             </div>
             <div id='table-tabs'>
                 {{ plot_div.table_tabs }}
             </div>
             <div class='hidden overlay' id='bar-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('13');"/>
+                <img src="bootstrap/question.png" height="25" width="25" onclick="step('16');"/>
                 <span class="tooltiptext">Histograms</span>
             </div>
             <div id='bar-tabs'>
@@ -459,7 +458,6 @@ def _createWidgets(cbDict, sources):
                       callback=cbDict['select_button'])
     multiselect_toggle = CheckboxGroup(labels=["multiselect"], callback=cbDict['multiselect_toggle'])
     reset_button = Button(label="Reset", callback=cbDict['reset'], button_type='danger', width=100)
-
     p_selector = Select(title="Choose row metadata", options=list(ptid_md)[1:], callback=cbDict['p_select'], width=175)
     m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=cbDict['m_select'],
                         width=175)
@@ -472,6 +470,8 @@ def _createHeatmap(cbDict, colors, sources):
     df, data = sources['df'], sources['data']
     feature_list = list(data.columns)
     ptid = list(data.index)
+    print(feature_list)
+    print(ptid)
     box_select = BoxSelectTool(callback=cbDict['box_select'])
     TOOLS = "hover,save,pan,box_zoom,reset,zoom_in,zoom_out"
     mapper = LinearColorMapper(palette=colors, low=df.rate.min(), high=df.rate.max())
@@ -512,10 +512,57 @@ def _createHeatmap(cbDict, colors, sources):
            selection_line_color="black",
            selection_line_alpha=0.2,
            nonselection_line_color=None,
-           nonselection_fill_alpha=0.5,
+           nonselection_fill_alpha=0,
            nonselection_fill_color=color,
            )
     return p, mapper
+
+
+def _createSubsel(colors, sources, mapper):
+    # Defining tools/colors
+    color = {'field': 'rate', 'transform': mapper}
+    TOOLS = "hover,save,pan,box_zoom,reset,zoom_in,zoom_out"
+
+    # Creating heatmap figure
+    subsel_chart = Figure(x_range=sources['subsel_source'].data['features'],
+               y_range=sources['subsel_source'].data['ptids'], plot_width=900, plot_height=400,
+               tools=[TOOLS], logo=None,
+               toolbar_location='right', toolbar_sticky=False)
+
+    # Adjusting plot details
+    subsel_chart.grid.grid_line_color = None
+    subsel_chart.min_border = 0
+    subsel_chart.outline_line_color = None
+    subsel_chart.axis.visible = False
+
+    # Adding colorbar
+    color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",
+                         ticker=BasicTicker(desired_num_ticks=len(colors)),
+                         formatter=PrintfTickFormatter(format="%f"),
+                         label_standoff=1, border_line_color=None, location=(0, 0))
+
+    subsel_chart.add_layout(color_bar, 'right')
+
+    # Adding hover functionality
+    subsel_chart.select_one(HoverTool).tooltips = [
+        ('Patient ID and Feature', '@PtID, @Feature'),
+        ('rate', '@rate')
+    ]
+
+    # Creating individual rectangle glyphs for heatmap
+    subsel_chart.rect(x="features", y="ptids", width=1, height=1,
+           source=sources['subsel_source'],
+           fill_color=color,
+           line_color=None,
+           selection_fill_color=color,
+           selection_line_color="black",
+           selection_line_alpha=0.2,
+           nonselection_line_color=None,
+           nonselection_fill_alpha=0,
+           nonselection_fill_color=color,
+           )
+    sources['subsel_chart'] = subsel_chart
+    return subsel_chart
 
 
 # PERFORMANCE BOTTLENECK PLEASE FIX

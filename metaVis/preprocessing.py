@@ -26,13 +26,10 @@ def initSources(data, ptid_md, measures_md):
 
     likely_continuous = []
     for var in [c for c in ptid_md.columns if not c in ['PtID']]:
-        print(var)
         if type(ptid_md[var][0]) != str and 1. * ptid_md[var].nunique() / ptid_md[var].count() > 0.1:
             likely_continuous.append(var)
 
     for var in likely_continuous:
-        print(likely_continuous)
-        print(var)
         ptid_md[var] = pd.qcut(ptid_md[var], 3, labels=["Low", 'Medium', 'High']).astype(str)
 
     likely_continuous = []
@@ -45,6 +42,8 @@ def initSources(data, ptid_md, measures_md):
 
     sources = {}
     sources['source'] = ColumnDataSource(df)
+    sources['subsel_source'] = ColumnDataSource(data=dict(ptids=[], features=[], rate=[]))
+    sources['subsel_chart'] = []
     sources['ptid'] = ColumnDataSource(ptid_md)
     sources['ptid'].data['inspect'] = sources['ptid'].data[p_default]
     sources['measure'] = ColumnDataSource(measures_md)
@@ -58,7 +57,7 @@ def initSources(data, ptid_md, measures_md):
                                                     mode=['Cross'], indices=[], multiselect=['False'],
                                                     s_rowbar=[], s_colbar=[], total_rowbar=[], total_colbar=[],
                                                     p_colname=[p_default], m_colname=[m_default],
-                                                    p_legend_index=[], m_legend_index=[]))
+                                                    p_legend_index=[], m_legend_index=[], intersect=[0]))
     sources['p_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
                                                      nonsel_count=[], sel_count=[]))
     sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
