@@ -114,15 +114,14 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     data_tab1 = Panel(child=row_table, title="Row Table")
     data_tab2 = Panel(child=col_table, title="Col Table")
-    table_tabs = widgetbox(Tabs(tabs=[data_tab1, data_tab2]))
+    table_tabs = Tabs(tabs=[data_tab1, data_tab2])
 
     select_rowbar_tab = Panel(child=sources['select_rowbarchart'], title="Selected Rows")
     nonselect_rowbar_tab = Panel(child=sources['nonselect_rowbarchart'], title="Unselected Rows")
     select_colbar_tab = Panel(child=sources['select_colbarchart'], title="Selected Cols")
     nonselect_colbar_tab = Panel(child=sources['nonselect_colbarchart'], title="Unselected Cols")
 
-    barchart_tabs = widgetbox(
-        Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
+    barchart_tabs = widgetbox(Tabs(tabs=[select_rowbar_tab, nonselect_rowbar_tab, select_colbar_tab, nonselect_colbar_tab]))
 
     # Heatmap Density Color Selector:
     # TODO - Add default coloring if given no input

@@ -419,14 +419,7 @@ _js = dict(box_select="""
 
     """,
            p_legend="""
-        if (storage.data['intersect'][0]) {
-            console.log("resetting...");
-            source.selected.indices = [];
-            p_legend.selected.indices = [];
-            m_legend.selected.indices = [];
-            storage.data['intersect'][0] = 0;
-        }
-        else if (p_legend.selected.indices[0] == storage.data['p_legend_index'][0] && source.selected.indices.length != 0) {
+        if (p_legend.selected.indices[0] == storage.data['p_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
             p_legend.selected.indices = [];
             // resetting p_table
@@ -436,6 +429,11 @@ _js = dict(box_select="""
             }
         }
         else {
+            if (storage.data['intersect'][0]) {
+                console.log("resetting...");
+                m_legend.selected.indices = [];
+                storage.data['intersect'][0] = 0;
+            }
             storage.data['p_legend_index'] = p_legend.selected.indices;
             storage.data['m_legend_index'] = [];
             var index = p_legend.selected.indices;
@@ -489,13 +487,6 @@ _js = dict(box_select="""
         m_legend.change.emit();
     """,
            m_legend="""
-        if (storage.data['intersect'][0]) {
-            console.log("resetting...");
-            source.selected.indices = [];
-            p_legend.selected.indices = [];
-            m_legend.selected.indices = [];
-            storage.data['intersect'][0] = 0;
-        }
         if (m_legend.selected.indices[0] == storage.data['m_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
             m_legend.selected.indices = [];
@@ -505,6 +496,11 @@ _js = dict(box_select="""
             }
         }
         else {
+            if (storage.data['intersect'][0]) {
+                console.log("resetting...");
+                p_legend.selected.indices = [];
+                storage.data['intersect'][0] = 0;
+            }
             storage.data['m_legend_index'] = m_legend.selected.indices;
             storage.data['p_legend_index'] = [];
             let index = m_legend.selected.indices;

@@ -101,7 +101,6 @@ if __name__ == '__main__':
     # measures_md = pd.read_csv(op.join('tmpdata', 'col_md.csv'), index_col=0)
     # ptid_md = pd.read_csv(op.join('tmpdata', 'row_md.csv'), index_col=0)
     #
-
     # data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_test.csv'), index_col=0)
     # measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_measuremd_test.csv'), index_col=0)
     # ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform_ptidmd_test.csv'), index_col=0)

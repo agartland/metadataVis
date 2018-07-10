@@ -5,7 +5,7 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import squareform, pdist
 import pandas as pd
 from bokeh.transform import factor_cmap
-from bokeh.models import TableColumn, DataTable, ColumnDataSource, HoverTool, FactorRange
+from bokeh.models import TableColumn, DataTable, ColumnDataSource, HoverTool, Range1d
 from bokeh.plotting import Figure
 from metaVis import *
 
@@ -234,9 +234,10 @@ def _createBarChart(source, title, sel):
     factors = []
     for i in range(12):
         factors.append(str(i))
-    barchart = Figure(x_range=source.data['names'], y_range=(0, 50), plot_height=200, plot_width=200,
-                    tools=['xwheel_zoom', 'xpan', 'hover'],
-                    active_scroll='xwheel_zoom')
+    barchart = Figure(x_range=source.data['names'], y_range=Range1d(start=0, end=50, bounds=(0, None)), plot_height=200,
+                      plot_width=200,
+                      tools=['xwheel_zoom', 'pan', 'hover'],
+                      active_scroll='xwheel_zoom')
     mapper_dict = factor_cmap('factors', palette=Set3[12], factors=factors)
     if sel:
         barchart.vbar(source=source, x='names', top='sel_count', bottom=0, width=0.8, fill_color=mapper_dict,
