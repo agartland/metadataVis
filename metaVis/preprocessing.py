@@ -119,7 +119,7 @@ def filterData(data, md, method='mean', params={'thresh':0.0001}):
     return data, md
 
 
-def clusterData(data, ptid_md, measures_md, metric='euclidean', method='complete', standardize=True, impute=True):
+def clusterData(data, ptid_md, measures_md, metric='euclidean', method='Ward', standardize=True, impute=True):
     """
     """
     if impute:

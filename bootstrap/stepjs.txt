@@ -8,7 +8,7 @@ var steps = [
               },
               {
                  // 1
-                 intro: "<div style='text-align:center'><p> Welcome to MetaVis! </p> MetaVis is an interactive visualization tool that allows you to explore data in deeper and more intuitive ways."+
+                 intro: "MetaVis is an interactive visualization tool that allows you to explore data in deeper and more intuitive ways."+
                  " We hope that MetaVis can help provide a more effective interace to identify patterns, understand relationships, and interrogate data." +
                  "<br /> <br /> To these ends, MetaVis has many functionalities and tools to help streamline the experience.</div>",
               },

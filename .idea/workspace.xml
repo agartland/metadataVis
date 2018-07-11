@@ -7,7 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/metaVis/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaVis/plotting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MetaVis.html" beforeDir="false" afterPath="$PROJECT_DIR$/MetaVis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/sources/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/sources/header.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/stepjs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/stepjs.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/metaVis/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaVis/preprocessing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="plotting.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="plotting.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="466" column="18" selection-start-line="466" selection-start-column="18" selection-end-line="466" selection-end-column="18" />
+            <state relative-caret-position="-79">
+              <caret line="478" selection-start-line="478" selection-end-line="478" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -30,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="93" selection-start-line="93" selection-end-line="93" />
+            <state relative-caret-position="397">
+              <caret line="143" column="53" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="53" />
               <folding>
                 <element signature="e#151#170#0" expanded="true" />
               </folding>
@@ -45,7 +48,7 @@
       <file leaf-file-name="callbacks.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8772">
+            <state relative-caret-position="635">
               <caret line="517" column="55" selection-start-line="517" selection-start-column="55" selection-end-line="517" selection-end-column="55" />
             </state>
           </provider>
@@ -54,8 +57,8 @@
       <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3927">
-              <caret line="240" column="55" selection-start-line="240" selection-start-column="55" selection-end-line="240" selection-end-column="55" />
+            <state relative-caret-position="1751">
+              <caret line="121" column="76" selection-start-line="121" selection-start-column="76" selection-end-line="121" selection-end-column="76" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -179,10 +182,10 @@
         <option value="$PROJECT_DIR$/../metadataVis2/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/LongformReader.py" />
         <option value="$PROJECT_DIR$/metaVis/callbacks.py" />
-        <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
         <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
         <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
         <option value="$PROJECT_DIR$/metaVis/plotting.py" />
+        <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
       </list>
     </option>
   </component>
@@ -582,37 +585,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8772">
-          <caret line="517" column="55" selection-start-line="517" selection-start-column="55" selection-end-line="517" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3927">
-          <caret line="240" column="55" selection-start-line="240" selection-start-column="55" selection-end-line="240" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-816">
           <caret column="37" selection-start-column="37" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="93" selection-start-line="93" selection-end-line="93" />
-          <folding>
-            <element signature="e#151#170#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -625,10 +601,37 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="466" column="18" selection-start-line="466" selection-start-column="18" selection-end-line="466" selection-end-column="18" />
+        <state relative-caret-position="-79">
+          <caret line="478" selection-start-line="478" selection-end-line="478" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="635">
+          <caret line="517" column="55" selection-start-line="517" selection-start-column="55" selection-end-line="517" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1751">
+          <caret line="121" column="76" selection-start-line="121" selection-start-column="76" selection-end-line="121" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="143" column="53" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="53" />
+          <folding>
+            <element signature="e#151#170#0" expanded="true" />
           </folding>
         </state>
       </provider>
