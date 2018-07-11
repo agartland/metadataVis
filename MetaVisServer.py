@@ -8,12 +8,12 @@ from twisted.python import log
 
 from io import StringIO
 import argparse
-import pandas as pd
+#import pandas as pd
 import tempfile, os, sys
 import subprocess
 import shutil
 
-from HeatmapMetaVis import gen_heatmap_html
+# from HeatmapMetaVis import gen_heatmap_html
 import MetaVisLauncherConfig as config
 import MetaVisLauncherConstants as constants
 
