@@ -279,6 +279,26 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
 
+    with open('bootstrap/headercss.txt', 'r') as myfile:
+        headercss = myfile.read()
+    with open('bootstrap/headerjs.txt', 'r') as myfile:
+        headerjs = myfile.read()
+    with open('bootstrap/introjs.txt', 'r') as myfile:
+        introjs = myfile.read()
+    with open('bootstrap/introcss.txt', 'r') as myfile:
+        introcss = myfile.read()
+    with open('bootstrap/sidebarcss.txt', 'r') as myfile:
+        sidebarcss = myfile.read()
+    with open('bootstrap/sidebarjs.txt', 'r') as myfile:
+        sidebarjs = myfile.read()
+    with open('bootstrap/stepcss.txt', 'r') as myfile:
+        stepcss = myfile.read()
+    with open('bootstrap/stepjs.txt', 'r') as myfile:
+        stepjs = myfile.read()
+    with open('bootstrap/sidemenucss.txt', 'r') as myfile:
+        sidemenucss = myfile.read()
+    with open('bootstrap/sidemenujs.txt', 'r') as myfile:
+        sidemenujs = myfile.read()
 
     template2 = Template("""\
     <!DOCTYPE html>
@@ -290,20 +310,64 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
             <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-            <link rel="stylesheet" href="bootstrap/header.css">
-            <link rel="stylesheet" href="bootstrap/sidebar.css">
-            <link rel="stylesheet" href="bootstrap/sidemenu.css">
-            <link href="bootstrap/introjs.css" rel="stylesheet">
-            <link href="bootstrap/step.css" rel="stylesheet">
-            <script type="text/javascript" src="bootstrap/intro.js"></script>
-            <script type="text/javascript" src="bootstrap/step.js"></script>
-            <script src="bootstrap/sidebar.js"></script>
-            <script src="bootstrap/sidemenu.js"></script>
-            <script src="bootstrap/header.js"></script>
+            <style> {{ bootstrap.headercss }} </style>
+            <style> {{ bootstrap.sidebarcss }} </style>
+            <style> {{ bootstrap.sidemenucss }} </style>
+            <style> {{ bootstrap.introcss }} </style>
+            <style> {{ bootstrap.stepcss }} </style>
+            <script> {{ bootstrap.introjs }} </script>
+            <script> {{ bootstrap.sidemenujs }} </script>
+            <script> {{ bootstrap.sidebarjs }} </script>
+            <script> {{ bootstrap.headerjs }} </script>
+            <script> {{ bootstrap.stepjs }} </script>
         </head>
         <body>
         <nav id="header" class="navbar navbar-fixed-top">
             <div id="header-container" class="container navbar-container">
+                <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
+                    <div class="navbar-toggler animate">
+                        <span class="menu-icon"></span>
+                    </div>
+                    <ul class=" navbar-menu animate">
+                        <li>
+                            <div class="container2">
+                            <div class="panel panel-default">
+                                <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
+                                    <h4 class="panel-title">
+                                        Color Palette
+                                        <span class="pull-right">
+                                            <i class="glyphicon glyphicon-chevron-down"></i>
+                                        </span>
+                                    </h4>
+                                </div>
+                                <div id="filterPanel" class="panel-collapse panel-collapse collapse">
+                                    <div class="panel-body">
+                                        {{ plot_div.colors }}
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="container2">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
+                                        <h4 class="panel-title">
+                                            Histograms
+                                            <span class="pull-right">
+                                                <i class="glyphicon glyphicon-chevron-down"></i>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                    <div id="filterPanel2" class="panel-collapse panel-collapse collapse">
+                                        <div class="panel-body">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
@@ -424,11 +488,16 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     script2, div2 = components({'heatmap': p, 'y_color': y_colorbar, 'y_dend': y_dendrogram, 'x_dend': x_dendrogram,
                                 'x_leg': x_legend, 'y_leg': y_legend, 'selectors': selectors, 'p_selector': p_selector,
                                 'm_selector': m_selector, 'reset': reset_button, 'bar_tabs': barchart_tabs,
-                                'table_tabs': table_tabs, 'x_color': x_colorbar})
+                                'table_tabs': table_tabs, 'x_color': x_colorbar, 'colors': cust_tabs})
+
+    bootstrap = {'headercss': headercss, 'headerjs': headerjs, 'introjs': introjs, 'introcss': introcss,
+                 'sidebarcss': sidebarcss, 'sidebarjs': sidebarjs, 'stepjs': stepjs, 'stepcss': stepcss,
+                 'sidemenujs': sidemenujs, 'sidemenucss': sidemenucss}
 
     html = template2.render(resources=resources2,
                            plot_script=script2,
-                           plot_div=div2)
+                           plot_div=div2,
+                           bootstrap=bootstrap)
 
     filename2 = 'tutorial.html'
 
@@ -469,8 +538,6 @@ def _createHeatmap(cbDict, colors, sources):
     df, data = sources['df'], sources['data']
     feature_list = list(data.columns)
     ptid = list(data.index)
-    print(feature_list)
-    print(ptid)
     box_select = BoxSelectTool(callback=cbDict['box_select'])
     TOOLS = "hover,save,pan,box_zoom,reset,zoom_in,zoom_out"
     mapper = LinearColorMapper(palette=colors, low=df.rate.min(), high=df.rate.max())

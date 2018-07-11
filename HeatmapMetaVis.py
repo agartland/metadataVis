@@ -77,6 +77,8 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
 
     with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
         f.write(html)
+    with io.open("MetaVis.html", mode='w', encoding='utf-8') as f:
+        f.write(html)
     return ret_val
 
 
