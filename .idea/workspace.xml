@@ -7,12 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/MetaVis.html" beforeDir="false" afterPath="$PROJECT_DIR$/MetaVis.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MetaVisLauncherConfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/MetaVisLauncherConfig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/headercss.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/headercss.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/question.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/sources/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/sources/header.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/tester.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/metaVis/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaVis/plotting.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="plotting.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="plotting.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="299" column="57" lean-forward="true" selection-start-line="299" selection-start-column="57" selection-end-line="299" selection-end-column="57" />
+            <state relative-caret-position="278">
+              <caret line="466" column="18" selection-start-line="466" selection-start-column="18" selection-end-line="466" selection-end-column="18" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -69,7 +63,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
@@ -187,8 +181,8 @@
         <option value="$PROJECT_DIR$/metaVis/callbacks.py" />
         <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
         <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
-        <option value="$PROJECT_DIR$/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
+        <option value="$PROJECT_DIR$/metaVis/plotting.py" />
       </list>
     </option>
   </component>
@@ -622,20 +616,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="299" column="57" lean-forward="true" selection-start-line="299" selection-start-column="57" selection-end-line="299" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="41" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="466" column="18" selection-start-line="466" selection-start-column="18" selection-end-line="466" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

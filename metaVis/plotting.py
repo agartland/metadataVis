@@ -464,7 +464,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
         </section>
         
         <footer>
-            <p>© 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
+            <p>(c) 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
         </footer>
         {{ plot_script }}
     
