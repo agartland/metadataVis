@@ -396,15 +396,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 <div id="x_color">
                     {{ plot_div.x_color }}
                 </div>
-                <div class='hidden overlay' id='color-q'> 
-                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('7');"/>
+                <div class='hidden overlay' id='color-q' onclick="step('7');"> 
                     <span class="tooltiptext">Colorbars</span>
                 </div>
             </div>
         </section>
         <section class='wrapper'>
-            <div class='hidden overlay' id='dend-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('13');"/>
+            <div class='hidden overlay' id='dend-q' onclick="step('13');"> 
                 <span class="tooltiptext">Dendrograms</span>
             </div>
             <div id="y_dend"> 
@@ -413,8 +411,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div id="y_color">
                 {{ plot_div.y_color }}
             </div>
-            <div class='hidden overlay' id='heatmap-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('2');"/>
+            <div class='hidden overlay' id='heatmap-q' onclick="step('2');">
                 <span class="tooltiptext">Heatmap</span>
             </div>
             <div id="heatmap"> 
@@ -427,8 +424,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 <div id='x_leg'>
                     {{ plot_div.x_leg }}
                 </div>  
-                <div class='hidden overlay' id='leg-q'> 
-                    <img src="bootstrap/question.png" height="25" width="25" onclick="step('10');"/>
+                <div class='hidden overlay' id='leg-q'onclick="step('10');"> 
                     <span class="tooltiptext">Legends</span>
                 </div>
             </div>
@@ -448,21 +444,18 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div id='reset'>
                 {{ plot_div.reset }}
             </div>
-            <div class='hidden overlay' id='sel-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('3');"/>
+            <div class='hidden overlay' id='sel-q' onclick="step('3');"> 
                 <span class="tooltiptext">Selectors</span>
             </div>
         </section>
         <section class="wrapper">
-            <div class='hidden overlay' id='table-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('15');"/>
+            <div class='hidden overlay' id='table-q' onclick="step('15');"> 
                 <span class="tooltiptext">Data Tables</span>
             </div>
             <div id='table-tabs'>
                 {{ plot_div.table_tabs }}
             </div>
-            <div class='hidden overlay' id='bar-q'> 
-                <img src="bootstrap/question.png" height="25" width="25" onclick="step('16');"/>
+            <div class='hidden overlay' id='bar-q' onclick="step('16');"> 
                 <span class="tooltiptext">Histograms</span>
             </div>
             <div id='bar-tabs'>

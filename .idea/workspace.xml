@@ -7,21 +7,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HeatmapMetaVis.py" beforeDir="false" afterPath="$PROJECT_DIR$/HeatmapMetaVis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MetaVis.html" beforeDir="false" afterPath="$PROJECT_DIR$/MetaVis.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/header.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/header.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/intro.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/introjs.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/sidebar.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/sidebar.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/sidemenu.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/sidemenu.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/step.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/step.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MetaVisLauncherConfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/MetaVisLauncherConfig.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/headercss.txt" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/headercss.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/question.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/sources/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/sources/header.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/tester.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/metaVis/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/metaVis/plotting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tutorial.html" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,8 +27,8 @@
       <file leaf-file-name="plotting.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="295">
-              <caret line="317" column="54" lean-forward="true" selection-start-line="317" selection-start-column="54" selection-end-line="317" selection-end-column="54" />
+            <state relative-caret-position="193">
+              <caret line="299" column="57" lean-forward="true" selection-start-line="299" selection-start-column="57" selection-end-line="299" selection-end-column="57" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -44,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+            <state relative-caret-position="465">
+              <caret line="93" selection-start-line="93" selection-end-line="93" />
               <folding>
                 <element signature="e#151#170#0" expanded="true" />
               </folding>
@@ -77,11 +69,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            <state relative-caret-position="34">
+              <caret line="2" column="41" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -194,8 +186,9 @@
         <option value="$PROJECT_DIR$/LongformReader.py" />
         <option value="$PROJECT_DIR$/metaVis/callbacks.py" />
         <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
-        <option value="$PROJECT_DIR$/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
+        <option value="$PROJECT_DIR$/metaVis/plotting.py" />
+        <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
       </list>
     </option>
   </component>
@@ -612,13 +605,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-816">
@@ -626,23 +612,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="93" selection-start-line="93" selection-end-line="93" />
+          <folding>
+            <element signature="e#151#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="317" column="54" lean-forward="true" selection-start-line="317" selection-start-column="54" selection-end-line="317" selection-end-column="54" />
+        <state relative-caret-position="193">
+          <caret line="299" column="57" lean-forward="true" selection-start-line="299" selection-start-column="57" selection-end-line="299" selection-end-column="57" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
+    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
-          <folding>
-            <element signature="e#151#170#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="34">
+          <caret line="2" column="41" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
         </state>
       </provider>
     </entry>

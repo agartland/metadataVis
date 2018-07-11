@@ -199,6 +199,11 @@ footer p {
     height: 25px;
     z-index: 10;
     position: absolute;
+    text-align: center;
+    background-color: #BCDBEA;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 26px;
     /* top: 0; left: 0; */
     /* width: 100%; height: 100%; */
     /* display: -webkit-flex; */
@@ -207,10 +212,17 @@ footer p {
     /* clear: both; */
 }
 
-.overlay img:hover {
+.overlay:before{
+    content:'?';
+    font-weight: bold;
+    color:#fff;
+    font-size: 20px;
+}
+
+.overlay:hover {
     width: 30px;
     height: 30px;
-    border: 2px solid gray;
+    border: 2.5px solid #a9c9fc;
     border-radius: 50%;
     cursor: pointer;
 }
