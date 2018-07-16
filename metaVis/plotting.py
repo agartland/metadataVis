@@ -104,7 +104,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                      orientation='horizontal')
 
     (row_reset_button, col_reset_button, selector,
-     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources)
+     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend, y_legend=y_legend)
     spacer = _createSpacer(p)
     row_table = column(sources['p_data_table'], widgetbox(row_reset_button, width=50))
     col_table = column(sources['m_data_table'], widgetbox(col_reset_button, width=50))
@@ -510,7 +510,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 """============================================================================================"""
 
 
-def _createWidgets(cbDict, sources):
+def _createWidgets(cbDict, sources, x_legend, y_legend):
     # Defining Buttons
     data, ptid_md, measures_md = sources['data'], sources['ptid_md'], sources['measures_md']
     row_reset_button = Button(label="Reset", callback=cbDict['row_reset'], button_type='danger')
@@ -519,8 +519,104 @@ def _createWidgets(cbDict, sources):
                       callback=cbDict['select_button'])
     multiselect_toggle = CheckboxGroup(labels=["multiselect"], callback=cbDict['multiselect_toggle'])
     reset_button = Button(label="Reset", callback=cbDict['reset'], button_type='danger', width=100)
-    p_selector = Select(title="Choose row metadata", options=list(ptid_md)[1:], callback=cbDict['p_select'], width=175)
-    m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=cbDict['m_select'],
+    p_selector = Select(title="Choose row metadata", options=list(ptid_md)[1:], callback=CustomJS(args=dict(y_legend=y_legend, source=sources['source'], p_legend=sources['p_legend'],
+                                            storage=sources['storage'], ptid=sources['ptid'], nonselect_rowbarchart=sources['nonselect_rowbarchart'],
+                                            select_rowbarchart=sources['select_rowbarchart']), code='''
+        y_legend.reset.emit();
+        let input = cb_obj.value;
+        storage.data['p_colname'] = input;
+        let new_row = ptid.data[input];
+        var factor_dict = {};
+        var count = -1;
+        var freq = {};
+        var key_array = [];
+        for (i = 0; i < new_row.length; i++) {
+            var entry = new_row[i];
+            if (!(factor_dict.hasOwnProperty(entry))) {
+                count++;
+                factor_dict[entry] = count;
+                freq[entry] = 1;
+            }
+            else {
+                freq[entry] = freq[entry] + 1;
+            }
+            key_array.push(factor_dict[entry]);
+        }
+        ptid.data['inspect'] = key_array.map(String);
+        ptid.change.emit();
+        freq_list = [];
+        for (var key in freq) {
+            freq_list.push(freq[key]);
+        }            
+        storage.data['total_rowbar'] = freq_list;        
+        p_legend.data['factors'] = [];
+        p_legend.data['names'] = [];
+        let names = [];
+        let factors = [];
+        for (entry in factor_dict) {
+            names.push(entry);
+            factors.push(factor_dict[entry].toString());
+        }
+        let sel_count = new Array(freq_list.length).fill(0);
+        p_legend.data = {'factors': factors, 'names': names, 'nonsel_count': freq_list, 'sel_count': sel_count};
+        console.log(p_legend.data);
+        p_legend.change.emit();
+        p_legend.data['nonsel_count'] = storage.data['total_rowbar'];
+        p_legend.selected.indices = [];
+        p_legend.change.emit();
+        nonselect_rowbarchart.x_range.factors = p_legend.data['names'];
+        select_rowbarchart.x_range.factors = p_legend.data['names'];
+    '''), width=175)
+    m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=CustomJS(args=dict(x_legend=x_legend, source=sources['source'], p_legend=sources['p_legend'],
+                                            storage=sources['storage'], measure=sources['measure'], col=sources['col'], m_table=sources['m_table'],
+                                            m_data_table=sources['m_data_table'], m_legend=sources['m_legend']), code='''
+        x_legend.reset.emit();
+        let input = cb_obj.value;
+        storage.data['m_colname'] = input;
+        let new_row = measure.data[input];
+        var factor_dict = {};
+        var count = -1;
+        var freq = {};
+        var key_array = [];
+        for (i = 0; i < new_row.length; i++) {
+            var entry = new_row[i];
+            if (!(factor_dict.hasOwnProperty(entry))) {
+                count++;
+                factor_dict[entry] = count;
+                freq[entry] = 1;
+            }
+            else {
+                freq[entry] = freq[entry] + 1;
+            }
+            key_array.push(factor_dict[entry]);
+        }
+        measure.data['inspect'] = key_array.map(String);
+        measure.change.emit();
+        freq_list = [];
+        for (var key in freq) {
+            freq_list.push(freq[key]);
+        }
+        storage.data['total_colbar'] = freq_list;
+        m_legend.data['factors'] = [];
+        m_legend.data['names'] = [];
+        let names = [];
+        let factors = [];
+        for (entry in factor_dict) {
+            names.push(entry);
+            factors.push(factor_dict[entry].toString());
+        }
+        console.log(m_legend.data);
+        let sel_count = new Array(freq_list.length).fill(0);
+        m_legend.data = {'factors': factors, 'names': names, 'nonsel_count': freq_list, 'sel_count': sel_count};
+        console.log(m_legend.data);
+        m_legend.change.emit();
+        console.log(m_legend.data['factors']);
+        m_legend.data['nonsel_count'] = storage.data['total_colbar'];
+        m_legend.selected.indices = [];
+        m_legend.change.emit();
+        nonselect_colbarchart.x_range.factors = m_legend.data['names'];
+        select_colbarchart.x_range.factors = m_legend.data['names'];
+                                            '''),
                         width=175)
 
     return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector
@@ -558,7 +654,8 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Adding hover functionality
     p.select_one(HoverTool).tooltips = [
-        ('Patient ID and Feature', '@PtID, @Feature'),
+        ('Patient ID ', '@PtID'),
+        ('Feature: ', '@Feature'),
         ('rate', '@rate')
     ]
 

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
 
     <meta charset="utf-8">
@@ -21,7 +20,30 @@
 
 	<link href="css/upload.css" rel="stylesheet">
 	<script src="vendor/jquery/jquery.min.js"></script>
-	<script src="js/jquery_upload.js"></script>
+  <script src="js/jquery_upload.js"></script>
+  <script>
+  "use strict";
+  (function() {
+    window.onload = function(){
+      let ics = document.querySelector("form div[name='ics']");
+      let bama = document.querySelector("form div[name='bama']");
+      console.log(bama)
+      console.log(ics)
+      let dataStrings = document.querySelectorAll("form input[type='text']")
+      bama.onclick = function() {
+        dataStrings[0].value = 'ptid, feature, pctpos_pos';
+        dataStrings[1].value = 'labid, samp_ord, rx_code, rx';
+        dataStrings[2].value = 'tcellsub, cytokine, antigen' ;
+      }
+      ics.onclick = function() {
+        dataStrings[0].value = 'ptid, feature, pctpos_pos';
+        dataStrings[1].value = 'labid, samp_ord, rx_code, rx, pub_id';
+        dataStrings[2].value = 'tcellsub, cytokine, antigen' ;
+      }
+    }
+  })();
+  </script>
+
 
   </head>
 
@@ -136,9 +158,29 @@
                       <div class="col-sm-8">
                         <input type="file" class="form-control" name="longformFile">
                       </div>
-                    <label class="control-label col-sm-5">RX Data:</label>
+                    <label class="control-label col-sm-5">RX Data (Optional):</label>
                       <div class="col-sm-8">
                         <input type="file" class="form-control" name="rxFile">
+                      </div>
+                    <label class='control-label col-sm-5'> Select columns from your dataset: </label>
+                      <div>
+                        <div class="col-sm-8">
+                        Columns for base data: <input type="text" class="form-control" name="baseStr" placeholder='"row, column, rate"'>
+                        </div>
+                        <div class="col-sm-8">
+                        Columns for row metadata: <input type="text" class="form-control" name="rowStr" placeholder='"col1, col2, col3, ..."'>
+                        </div>
+                        <div class="col-sm-8">
+                        Columns for column metadata: <input type="text" class="form-control" name="colStr" placeholder='"col1, col2, col3, ..."'>
+                        </div>
+                      </div>
+                      <div style="display: flex;">
+                        <div class="col-xs mx-3">
+                          <p><div class="btn btn-outlined btn-primary" name='bama'>BAMA Data Defaults</div></p>
+                        </div>
+                        <div class="col-xs mx-3">
+                          <p><div class="btn btn-outlined btn-primary" name='ics'>ICS Data Defaults</div></p>
+                        </div>
                       </div>
                       </br>
                       <p class ="lead"> OR </p>

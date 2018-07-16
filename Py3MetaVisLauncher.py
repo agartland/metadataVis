@@ -26,6 +26,7 @@ def _handle_incorrect_input(error):
 
 def _parse_args():
     error = None
+    print(sys.argv)
     if len(sys.argv) < 7:
         error = "Error: Too few arguments"
     elif(sys.argv[5] != '-euclidean' and sys.argv[5] != '-correlation'):
@@ -55,14 +56,14 @@ _empty_prev_error()
 _parse_args()
 kwargs = {}
 dirname = sys.argv[1]
-if sys.argv[2] == '-lf':
-    #Longform
-    kwargs['longform'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'))
-    kwargs['rx'] =  pd.read_csv(op.join(dirname, sys.argv[4] + '.csv'))
-else:
-    kwargs['data'] =  pd.read_csv(op.join(dirname, sys.argv[2] + '.csv'), index_col=0)
-    kwargs['row_md'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'), index_col=0)
-    kwargs['col_md'] = pd.read_csv(op.join(dirname, sys.argv[4] + '.csv'), index_col=0)
+# if sys.argv[2] == '-lf':
+#     #Longform
+#     kwargs['longform'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'))
+#     kwargs['rx'] =  pd.read_csv(op.join(dirname, sys.argv[4] + '.csv'))
+# else:
+kwargs['data'] =  pd.read_csv(op.join(dirname, sys.argv[2] + '.csv'), index_col=0)
+kwargs['row_md'] = pd.read_csv(op.join(dirname, sys.argv[3] + '.csv'), index_col=0)
+kwargs['col_md'] = pd.read_csv(op.join(dirname, sys.argv[4] + '.csv'), index_col=0)
 
 kwargs['metric'] = str(sys.argv[5].replace('-',''))
 kwargs['method'] = str(sys.argv[6].replace('-',''))

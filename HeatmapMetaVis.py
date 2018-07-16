@@ -42,7 +42,7 @@ def error_check(data, ptid_md, measures_md):
     if (measures_names != data_colnames):
         error = "<p>Error: Measures in base dataset do not match measures in measurement metadata. </br>"
         error += str(list(measures_names)) + "</br>"
-        error += str(list(data_colnames)) + "</p"
+        error += str(list(data_colnames)) + "</p>"
         return error
     return None
 
@@ -54,8 +54,8 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
     # TODO - Metavis currently does not work without imputing
     impute=True
 
-    if (longform is not None and rx is not None):
-        data, row_md, col_md = _generateWideform(longform, rx)
+    # if (longform is not None and rx is not None):
+    #     data, row_md, col_md = _generateWideform(longform, rx)
     ret_val = {}
     ret_val['error'] = error_check(data, row_md, col_md)
     if ret_val['error'] is not None:
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
+    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 

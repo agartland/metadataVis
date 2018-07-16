@@ -15,10 +15,10 @@ var steps = [
               {
                   // 2
                  element: '#heatmap',
-                 intro: 'This is the base heatmap visualization created by MetaVis, which serves as its centerpoint for interactivity and functionality. Some notable features are:'+
-                 '<ul><li>Hover functionality for each cell to view more detailed information</li><li>Responsive integration with auxillary tools</li>'+
+                 intro: 'This is the base heatmap visualization created by MetaVis, <br /> which serves as its centerpoint for interactivity and functionality.<br />Some notable features are:'+
+                 '<ul><li>Hover for details over each cell</li><li>Responsive integration with auxillary tools</li>'+
                  '<li>Selection by row, column, or both</li><li>Supplemental Toolbar<ul><li>Pan</li><li>Zoom Tools</li><li>Save as PNG</li><li>Viewport Reset Tool</li></ul></ul>',
-                 position: 'bottom'
+                 position: 'right'
               },
               {
                   // 3
@@ -123,7 +123,8 @@ function startIntro(){
             showProgress: true,
             exitOnOverlayClick: true,
             showStepNumbers: false,
-            keyboardNavigation: true
+            keyboardNavigation: true,
+	    scrollToElement: true
           });
           intro.start();
           intro.onexit(function(target) {

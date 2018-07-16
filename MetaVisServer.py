@@ -12,15 +12,16 @@ import pandas as pd
 import tempfile, os, sys
 import subprocess
 import shutil
+import pandas as pd
 
-from HeatmapMetaVis import gen_heatmap_html
 import MetaVisLauncherConfig as config
 import MetaVisLauncherConstants as constants
+from LongformReader import _generateWideform
+
 
 # TODO - Popup if file upload is empty; popup for errors
 # Must call _cleanup_tmp before returning
 def _handleMetaVis(request):
-    kwargs = {}
     tmpdirname = config.tmp_dir
     if not os.path.exists(tmpdirname):
         os.makedirs(tmpdirname)
@@ -48,6 +49,20 @@ def _handleMetaVis(request):
     request.write(res_html)
     return _clean_and_return(request)
 
+def _processLongform(request):
+    sio_longform = StringIO(request.args['longformFile'][0].decode("UTF-8"))
+    longform = pd.read_csv(sio_longform)
+    rx = None
+    if request.args['rxFile'][0]:
+        sio_rx = StringIO(request.args['rxFile'][0].decode("UTF-8"))
+        rx = pd.read_csv(sio_rx)
+    base_str = request.args['baseStr'][0]
+    row_str = request.args['rowStr'][0]
+    col_str = request.args['colStr'][0]
+    data, row_md, col_md = _generateWideform(base_str=base_str, row_str=row_str, col_str=col_str, longform_df=longform,
+                                                                             rx=rx)
+    return data, row_md, col_md
+
 def _prepArgs(request):
     # See Py3MetaVisLauncher.py for format
     tmpdirname = config.tmp_dir
@@ -56,21 +71,25 @@ def _prepArgs(request):
     launcher_args[1] = tmpdirname
 
     for k,v in request.args.iteritems():
-        if k.find('File') >= 0 and request.args[k][0] != '':
-            filename = str(k.replace('File',''))
-            with open(os.path.join(tmpdirname, filename + '.csv'), 'w') as tmpFile:
-                tmpFile.write(request.args[k][0])
-            if k.find('longformFile') >= 0:
-                launcher_args[2] = constants.LF_FLAG
-                launcher_args[3] = filename
-            elif k.find('rx') >= 0:
-                launcher_args[4] = filename
-            elif k == 'dataFile':
-                launcher_args[2] = filename
-            elif k == 'row_mdFile':
-                launcher_args[3] = filename
-            else: # k == 'col_mdFile'
-                launcher_args[4] = filename
+        if (k.find('File') >= 0) & (request.args[k][0] != ''):
+            if k == 'longformFile':
+                data, row_md, col_md = _processLongform(request)
+                data.to_csv(os.path.join(tmpdirname, 'data.csv'))
+                row_md.to_csv(os.path.join(tmpdirname, 'row_md.csv'))
+                col_md.to_csv(os.path.join(tmpdirname, 'col_md.csv'))
+                launcher_args[2] = 'data'
+                launcher_args[3] = 'row_md'
+                launcher_args[4] = 'col_md'
+            else:
+                filename = str(k.replace('File', ''))
+                with open(os.path.join(tmpdirname, filename + '.csv'), 'w') as tmpFile:
+                    tmpFile.write(request.args[k][0])
+                if k == 'dataFile':
+                    launcher_args[2] = filename
+                elif k == 'row_mdFile':
+                    launcher_args[3] = filename
+                else: # k == 'col_mdFile'
+                    launcher_args[4] = filename
     launcher_args[5] = '-' + str(request.args['metric'][0])
     launcher_args[6] = '-' + str(request.args['method'][0])
     if 'standardize' in request.args:

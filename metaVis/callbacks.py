@@ -103,10 +103,10 @@ _js = dict(box_select="""
         }
         // Clearing Tables
         else {
-            for (a = 0; a < row_names.length - 1; a++) {
+            for (a = 0; a < row_names.length; a++) {
                 p_table.data[row_names[a]] = [];
             }
-            for (b = 0; b < col_names.length - 1; b++) {
+            for (b = 0; b < col_names.length; b++) {
                 m_table.data[col_names[b]] = [];
             }
         }
@@ -165,12 +165,19 @@ _js = dict(box_select="""
         // @param {BK model} table - BK model of datatable to be populated 
         function pop_table(inds_arr, src, table) {
             let names = src.column_names;
+
+            console.log(names);
             for (let i = 0; i < inds_arr.length; i++) {
                 let dir = inds_arr[i];
-                for (let j = 0; j < names.length - 1; j++) {
+                for (let j = 0; j < names.length; j++) {
                     table.data[names[j]].push(src.data[names[j]][dir]);
                 }
             }
+            console.log(table.data);
+            //for (let j = 0; j < names.length; j++) {
+             //   console.log(names[j]+":");
+            //    console.log(table.data[names[j]]);
+            //}
         }
 
         // Function to perform a grouped select on rows selected
@@ -419,9 +426,11 @@ _js = dict(box_select="""
 
     """,
            p_legend="""
+           console.log(p_table.data);
         if (p_legend.selected.indices[0] == storage.data['p_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
             p_legend.selected.indices = [];
+            m_legend.selected.indices = []; 
             // resetting p_table
             let p_col_names = p_table.column_names;
             for (i = 0; i < p_col_names.length; i++) {
@@ -442,7 +451,10 @@ _js = dict(box_select="""
             var reduced_inds = [];
             var colname = storage.data['p_colname'];
             var row_names = ptid.column_names;
-            for (a = 0; a < row_names.length - 1; a++) {
+            if (row_names.indexOf("inspect") == -1 ) {
+                row_names.push('inspect');
+            }
+            for (a = 0; a < row_names.length; a++) {
                 p_table.data[row_names[a]] = [];
             }
             for (i = 0; i < ptid.data[colname].length; i++) {
@@ -474,12 +486,12 @@ _js = dict(box_select="""
             }
             for (let j = 0; j < reduced_inds.length; j++) {
                 let col = reduced_inds[j];
-                for (let k = 0; k < row_names.length - 1; k++) {
+                for (let k = 0; k < row_names.length; k++) {
                     p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
                 }
             }
         }
-        console.log(storage.data['intersect'][0]);
+        console.log(p_table.data);
         source.change.emit();
         p_legend.change.emit();
         p_table.change.emit();
@@ -490,6 +502,7 @@ _js = dict(box_select="""
         if (m_legend.selected.indices[0] == storage.data['m_legend_index'][0] && source.selected.indices.length != 0) {
             source.selected.indices = [];
             m_legend.selected.indices = [];
+            p_legend.selected.indices = []; 
             let m_col_names = m_table.column_names;
             for (let i = 0; i < m_col_names.length; i++) {
                 m_table.data[m_col_names[i]] = [];
@@ -509,7 +522,10 @@ _js = dict(box_select="""
             let reduced_inds = [];
             let inds = [];
             let col_names = measure.column_names;
-            for (let b = 0; b < col_names.length - 1; b++) {
+            if (col_names.indexOf("inspect") == -1 ) {
+                col_names.push('inspect');
+            }
+            for (let b = 0; b < col_names.length; b++) {
                 m_table.data[col_names[b]] = [];
             }
             // Getting min indices for selected column_names
@@ -539,14 +555,18 @@ _js = dict(box_select="""
                 source.selected.indices = inds;      
                 storage.data['intersect'][0] = 0;
             }
+            console.log(col_names);
             for (let j = 0; j < reduced_inds.length; j++) {
                 let col = reduced_inds[j];
-                for (let k = 0; k < col_names.length - 1; k++) {
+                for (let k = 0; k < col_names.length; k++) {
+                    if (col_names[k] == 'inspect') {
+                        console.log(col);
+                    }
                     m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
                 }
             }
         }
-        console.log(storage.data['intersect'][0]);
+        console.log(m_table.data);
         m_legend.change.emit();
         m_table.change.emit();
         m_data_table.change.emit();
