@@ -8,7 +8,7 @@ from twisted.python import log
 
 from io import StringIO
 import argparse
-import pandas as pd
+#import pandas as pd
 import tempfile, os, sys
 import subprocess
 import shutil
