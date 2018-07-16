@@ -497,7 +497,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename2, mode='w', encoding='utf-8') as g:
         g.write(html)
 
-    view(filename2)
+    #view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -569,7 +569,8 @@ def _createWidgets(cbDict, sources, x_legend, y_legend):
     '''), width=175)
     m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=CustomJS(args=dict(x_legend=x_legend, source=sources['source'], p_legend=sources['p_legend'],
                                             storage=sources['storage'], measure=sources['measure'], col=sources['col'], m_table=sources['m_table'],
-                                            m_data_table=sources['m_data_table'], m_legend=sources['m_legend']), code='''
+                                            m_data_table=sources['m_data_table'], m_legend=sources['m_legend'], nonselect_colbarchart=sources['nonselect_colbarchart'],
+                                            select_colbarchart=sources['select_colbarchart']), code='''
         x_legend.reset.emit();
         let input = cb_obj.value;
         storage.data['m_colname'] = input;

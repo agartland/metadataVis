@@ -1,6 +1,6 @@
 # - Paths
 # Edit python path here
-python3_path = "C:/Users/mihuz/Anaconda3/python.exe"
+python3_path = "C:/Users/mzhao/Documents/anaconda/python.exe"
 launcher = "Py3MetaVisLauncher.py"
 
 # - File Handling

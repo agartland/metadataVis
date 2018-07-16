@@ -235,8 +235,8 @@ def _createBarChart(source, title, sel):
     for i in range(12):
         factors.append(str(i))
     barchart = Figure(x_range=source.data['names'], y_range=Range1d(start=0, end=50, bounds=(0, None)), plot_height=200,
-                      plot_width=200,
-                      tools=['xwheel_zoom', 'pan', 'hover'],
+                      plot_width=280,
+                      tools=['xwheel_zoom', 'ywheel_zoom, ''pan', 'hover'],
                       active_scroll='xwheel_zoom')
     mapper_dict = factor_cmap('factors', palette=Set3[12], factors=factors)
     if sel:
@@ -247,6 +247,6 @@ def _createBarChart(source, title, sel):
         barchart.vbar(source=source, x='names', top='nonsel_count', bottom=0, width=0.8, fill_color=mapper_dict,
                       line_color=None)
         barchart.select_one(HoverTool).tooltips = '@names: @nonsel_count'
-    barchart.toolbar_location = None
+    barchart.toolbar_location = 'right'
 
     return barchart, mapper_dict['transform']
