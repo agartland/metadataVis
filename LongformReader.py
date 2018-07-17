@@ -1,8 +1,13 @@
 import pandas as pd
 import sys
 import os.path as op
+from bisect import bisect_left
 import numpy as np
 import random
+#from bokeh.io import show, output_file
+#from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
+#from bokeh.layouts import layout
+#from bokeh.models.widgets import MultiSelect, Dropdown
 
 
 # DATAFRAME CONFIGURATION:
@@ -18,9 +23,10 @@ def _generateWideform(base_str, row_str, col_str, longform_df, rx=None):
     # Column Metadata Table
     colmeta_index = base_columns
     colmeta_columns = [x.strip() for x in col_str.split(',')]
-    longform_df[base_columns] = longform_df.apply(lambda r: '|'.join(r[colmeta_columns]), axis=1)
+
     longform_df[base_rows] = longform_df[base_rows].astype(int).astype(str)
 
+    longform_df[base_columns] = longform_df['tcellsub'] + '_' + longform_df['cytokine'] + '_' + longform_df['antigen']
 
     wideform_df = longform_df.pivot_table(index=base_rows, columns=base_columns, values=base_values)
 
