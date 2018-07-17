@@ -4,10 +4,10 @@ import os.path as op
 from bisect import bisect_left
 import numpy as np
 import random
-from bokeh.io import show, output_file
-from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
-from bokeh.layouts import layout
-from bokeh.models.widgets import MultiSelect, Dropdown
+#from bokeh.io import show, output_file
+#from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
+#from bokeh.layouts import layout
+#from bokeh.models.widgets import MultiSelect, Dropdown
 
 
 # DATAFRAME CONFIGURATION:
