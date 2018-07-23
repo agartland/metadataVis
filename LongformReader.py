@@ -12,23 +12,22 @@ import random
 
 # DATAFRAME CONFIGURATION:
 
-def _generateWideform(base_str, row_str, col_str, longform_df, rx=None):
-    base_rows, base_columns, base_values = [x.strip() for x in base_str.split(',', 2)]
+def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df):
 
     # Row Metadata Table
-    rowmeta_index = base_rows
+    unique_rows = [x.strip() for x in uniquerow_str.split(',')]
+    rowmeta_index = '|'.join(unique_rows)
     rowmeta_columns = [x.strip() for x in row_str.split(',')]
-    ex_rowmeta_cols = list(rowmeta_columns)
 
     # Column Metadata Table
-    colmeta_index = base_columns
+    unique_cols = [x.strip() for x in uniquecol_str.split(',')]
+    colmeta_index = '|'.join(unique_cols)
     colmeta_columns = [x.strip() for x in col_str.split(',')]
 
-    longform_df[base_rows] = longform_df[base_rows].astype(int).astype(str)
+    longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
 
-    longform_df[base_columns] = longform_df['tcellsub'] + '_' + longform_df['cytokine'] + '_' + longform_df['antigen']
-
-    wideform_df = longform_df.pivot_table(index=base_rows, columns=base_columns, values=base_values)
+    longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols]), axis=1)
+    wideform_df = longform_df.pivot_table(index=rowmeta_index, columns=colmeta_index, values=value_str)
 
     ids = list(range(1, wideform_df.shape[0] + 1))
     id_list = ['id-{0}'.format(i) for i in ids]
@@ -38,13 +37,9 @@ def _generateWideform(base_str, row_str, col_str, longform_df, rx=None):
     for entry in rowmeta_columns:
         if entry in lf_col_names:
             rowmeta_dict[entry] = longform_df[entry]
-            ex_rowmeta_cols.remove(entry)
     ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
     ptid_md = ptid_md.drop_duplicates()
-
-    if rx is not None:
-        ptid_md = _handleRX(ex_rowmeta_cols, ptid_md, base_rows, rx)
 
     ptid_md['id'] = id_list
     ptid_md.set_index("id", inplace=True)
@@ -55,7 +50,7 @@ def _generateWideform(base_str, row_str, col_str, longform_df, rx=None):
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
-    measure_md.set_index("feature", inplace=True)
+    measure_md.set_index(colmeta_index, inplace=True)
     wideform_df['id'] = id_list
     wideform_df.set_index("id", inplace=True)
 
@@ -100,8 +95,8 @@ if __name__ == '__main__':
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-# wideform_df, ptid_md, measure_md = _generateWideform('ptid, feature, pctpos_pos', 'labid, samp_ord, rx_code, rx', 'tcellsub, cytokine, antigen', longform_df, rx)
-#
+# wideform_df, ptid_md, measure_md = _generateWideform('ptid', 'tcellsub, cytokine, antigen', 'pctpos_pos', 'labid, samp_ord, rx_code, rx', 'tcellsub, cytokine, antigen', longform_df)
+
 # wideform_df.to_csv('wideform123.csv')
 # ptid_md.to_csv('ptid123.csv')
 # measure_md.to_csv('measure123.csv')

@@ -31,14 +31,19 @@
       console.log(ics)
       let dataStrings = document.querySelectorAll("form input[type='text']")
       bama.onclick = function() {
-        dataStrings[0].value = 'ptid, feature, pctpos_pos';
-        dataStrings[1].value = 'labid, samp_ord, rx_code, rx';
-        dataStrings[2].value = 'tcellsub, cytokine, antigen' ;
+        dataStrings[0].value = 'ptid';
+        dataStrings[1].value = 'tcellsub, cytokine, antigen';
+        dataStrings[2].value = 'pctpos_pos';
+        dataStrings[3].value = 'labid, samp_ord';
+        dataStrings[4].value = 'tcellsub, cytokine, antigen';
+
       }
       ics.onclick = function() {
-        dataStrings[0].value = 'ptid, feature, pctpos_pos';
-        dataStrings[1].value = 'labid, samp_ord, rx_code, rx, pub_id';
-        dataStrings[2].value = 'tcellsub, cytokine, antigen' ;
+        dataStrings[0].value = 'ptid';
+        dataStrings[1].value = 'tcellsub, cytokine, antigen';
+        dataStrings[2].value = 'pctpos_pos';
+        dataStrings[3].value = 'labid, samp_ord, spectype';
+        dataStrings[4].value = 'tcellsub, cytokine, antigen';
       }
     }
   })();
@@ -165,13 +170,19 @@
                     <label class='control-label col-sm-5'> Select columns from your dataset: </label>
                       <div>
                         <div class="col-sm-8">
-                        Columns for base data: <input type="text" class="form-control" name="baseStr" placeholder='"row, column, rate"'>
+                        Columns that create unique rows: <input type="text" class="form-control" name="uniquerowStr" placeholder='ptid'>
                         </div>
                         <div class="col-sm-8">
-                        Columns for row metadata: <input type="text" class="form-control" name="rowStr" placeholder='"col1, col2, col3, ..."'>
+                        Columns that create unique columns: <input type="text" class="form-control" name="uniquecolStr" placeholder='tcellsub, antigen, cytokine'>
                         </div>
                         <div class="col-sm-8">
-                        Columns for column metadata: <input type="text" class="form-control" name="colStr" placeholder='"col1, col2, col3, ..."'>
+                        Columns to assign value: <input type="text" class="form-control" name="valueStr" placeholder='pctpos_pos'>
+                        </div>
+                        <div class="col-sm-8">
+                        Columns for row metadata: <input type="text" class="form-control" name="rowStr" placeholder='col1, col2, col3, ...'>
+                        </div>
+                        <div class="col-sm-8">
+                        Columns for column metadata: <input type="text" class="form-control" name="colStr" placeholder='col1, col2, col3, ...'>
                         </div>
                       </div>
                       <div style="display: flex;">
@@ -269,11 +280,6 @@
 
     <!-- Plugin JavaScript -->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom JavaScript for this theme -->
-    <script src="js/homepage.js"></script>
-    <!-- <script src="js/upload.js"></script> -->
-
 
   </body>
 

@@ -56,11 +56,14 @@ def _processLongform(request):
     if request.args['rxFile'][0]:
         sio_rx = StringIO(request.args['rxFile'][0].decode("UTF-8"))
         rx = pd.read_csv(sio_rx)
-    base_str = request.args['baseStr'][0]
+    uniquerow_str = request.args['uniquerowStr'][0]
+    uniquecol_str = request.args['uniquecolStr'][0]
+    value_str = request.args['valueStr'][0]
     row_str = request.args['rowStr'][0]
     col_str = request.args['colStr'][0]
-    data, row_md, col_md = _generateWideform(base_str=base_str, row_str=row_str, col_str=col_str, longform_df=longform,
-                                                                             rx=rx)
+    data, row_md, col_md = _generateWideform(uniquerow_str=uniquerow_str, uniquecol_str=uniquecol_str,
+                                             value_str=value_str, row_str=row_str, col_str=col_str,
+                                             longform_df=longform)
     return data, row_md, col_md
 
 def _prepArgs(request):

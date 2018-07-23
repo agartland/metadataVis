@@ -7,7 +7,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/homepage/js/homepage.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/LongformReader.py" afterPath="$PROJECT_DIR$/LongformReader.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVis.html" afterPath="$PROJECT_DIR$/MetaVis.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisLauncherConfig.py" afterPath="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisServer.py" afterPath="$PROJECT_DIR$/MetaVisServer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/homepage/index.html" afterPath="$PROJECT_DIR$/homepage/index.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,45 +27,13 @@
       <file leaf-file-name="plotting.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21">
+            <state relative-caret-position="0">
               <caret line="572" column="100" lean-forward="false" selection-start-line="572" selection-start-column="100" selection-end-line="572" selection-end-column="100" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
                 <element signature="e#7996#13217#0" expanded="false" />
                 <element signature="e#14521#22581#0" expanded="false" />
                 <element signature="e#27611#29423#0" expanded="false" />
-                <marker date="1531854335580" expanded="true" signature="1007:23767" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="27601:29575" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="29622:31545" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="30969:31069" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="31591:33322" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="32694:32780" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="33430:36169" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="33608:34012" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="34048:34455" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35049:35579" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35158:35579" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35356:35579" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35617:36147" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35726:36147" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="35924:36147" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="36272:37344" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="36299:36452" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="36462:36615" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="37408:38632" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="38656:38936" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="38939:39064" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="39086:39243" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="39096:39148" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39162:39229" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39270:39899" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="39280:39497" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39511:39557" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39571:39617" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39631:39677" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39691:39885" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1531854335580" expanded="true" signature="39902:40199" ph="..." />
-                <marker date="1531854335580" expanded="true" signature="40256:40575" ph="..." />
               </folding>
             </state>
           </provider>
@@ -68,8 +42,8 @@
       <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="42">
+              <caret line="2" column="40" lean-forward="false" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -78,7 +52,7 @@
       <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="823">
+            <state relative-caret-position="518">
               <caret line="90" column="45" lean-forward="false" selection-start-line="90" selection-start-column="45" selection-end-line="90" selection-end-column="45" />
               <folding>
                 <element signature="e#151#170#0" expanded="true" />
@@ -87,26 +61,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="508">
-              <caret line="121" column="57" lean-forward="true" selection-start-line="121" selection-start-column="57" selection-end-line="121" selection-end-column="57" />
+            <state relative-caret-position="518">
+              <caret line="121" column="57" lean-forward="false" selection-start-line="121" selection-start-column="57" selection-end-line="121" selection-end-column="57" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
                 <marker date="1531854335596" expanded="true" signature="10939:10986" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LongformReader.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/LongformReader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -125,9 +87,11 @@
       <file leaf-file-name="MetaVisServer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1046">
-              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="-7">
+              <caret line="54" column="13" lean-forward="true" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -135,7 +99,7 @@
       <file leaf-file-name="Py3MetaVisLauncher.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Py3MetaVisLauncher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="907">
+            <state relative-caret-position="518">
               <caret line="56" column="11" lean-forward="false" selection-start-line="56" selection-start-column="11" selection-end-line="56" selection-end-column="11" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -228,12 +192,12 @@
         <option value="$PROJECT_DIR$/../metadataVis2/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/MetaVisLauncherConstants.py" />
         <option value="$PROJECT_DIR$/Py3MetaVisLauncher.py" />
-        <option value="$PROJECT_DIR$/MetaVisServer.py" />
         <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
         <option value="$PROJECT_DIR$/metaVis/callbacks.py" />
-        <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
         <option value="$PROJECT_DIR$/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
+        <option value="$PROJECT_DIR$/MetaVisServer.py" />
+        <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
         <option value="$PROJECT_DIR$/LongformReader.py" />
       </list>
     </option>
@@ -276,7 +240,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.HeatmapMetaVis">
+  <component name="RunManager" selected="Python.LongformReader">
     <configuration name="HeatmapMetaVis (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -371,8 +335,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.HeatmapMetaVis" />
-        <item index="1" class="java.lang.String" itemvalue="Python.LongformReader" />
+        <item index="0" class="java.lang.String" itemvalue="Python.LongformReader" />
+        <item index="1" class="java.lang.String" itemvalue="Python.HeatmapMetaVis" />
         <item index="2" class="java.lang.String" itemvalue="Python.testing" />
         <item index="3" class="java.lang.String" itemvalue="Python.HeatmapMetaVis (1)" />
         <item index="4" class="java.lang.String" itemvalue="Python.HeatmapMetaVis (2)" />
@@ -411,13 +375,13 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19243243" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -538,42 +502,6 @@
     <entry file="file://$PROJECT_DIR$/../anaconda/Lib/site-packages/pandas/core/indexing.py" />
     <entry file="file://$USER_HOME$/Anaconda3/Scripts/2to3-script.py" />
     <entry file="file://$PROJECT_DIR$/metaVis/awsf.py" />
-    <entry file="file://$PROJECT_DIR$/Py3MetaVisLauncher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="907">
-          <caret line="56" column="11" lean-forward="false" selection-start-line="56" selection-start-column="11" selection-end-line="56" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1046">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConstants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="3" column="35" lean-forward="false" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="823">
-          <caret line="90" column="45" lean-forward="false" selection-start-line="90" selection-start-column="45" selection-end-line="90" selection-end-column="45" />
-          <folding>
-            <element signature="e#151#170#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8505">
@@ -585,76 +513,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21">
+        <state relative-caret-position="0">
           <caret line="572" column="100" lean-forward="false" selection-start-line="572" selection-start-column="100" selection-end-line="572" selection-end-column="100" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
             <element signature="e#7996#13217#0" expanded="false" />
             <element signature="e#14521#22581#0" expanded="false" />
             <element signature="e#27611#29423#0" expanded="false" />
-            <marker date="1531854335580" expanded="true" signature="1007:23767" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="27601:29575" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="29622:31545" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="30969:31069" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="31591:33322" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="32694:32780" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="33430:36169" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="33608:34012" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="34048:34455" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35049:35579" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35158:35579" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35356:35579" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35617:36147" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35726:36147" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="35924:36147" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="36272:37344" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="36299:36452" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="36462:36615" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="37408:38632" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="38656:38936" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="38939:39064" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="39086:39243" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="39096:39148" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39162:39229" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39270:39899" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="39280:39497" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39511:39557" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39571:39617" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39631:39677" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39691:39885" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1531854335580" expanded="true" signature="39902:40199" ph="..." />
-            <marker date="1531854335580" expanded="true" signature="40256:40575" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="518">
+          <caret line="90" column="45" lean-forward="false" selection-start-line="90" selection-start-column="45" selection-end-line="90" selection-end-column="45" />
+          <folding>
+            <element signature="e#151#170#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7">
+          <caret line="54" column="13" lean-forward="true" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Py3MetaVisLauncher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="518">
+          <caret line="56" column="11" lean-forward="false" selection-start-line="56" selection-start-column="11" selection-end-line="56" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConstants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="3" column="35" lean-forward="false" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="42">
+          <caret line="2" column="40" lean-forward="false" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LongformReader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="508">
-          <caret line="121" column="57" lean-forward="true" selection-start-line="121" selection-start-column="57" selection-end-line="121" selection-end-column="57" />
+        <state relative-caret-position="518">
+          <caret line="121" column="57" lean-forward="false" selection-start-line="121" selection-start-column="57" selection-end-line="121" selection-end-column="57" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
             <marker date="1531854335596" expanded="true" signature="10939:10986" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LongformReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
