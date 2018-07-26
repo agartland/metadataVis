@@ -25,13 +25,12 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
     colmeta_columns = [x.strip() for x in col_str.split(',')]
 
     longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
+    longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols].astype(str)), axis=1)
 
-    longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols]), axis=1)
     wideform_df = longform_df.pivot_table(index=rowmeta_index, columns=colmeta_index, values=value_str)
 
     ids = list(range(1, wideform_df.shape[0] + 1))
     id_list = ['id-{0}'.format(i) for i in ids]
-
     rowmeta_dict = {rowmeta_index: longform_df[rowmeta_index]}
     lf_col_names = list(longform_df.columns.values)
     for entry in rowmeta_columns:
@@ -41,15 +40,23 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
                            columns=rowmeta_dict.keys())
     ptid_md = ptid_md.drop_duplicates()
 
-    ptid_md['id'] = id_list
-    ptid_md.set_index("id", inplace=True)
-
     colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
     for entry in colmeta_columns:
         colmeta_dict[entry] = longform_df[entry]
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
+
+    try:
+        ptid_md['id'] = id_list
+        ptid_md.set_index("id", inplace=True)
+    except ValueError:
+        print("Index row not unique")
+        return "Index row not unique", None, None
+    if measure_md.shape[0] != wideform_df.shape[1]:
+        print("Index column not unique")
+        return "Index column not unique", None, None
+
     measure_md.set_index(colmeta_index, inplace=True)
     wideform_df['id'] = id_list
     wideform_df.set_index("id", inplace=True)
@@ -95,11 +102,11 @@ if __name__ == '__main__':
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-# wideform_df, ptid_md, measure_md = _generateWideform('ptid', 'tcellsub, cytokine, antigen', 'pctpos_pos', 'labid, samp_ord, rx_code, rx', 'tcellsub, cytokine, antigen', longform_df)
-
-# wideform_df.to_csv('wideform123.csv')
-# ptid_md.to_csv('ptid123.csv')
-# measure_md.to_csv('measure123.csv')
+# wideform_df, ptid_md, measure_md = _generateWideform('ptid', 'tcellsub, antigen, tcellsub', 'pctpos_pos', 'labid, samp_ord, rx_code, rx', 'tcellsub, cytokine, antigen', longform_df)
+#
+# wideform_df.to_csv('wideform3.csv')
+# ptid_md.to_csv('ptid3.csv')
+# measure_md.to_csv('measure3.csv')
 
 # for i in wideform_df.index:
 #     if i ==

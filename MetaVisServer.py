@@ -64,6 +64,9 @@ def _processLongform(request):
     data, row_md, col_md = _generateWideform(uniquerow_str=uniquerow_str, uniquecol_str=uniquecol_str,
                                              value_str=value_str, row_str=row_str, col_str=col_str,
                                              longform_df=longform)
+    if type(data) is str:
+        request.write("<div>" + data + "</div>")
+        sys.exit()
     return data, row_md, col_md
 
 def _prepArgs(request):
