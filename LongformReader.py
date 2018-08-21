@@ -12,20 +12,44 @@ import random
 
 # DATAFRAME CONFIGURATION:
 def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df):
+    '''
+    cd A:/gitrepo/metadataVisData/data
+    fn = 'e097lum_gt_resp_p.csv'
+    uniquerow_str = 'ptid,visitno'
+    uniquecol_str = 'isotype,antigen'
+    value_str = 'delta'
+    row_str, col_str = 'response','dilution,testdt'
+    longform_df = pd.read_csv(fn)
+    wideform_df, ptid_md, measure_md = _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df)'''
 
     # Row Metadata Table
-    unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
+    unique_rows = [x.strip() for x in (uniquerow_str).split(',')]
+    #unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
     rowmeta_index = '|'.join(unique_rows)
     rowmeta_columns = [x.strip() for x in row_str.split(',')]
 
     # Column Metadata Table
-    unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
+    unique_cols = [x.strip() for x in (uniquecol_str).split(',')]
+    #unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
     colmeta_index = '|'.join(unique_cols)
     colmeta_columns = [x.strip() for x in col_str.split(',')]
 
     longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
     longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols].astype(str)), axis=1)
     # print(len(longform_df[colmeta_index]))
+
+    '''unique_rows = [x.strip() for x in (uniquerow_str).split(',')]
+    unique_cols = [x.strip() for x in (uniquecol_str).split(',')]
+    hDf = longform_df.set_index(unique_cols + unique_rows)[value_str].unstack(unique_cols)
+
+    unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
+    unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
+    wdf = longform_df.set_index(unique_cols + unique_rows)[value_str].unstack(unique_cols)
+    row_metadata = wdf.index.to_frame()
+    col_metadata = wdf.columns.to_frame()
+
+    row_metadata.index = np.arange(row_metadata.shape[0])
+    row_metadata = row_metadata.reset_index()'''
 
     wideform_df = longform_df.pivot_table(index=rowmeta_index, columns=colmeta_index, values=value_str)
     # print(len(wideform_df.columns.values))
