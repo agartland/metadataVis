@@ -304,6 +304,8 @@ _js = dict(box_select="""
         p_legend.data['nonsel_count'] = storage.data['total_rowbar']
         p_legend.data['sel_count'] = new Array(storage.data['total_rowbar'].length).fill(0);
         m_legend.data['sel_count'] = new Array(storage.data['total_colbar'].length).fill(0);
+        document.getElementById('temp').style.display = "block";
+        console.log(document.getElementById('temp'));
         source.change.emit();
         storage.change.emit();
         p_legend.change.emit();

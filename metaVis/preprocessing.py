@@ -7,6 +7,7 @@ import pandas as pd
 from bokeh.transform import factor_cmap
 from bokeh.models import TableColumn, DataTable, ColumnDataSource, HoverTool, Range1d
 from bokeh.plotting import Figure
+import MetaVisLauncherConfig as config
 from metaVis import *
 
 __all__ = ['imputeNA',
@@ -16,6 +17,7 @@ __all__ = ['imputeNA',
            'initSources']
 
 def initSources(data, ptid_md, measures_md):
+    print(config.palette)
     df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
     df.columns = ['PtID', 'Feature', 'rate']
     feature_list = list(data.columns)
@@ -232,13 +234,13 @@ def _createTable(md, md_source):
 
 def _createBarChart(source, title, sel):
     factors = []
-    for i in range(12):
+    for i in range(70):
         factors.append(str(i))
     barchart = Figure(x_range=source.data['names'], y_range=Range1d(start=0, end=50, bounds=(0, None)), plot_height=200,
                       plot_width=280,
                       tools=['xwheel_zoom', 'ywheel_zoom, ''pan', 'hover'],
                       active_scroll='xwheel_zoom')
-    mapper_dict = factor_cmap('factors', palette=Set3[12], factors=factors)
+    mapper_dict = factor_cmap('factors', palette=config.palette, factors=factors)
     if sel:
         barchart.vbar(source=source, x='names', top='sel_count', bottom=0, width=0.8, fill_color=mapper_dict,
                       line_color=None)

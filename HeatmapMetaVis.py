@@ -88,15 +88,15 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
+    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
     # Importing files as dataframes
     #
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'IR_levels097.csv'), index_col=0)
-    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metacols097.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'metarows097.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideforma.csv'), index_col=0)
+    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'measurea.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'ptida.csv'), index_col=0)
 
     #
     # data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
@@ -127,10 +127,12 @@ if __name__ == '__main__':
 
     if ptid_names != data_rownames:
         print("Error: PtID's in base dataset do not match PtID's in PtID metadata.")
+        print(set(ptid_names).symmetric_difference(data_rownames))
         sys.exit()
 
     if measures_names != data_colnames:
         print("Error: Measures in base dataset do not match measures in measurement metadata.")
+        print(set(measures_names).symmetric_difference(data_colnames))
         sys.exit()
 
     # data, measures_md = filterData(data, measures_md, method='mean', params={'thresh':0.0001})

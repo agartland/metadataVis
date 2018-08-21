@@ -12,6 +12,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
 from bokeh.resources import INLINE
 from bokeh.util.browser import view
 from bokeh.palettes import Set3
+import MetaVisLauncherConfig as config
 from bokeh.transform import factor_cmap
 import pandas as pd
 from bokeh.plotting import Figure
@@ -52,13 +53,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     feature_df.columns = ["feature"]
 
     factors = []
-    for i in range(12):
+    for i in range(70):
         factors.append(str(i))
 
     # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
     p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
-    x_palette = Set3[12]
-    y_palette = Set3[12]
+    x_palette = config.palette
+    y_palette = config.palette
 
     x_colorbar, x_bar_mapper = _createColorbar(source=sources['measure'],
                                                p=p,
@@ -462,7 +463,8 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 {{ plot_div.bar_tabs }}
             </div>
         </section>
-        
+        <div style="background-color:lightblue;display:none;width:100px;height:100px" id='temp'> 
+        </div>
         <footer>
             <p>(c) 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
         </footer>
@@ -497,7 +499,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename2, mode='w', encoding='utf-8') as g:
         g.write(html)
 
-    #view(filename2)
+    view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -617,8 +619,7 @@ def _createWidgets(cbDict, sources, x_legend, y_legend):
         m_legend.change.emit();
         nonselect_colbarchart.x_range.factors = m_legend.data['names'];
         select_colbarchart.x_range.factors = m_legend.data['names'];
-                                            '''),
-                        width=175)
+                                            '''), width=175)
 
     return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector
 
@@ -760,12 +761,14 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     dendrogram.grid.grid_line_color = None
     dendrogram.xaxis.major_label_text_font_size = '0pt'
     dendrogram.axis.visible = False
+    name = 0
 
     if orientation == 'vertical':
         # PERFORMANCE BOTTLENECK PLEASE FIX
         for xlist, ylist in zip(dend['dcoord'], dend['icoord']):
-            dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
-                            selection_line_alpha=1, nonselection_line_alpha=1)
+            name += 1
+            line = dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
+                            selection_line_alpha=1, nonselection_line_alpha=1, hover_line_color='red', name="line")
         # OLD MULTILINE CODE
         # dendrogram.multi_line(dend['dcoord'], dend['icoord'], color='black',
         # selection_color='black', nonselection_color='black',
@@ -773,12 +776,21 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     elif orientation == 'horizontal':
         # PERFORMANCE BOTTLENECK PLEASE FIX
         for xlist, ylist in zip(dend['icoord'], dend['dcoord']):
-            dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
-                            selection_line_alpha=1, nonselection_line_alpha=1)
+            print("xlist: " + str(xlist))
+            print("ylist: " + str(ylist))
+            name += 1
+            line = dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
+                            selection_line_alpha=1, nonselection_line_alpha=1, hover_line_color='red', name="line")
+
         # OLD MULTILINE CODE
         # dendrogram.multi_line(dend['icoord'], dend['dcoord'], color='black',
         # selection_color='black', nonselection_color='black',
         # selection_line_alpha=1, nonselection_line_alpha=1)
+    print(dendrogram.select(name="2"))
+    callback = CustomJS(args=dict(), code="""
+        console.log(cb_obj);
+    """)
+    dendrogram.add_tools(TapTool())
     return dendrogram
 
 

@@ -63,7 +63,7 @@ var steps = [
               {
                  // 9
                  intro: "Changes made to either the row or column metadata selectors will dynamically update their corresponding colorbars!<br /><br />" +
-                 "<p style='color: gray; font-size: 8pt;'><i>Currently only 12 colors are supported. If the metadata has more than 12 categories, the extra ones will be displayed as gray.</i></p>",
+                 "<p style='color: gray; font-size: 8pt;'><i>Supports up to 70 unique categories</i></p>",
               },
               {
                   // 10
