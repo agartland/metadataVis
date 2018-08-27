@@ -44,7 +44,7 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
 
     unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
     unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
-    wdf = longform_df.set_index(unique_cols + unique_rows)[value_str].unstack(unique_cols)
+    wdf = longform_df.set_index(unique_cols + unique_rows)[value_str].unstack(unique_cols)  
     row_metadata = wdf.index.to_frame()
     col_metadata = wdf.columns.to_frame()
 
@@ -57,34 +57,32 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
     # print(longform_df[colmeta_index].head(15))
     ids = list(range(1, wideform_df.shape[0] + 1))
     id_list = ['id-{0}'.format(i) for i in ids]
-    rowmeta_dict = {}
+    rowmeta_dict = {'index': longform_df[rowmeta_index]}
     lf_col_names = list(longform_df.columns.values)
-    for entry in unique_rows:
-        if entry in lf_col_names:
-            rowmeta_dict[entry] = longform_df[entry]
+    for entry in rowmeta_columns:
+        rowmeta_dict[entry] = longform_df[entry]
     ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
     ptid_md = ptid_md.drop_duplicates()
-
     colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
-    for entry in unique_cols:
+    for entry in colmeta_columns:
         colmeta_dict[entry] = longform_df[entry]
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
-    #print(wideform_df.columns.values[:15])
-    wideform_df = wideform_df.reindex(measure_md[colmeta_index], axis=1)
     try:
         ptid_md['id'] = id_list
         ptid_md.set_index("id", inplace=True)
     except ValueError:
-        print("Index row not unique")
-        return "Index row not unique", None, None
+        validity_arr = _validMetadata(wideform_df.shape[0], rowmeta_index, longform_df)
+        err_str = _validityMessages(wideform_df.shape[0], validity_arr, rowmeta_index, 'row')
+        print(err_str)
+        return err_str, None, None
     if measure_md.shape[0] != wideform_df.shape[1]:
-        print("Index column not unique")
-        print(measure_md.shape[0])
-        print(wideform_df.shape[1])
-        return "Index column not unique", None, None
+        validity_arr = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
+        err_str = _validityMessages(wideform_df.shape[1], validity_arr, colmeta_index, 'column')
+        print(err_str)
+        return err_str, None, None
 
     measure_md.set_index(colmeta_index, inplace=True)
     wideform_df['id'] = id_list
@@ -92,7 +90,20 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
 
     return wideform_df, ptid_md, measure_md
 
-
+def _validMetadata(num, index, longform_df):
+    columns = longform_df.columns.values
+    candidates = []
+    noncandidates = []
+    for col in columns:
+        d = {'index': longform_df[index]}
+        d[col] = longform_df[col]
+        df = pd.DataFrame(data=d, columns=d.keys())
+        df = df.drop_duplicates()
+        if df.shape[0] == num:
+            candidates.append(col)
+        else:
+            noncandidates.append(col + ", " + str(df.shape[0]))
+    return candidates, noncandidates
 
 def _handleRX(ex_rowmeta_cols, ptid_md, base_rows, rx):
     rx_col_names = list(rx.columns.values)
@@ -111,6 +122,11 @@ def _handleRX(ex_rowmeta_cols, ptid_md, base_rows, rx):
     ptid_md = pd.merge(ptid_md, rx_subset, on='ptid', how='inner')
     return ptid_md
 
+def _validityMessages(count, validity_arr, index, direc):
+    valid_str = "Possible valid " + direc + " metadata variables for given " + direc + " index of '" + index + "' (count: " + str(count) + ") are: \n" + '\n'.join(validity_arr[0])
+    invalid_str = "Invalid " + direc +" metadata variables for given " + direc + " index of '" + index + "' (count: " + str(count) + ") are: \n" + '\n'.join(validity_arr[1])
+    err_str = "Index " + direc + " not unique. \n" + valid_str + "\n\n" + invalid_str
+    return err_str
 
 # def binary_search(a, x, lo=0, hi=None):  # can't use a to specify default for hi
 #     hi = hi if hi is not None else len(a)  # hi defaults to len(a)
@@ -132,12 +148,12 @@ if __name__ == '__main__':
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-    wideform_df, ptid_md, measure_md = _generateWideform('ptid, visitno', 'isotype, antigen', 'delta', 'response', 'dilution, testdt', longform_df)
-    print(longform_df['delta'].count())
-    print(wideform_df.count().sum().sum())
-    wideform_df.to_csv('data/wideforma.csv')
-    ptid_md.to_csv('data/ptida.csv')
-    measure_md.to_csv('data/measurea.csv')
+    wideform_df, ptid_md, measure_md = _generateWideform('ptid, visitno', 'isotype, antigen', 'delta', 'dilution', 'ptid, isotype', longform_df)
+    # print(longform_df['delta'].count())
+    # print(wideform_df.count().sum().sum())
+    # wideform_df.to_csv('data/wideforma.csv')
+    # ptid_md.to_csv('data/ptida.csv')
+    # measure_md.to_csv('data/measurea.csv')
 
 # for i in wideform_df.index:
 #     if i ==
