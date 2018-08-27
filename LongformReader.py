@@ -70,6 +70,14 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
+
+    validity_arr1 = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
+    err_str1 = _validityMessages(wideform_df.shape[1], validity_arr1, colmeta_index, 'column')
+    print(err_str1)
+
+    validity_arr2 = _validMetadata(wideform_df.shape[0], rowmeta_index, longform_df)
+    err_str2 = _validityMessages(wideform_df.shape[0], validity_arr2, rowmeta_index, 'row')
+    print(err_str2)
     try:
         ptid_md['id'] = id_list
         ptid_md.set_index("id", inplace=True)
@@ -100,7 +108,11 @@ def _validMetadata(num, index, longform_df):
         df = pd.DataFrame(data=d, columns=d.keys())
         df = df.drop_duplicates()
         if df.shape[0] == num:
-            candidates.append(col)
+            unique = longform_df[col].unique().size
+            if unique > 1:
+                candidates.append("* " + col + ", " + str(unique))
+            else:
+                candidates.append(col + ", " + str(unique))
         else:
             noncandidates.append(col + ", " + str(df.shape[0]))
     return candidates, noncandidates
@@ -148,7 +160,7 @@ if __name__ == '__main__':
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-    wideform_df, ptid_md, measure_md = _generateWideform('ptid, visitno', 'isotype, antigen', 'delta', 'dilution', 'ptid, isotype', longform_df)
+    wideform_df, ptid_md, measure_md = _generateWideform('ptid, visitno', 'isotype, antigen', 'delta', 'dilution', 'isotype, antigen', longform_df)
     # print(longform_df['delta'].count())
     # print(wideform_df.count().sum().sum())
     # wideform_df.to_csv('data/wideforma.csv')
