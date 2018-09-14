@@ -1,6 +1,6 @@
 
       // Get the modal
-      var modal = document.getElementById('myModal');
+      var modal = document.getElementById('myModal2');
 
       // Get the button that opens the modal
       var btn = document.getElementById("metabutton");
@@ -15,8 +15,8 @@
 
       // When the user clicks on <span> (x), close the modal
       span.onclick = function() {
-          populateTabs("Row");
-          populateTabs("Column");
+          populateTabs("Row", "rowmeta");
+          populateTabs("Column", "colmeta");
           modal.style.display = "none";
       }
 
@@ -30,14 +30,19 @@
       }
 
       function populateTabs(header, select) {
-          console.log(document.querySelectorAll(".cbox"))
-          let boxes = document.querySelectorAll("#" + header + " .cbox");
-          let arr = [];
-          for (let i = 0; i < boxes.length; i++) {
-              if (boxes[i].checked) {
-                  arr.push(boxes[i].value);
+          if ($("#rowindex").multipleSelect("getSelects").length > 0 && $("#colindex").multipleSelect("getSelects").length > 0) {
+              let boxes = document.querySelectorAll("#" + header + " .cbox");
+              let arr = [];
+              for (let i = 0; i < boxes.length; i++) {
+                  if (boxes[i].checked) {
+                      arr.push(boxes[i].value);
+                  }
               }
+              console.log(arr)
+              $("#" + select).multipleSelect("setSelects", arr);
           }
-          console.log(arr)
-          $("#" + select).multipleSelect("setSelects", arr);
+          else if (header == "Row"){
+              // alert("Please select both a row and column index!");
+          }
+
       }

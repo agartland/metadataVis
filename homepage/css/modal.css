@@ -24,7 +24,8 @@
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
-    animation-duration: 0.4s
+    animation-duration: 0.4s;
+    min-height: 700px;
 }
 
 /* Add Animation */
@@ -66,8 +67,11 @@
 }
 .expand-text {
     cursor: pointer;
-    text-decoration: underline;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+.expand-text:hover {
+    color: #007bff;
 }

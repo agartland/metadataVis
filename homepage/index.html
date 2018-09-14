@@ -24,7 +24,7 @@
   <script src="js/jquery_upload.js"></script>
   <script src="js/jquery-csv.js"></script>
   <script src="js/index.js"></script>
-  <script src="js/multiple-select.js"></script>s
+  <script src="js/multiple-select.js"></script>
   <script>
   "use strict";
   (function() {
@@ -165,13 +165,7 @@
                         <input id='lfFile' type="file" class="form-control" name="longformFile">
                       </div>
                       <div id='colnames' style='padding-left:15px; padding-top:10px; padding-bottom:10px' class='hidden'>
-                          <p style='margin-bottom:0px;font-size:20px'> Row Index </p>
-                          <select id='rowindex' name='rowIndex' multiple='multiple' style='width:457px; display: block;'>
-                          </select>
-                          <p style='margin-bottom:0px;font-size:20px;margin-top:10px;'> Column Index </p>
-                          <select id='colindex' name='colIndex' multiple='multiple' style='width:457px; display: block;'>
-                          </select>
-                          <p id="metabutton" style='position:absolute;left:510px;top:232px' class="btn btn-outlined btn-primary"> Check Potential Metadata </p>
+                          <section id="metabutton" style='position:absolute;left:510px;top:232px' class="btn btn-outlined btn-primary"> Check Potential Metadata </section>
                           <div id="rowmeta-cont" class='hidden'>
                               <p style='margin-bottom:0px;font-size:20px;margin-top:10px;'> Row metadata </p>
                               <select id='rowmeta' name='rowMeta' multiple='multiple' style='width:457px; display: block;'> </select>
@@ -182,7 +176,6 @@
                           </div>
                       </div>
                       <div id="myModal" class="modal">
-
                       <!-- Modal content -->
                       <div class="modal-content">
                         <div class="modal-header">
@@ -194,7 +187,27 @@
                             </div>
                         </div>
                       </div>
-
+                    </div>
+                    <div id="myModal2" class="modal">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <h2 style="position:relative;left:165px;line-height:1.5;">Metadata Candidates</h2>
+                      </div>
+                      <div class="modal-body">
+                          <div class="container" id="modal2-cont">
+                              <h4> Choose your indices </h4>
+                              <p id='info'> </p>
+                              <p style='margin-bottom:0px;font-size:20px'> Row Index </p>
+                              <select id='rowindex' name='rowIndex' multiple='multiple' style='width:457px; display: block;'>
+                              </select>
+                              <p style='margin-bottom:0px;font-size:20px;margin-top:10px;'> Column Index </p>
+                              <select id='colindex' name='colIndex' multiple='multiple' style='width:457px; display: block;'>
+                              </select>
+                          </div>
+                      </div>
+                    </div>
                     </div>
                     <label class="control-label col-sm-5">RX Data (Optional):</label>
                       <div class="col-sm-8">

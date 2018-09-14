@@ -1,5 +1,6 @@
 var colnames = {};
 var data = [];
+var indices = [];
 
 $(document).ready(function() {
       if(isAPIAvailable()) {
@@ -54,6 +55,7 @@ $(document).ready(function() {
         colnames = {};
         document.getElementById('rowindex').innerHTML = '';
         document.getElementById('colindex').innerHTML = '';
+
         for (let i = 0; i < arr[0].length; i++) {
             let val = arr[0][i];
             colnames[val] = i;
@@ -64,13 +66,27 @@ $(document).ready(function() {
             let opt2 = opt1.cloneNode(true);
             document.getElementById('colindex').appendChild(opt2)
         }
+
         $('#rowindex').multipleSelect({
             selectAll: false,
             multiple: true,
             multipleWidth: 120,
             countSelected: false,
             placeholder: "Choose columns that make the samples unique",
-            filter: true
+            filter: true,
+            onClick: function(view) {
+                if (view.checked) {
+                    indices.push(view.label);
+                }
+                else {
+                    for (let i = 0; i < indices.length; i++){
+                       if (indices[i] === view.label) {
+                         indices.splice(i, 1);
+                       }
+                    }
+                }
+                dataCapture(view);
+            }
         });
         $('#colindex').multipleSelect({
             selectAll: false,
@@ -78,7 +94,20 @@ $(document).ready(function() {
             multipleWidth: 120,
             placeholder: "Choose columns that make the measures unique",
             countSelected: false,
-            filter: true
+            filter: true,
+            onClick: function(view) {
+                if (view.checked) {
+                    indices.push(view.label);
+                }
+                else {
+                    for (let i = 0; i < indices.length; i++){
+                       if (indices[i] === view.label) {
+                         indices.splice(i, 1);
+                       }
+                    }
+                }
+                dataCapture(view);
+            }
         });
         document.getElementById('colnames').classList.remove('hidden');
         document.getElementById('metabutton').onclick = function() {
@@ -90,7 +119,20 @@ $(document).ready(function() {
             return row[i];
         });
         });
+        var modal = document.getElementById('myModal2');
+        document.getElementById("info").innerText = "You are currently encapsulating 0 of " + data[0].length + " data points!";
+        modal.style.display = "block";
     }
+}
+
+function dataCapture() {
+    console.log(indices);
+    let index = data[colnames[indices[0]]];
+    for (let i = 1; i < indices.length; i++) {
+        index = mergeCols(index, data[colnames[indices[i]]])
+    }
+    index = dropDuplicates(index);
+    document.getElementById("info").innerText = "You are encapsulating " + index.length + " of " + data[0].length + " data points!";
 }
 
 function introspectData() {
@@ -203,12 +245,33 @@ function populateModal(metaDict, header) {
     if (header === "Row") {
         article.appendChild(document.createElement("hr"));
     }
+    if ($("#rowmeta").multipleSelect("getSelects").length > 0) {
+        let rowmeta_sels = $("#rowmeta").multipleSelect("getSelects", "text");
+        let rowboxes = document.querySelectorAll("#Row .cbox");
+        for (let i = 0; i < rowboxes.length; i++) {
+            for (let j = 0; j < rowmeta_sels.length; j++) {
+                if (rowboxes[i].value == rowmeta_sels[j]) {
+                    rowboxes[i].checked = true;
+                }
+            }
+        }
+    }
+    if ($("#colmeta").multipleSelect("getSelects").length > 0) {
+        let colmeta_sels = $("#colmeta").multipleSelect("getSelects", "text");
+        let colboxes = document.querySelectorAll("#Column .cbox");
+        for (let k = 0; k < colboxes.length; k++) {
+            for (let l = 0; l < colmeta_sels.length; l++) {
+                if (colboxes[k].value == colmeta_sels[l]) {
+                    colboxes[k].checked = true;
+                }
+            }
+        }
+    }
 }
 
 function checkMetadata(index) {
     let candidates = {};
     let count = dropDuplicates(index).length;
-    console.log(count)
     for (let i = 0; i < data.length; i++) {
         // If we are only looking at metadata columns with at least 2 unique entries
         if (dropDuplicates(data[i]).length > 2) {

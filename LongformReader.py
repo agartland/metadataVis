@@ -52,7 +52,7 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     row_metadata.index = np.arange(row_metadata.shape[0])
     row_metadata = row_metadata.reset_index()'''
 
-    wideform_df = longform_df.pivot_table(index=rowmeta_index, columns=colmeta_index, values=value_str)
+    wideform_df = longform_df.pivot(index=rowmeta_index, columns=colmeta_index, values=value_str)
     # print(len(wideform_df.columns.values))
     # print(wideform_df.columns.values[:15])
     # print(longform_df[colmeta_index].head(15))
