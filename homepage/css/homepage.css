@@ -14,6 +14,10 @@ header {
   }
 }
 
+.hidden {
+    display: none;
+}
+
 section {
   padding: 150px 0;
 }

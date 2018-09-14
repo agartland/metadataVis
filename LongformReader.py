@@ -11,7 +11,7 @@ import random
 
 
 # DATAFRAME CONFIGURATION:
-def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df):
+def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colmeta_columns, longform_df):
     '''
     cd A:/gitrepo/metadataVisData/data
     fn = 'e097lum_gt_resp_p.csv'
@@ -23,16 +23,17 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
     wideform_df, ptid_md, measure_md = _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df)'''
 
     # Row Metadata Table
-    unique_rows = [x.strip() for x in (uniquerow_str).split(',')]
+    print(unique_rows)
+    print(unique_cols)
+    print(value_str)
+    print(rowmeta_columns)
+    print(colmeta_columns)
     #unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
     rowmeta_index = '|'.join(unique_rows)
-    rowmeta_columns = [x.strip() for x in row_str.split(',')]
 
     # Column Metadata Table
-    unique_cols = [x.strip() for x in (uniquecol_str).split(',')]
     #unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
     colmeta_index = '|'.join(unique_cols)
-    colmeta_columns = [x.strip() for x in col_str.split(',')]
 
     longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
     longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols].astype(str)), axis=1)
@@ -71,13 +72,13 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
 
-    validity_arr1 = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
-    err_str1 = _validityMessages(wideform_df.shape[1], validity_arr1, colmeta_index, 'column')
-    print(err_str1)
+    # validity_arr1 = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
+    # err_str1 = _validityMessages(wideform_df.shape[1], validity_arr1, colmeta_index, 'column')
+    # print(err_str1)
 
-    validity_arr2 = _validMetadata(wideform_df.shape[0], rowmeta_index, longform_df)
-    err_str2 = _validityMessages(wideform_df.shape[0], validity_arr2, rowmeta_index, 'row')
-    print(err_str2)
+    # validity_arr2 = _validMetadata(wideform_df.shape[0], rowmeta_index, longform_df)
+    # err_str2 = _validityMessages(wideform_df.shape[0], validity_arr2, rowmeta_index, 'row')
+    # print(err_str2)
     try:
         ptid_md['id'] = id_list
         ptid_md.set_index("id", inplace=True)
@@ -86,11 +87,11 @@ def _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str,
         err_str = _validityMessages(wideform_df.shape[0], validity_arr, rowmeta_index, 'row')
         print(err_str)
         return err_str, None, None
-    if measure_md.shape[0] != wideform_df.shape[1]:
-        validity_arr = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
-        err_str = _validityMessages(wideform_df.shape[1], validity_arr, colmeta_index, 'column')
-        print(err_str)
-        return err_str, None, None
+    # if measure_md.shape[0] != wideform_df.shape[1]:
+    #     validity_arr = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
+    #     err_str = _validityMessages(wideform_df.shape[1], validity_arr, colmeta_index, 'column')
+    #     print(err_str)
+    #     return err_str, None, None
 
     measure_md.set_index(colmeta_index, inplace=True)
     wideform_df['id'] = id_list
@@ -160,12 +161,12 @@ if __name__ == '__main__':
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-    wideform_df, ptid_md, measure_md = _generateWideform('ptid, visitno', 'isotype, antigen', 'delta', 'dilution', 'isotype, antigen', longform_df)
+    wideform_df, ptid_md, measure_md = _generateWideform(['ptid', 'visitno'], ['isotype', 'antigen'], 'delta', ['ptid', 'visitno'], ['isotype', 'antigen', 'filedate'], longform_df)
     # print(longform_df['delta'].count())
     # print(wideform_df.count().sum().sum())
-    # wideform_df.to_csv('data/wideforma.csv')
-    # ptid_md.to_csv('data/ptida.csv')
-    # measure_md.to_csv('data/measurea.csv')
+    wideform_df.to_csv('data/wideforma.csv')
+    ptid_md.to_csv('data/ptida.csv')
+    measure_md.to_csv('data/measurea.csv')
 
 # for i in wideform_df.index:
 #     if i ==

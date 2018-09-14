@@ -215,7 +215,7 @@ def initSupplementSources(metadata, legend, default):
     key_array = list(map(str, key_array))
     metadata.data['inspect'] = key_array
     for entry in factor_dict:
-        legend.data['names'].append(entry)
+        legend.data['names'].append(str(entry))
         legend.data['factors'].append(str(factor_dict[entry]))
     storage = list(counts.values())
     legend.data['nonsel_count'] = list(counts.values())
