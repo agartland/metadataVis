@@ -6,6 +6,12 @@ $(document).ready(function() {
       if(isAPIAvailable()) {
         $('#lfFile').bind('change', handleFileSelect);
       }
+      var file_input_index = 0;
+        $('input[type=file]').each(function() {
+            file_input_index++;
+            $(this).wrap('<div style="display:flex;align-items:center" id="file_input_container_'+file_input_index+'"></div>');
+            $(this).after('<span class="clear" onclick="reset_html(\'file_input_container_'+file_input_index+'\')"> X </span>');
+        });
     });
 
     function isAPIAvailable() {
@@ -55,6 +61,14 @@ $(document).ready(function() {
         colnames = {};
         document.getElementById('rowindex').innerHTML = '';
         document.getElementById('colindex').innerHTML = '';
+        document.getElementById('row-modal-index').innerHTML = '';
+        document.getElementById('col-modal-index').innerHTML = '';
+        document.getElementById('value').innerHTML = '';
+        document.getElementById('value-modal').innerHTML = '';
+        indices = [];
+        document.getElementById("warning").style.display = "none";
+        document.getElementById("rowmeta-cont").classList.add("hidden");
+        document.getElementById("colmeta-cont").classList.add("hidden");
 
         for (let i = 0; i < arr[0].length; i++) {
             let val = arr[0][i];
@@ -64,14 +78,19 @@ $(document).ready(function() {
             opt1.innerText = val;
             document.getElementById('rowindex').appendChild(opt1);
             let opt2 = opt1.cloneNode(true);
-            document.getElementById('colindex').appendChild(opt2)
+            document.getElementById('colindex').appendChild(opt2);
+            let opt3 = opt1.cloneNode(true);
+            document.getElementById('row-modal-index').appendChild(opt3);
+            let opt4 = opt1.cloneNode(true);
+            document.getElementById('col-modal-index').appendChild(opt4);
         }
 
-        $('#rowindex').multipleSelect({
+        $('#row-modal-index').multipleSelect({
             selectAll: false,
             multiple: true,
             multipleWidth: 120,
             countSelected: false,
+            maxHeight: 400,
             placeholder: "Choose columns that make the samples unique",
             filter: true,
             onClick: function(view) {
@@ -82,10 +101,58 @@ $(document).ready(function() {
                     for (let i = 0; i < indices.length; i++){
                        if (indices[i] === view.label) {
                          indices.splice(i, 1);
+                         break;
                        }
                     }
                 }
                 dataCapture(view);
+            }
+        });
+        $('#col-modal-index').multipleSelect({
+            selectAll: false,
+            multiple: true,
+            multipleWidth: 120,
+            maxHeight: 400,
+            placeholder: "Choose columns that make the measures unique",
+            countSelected: false,
+            filter: true,
+            onClick: function(view) {
+                if (view.checked) {
+                    indices.push(view.label);
+                }
+                else {
+                    for (let i = 0; i < indices.length; i++){
+                       if (indices[i] === view.label) {
+                         indices.splice(i, 1);
+                         break;
+                       }
+                    }
+                }
+                dataCapture(view);
+            }
+        });
+        $('#rowindex').multipleSelect({
+            selectAll: false,
+            multiple: true,
+            multipleWidth: 120,
+            placeholder: "Choose columns that make the samples unique",
+            countSelected: false,
+            filter: true,
+            onClick: function(view) {
+                if (view.checked) {
+                    indices.push(view.label);
+                }
+                else {
+                    for (let i = 0; i < indices.length; i++){
+                       if (indices[i] === view.label) {
+                         indices.splice(i, 1);
+                         break;
+                       }
+                    }
+                }
+                dataCapture(view);
+                document.getElementById("rowmeta-cont").classList.add("hidden");
+                document.getElementById("colmeta-cont").classList.add("hidden");
             }
         });
         $('#colindex').multipleSelect({
@@ -103,10 +170,13 @@ $(document).ready(function() {
                     for (let i = 0; i < indices.length; i++){
                        if (indices[i] === view.label) {
                          indices.splice(i, 1);
+                         break;
                        }
                     }
                 }
                 dataCapture(view);
+                document.getElementById("rowmeta-cont").classList.add("hidden");
+                document.getElementById("colmeta-cont").classList.add("hidden");
             }
         });
         document.getElementById('colnames').classList.remove('hidden');
@@ -119,10 +189,51 @@ $(document).ready(function() {
             return row[i];
         });
         });
-        var modal = document.getElementById('myModal2');
-        document.getElementById("info").innerText = "You are currently encapsulating 0 of " + data[0].length + " data points!";
+        var modal = document.getElementById('indexModal');
+        document.getElementById("count").innerText = 0;
+        document.getElementById("total").innerText = data[0].length;
+        document.getElementById("info").style.color = "red";
+        document.getElementById("success").innerText = "";
         modal.style.display = "block";
     }
+}
+
+function popValueModal() {
+    let optgrp1 = document.createElement('optgroup');
+    optgrp1.label = "Potential Suggestions";
+    let optgrp2 = document.createElement('optgroup');
+    optgrp2.label = "Others";
+    for (let i = 0; i < Object.keys(colnames).length; i++) {
+        let total = data[i].length;
+        let uniq = dropDuplicates(data[i]).length;
+        let opt = document.createElement("option");
+        opt.value = data[i][0];
+        opt.innerText = data[i][0];
+        if (uniq / total > 0.5) {
+            optgrp1.appendChild(opt);
+        }
+        else {
+            optgrp2.appendChild(opt);
+        }
+    }
+    document.getElementById("value-modal").appendChild(optgrp1);
+    document.getElementById("value-modal").appendChild(optgrp2);
+    let value = document.getElementById('value');
+    value.appendChild(optgrp1.cloneNode(true));
+    value.appendChild(optgrp2.cloneNode(true));
+    $("#value-modal").multipleSelect({
+        placeholder: "Choose a column to supply heatmap values",
+        multiple: true,
+        multipleWidth: 120,
+        single: true,
+    })
+    $("#value").multipleSelect({
+        placeholder: "Choose a column to supply heatmap values",
+        multiple: true,
+        multipleWidth: 120,
+        single: true,
+    })
+    value.classList.remove("hidden");
 }
 
 function dataCapture() {
@@ -132,7 +243,26 @@ function dataCapture() {
         index = mergeCols(index, data[colnames[indices[i]]])
     }
     index = dropDuplicates(index);
-    document.getElementById("info").innerText = "You are encapsulating " + index.length + " of " + data[0].length + " data points!";
+    document.getElementById("count").innerText = index.length;
+    if (document.getElementById("indexModal").style.display == "block") {
+        document.getElementById("warning").style.display = "none";
+    }
+    if (index.length == data[0].length) {
+        document.getElementById("info").style.color = "green";
+        document.getElementById("success").innerText = "Success!";
+        document.getElementById("warning").innerText = "Success! You have encapsulated all " + data[0].length + " data points!";
+        document.getElementById("warning").style.color = "green";
+    }
+    else {
+        document.getElementById("info").style.color = "red";
+        document.getElementById("warning").style.color = "red";
+        document.getElementById("success").innerText = "";
+
+        if (document.getElementById("indexModal").style.display == "none") {
+            document.getElementById("warning").style.display = "block";
+        }
+        document.getElementById("warning").innerText = "Warning! " + document.getElementById("info").innerText;
+    }
 }
 
 function introspectData() {
@@ -143,12 +273,45 @@ function introspectData() {
         genMetaList(rowMetaCandidates, "rowmeta");
         document.getElementById("rowmeta-cont").classList.remove("hidden");
     }
+    else {
+        let cont = document.getElementById('modal-cont');
+        cont.innerHTML = '';
+        let article = document.createElement('article');
+        article.style.minHeight = "200px";
+        let head = document.createElement("h4");
+        head.innerText = "Possible Row Metadata Candidates";
+        article.appendChild(head);
+        let warning = document.createElement("span");
+        warning.classList.add("warning");
+        warning.innerText = "Error: No columns supplied for Row Indices."
+        article.appendChild(warning);
+        cont.appendChild(article);
+    }
     if (col_selected_inds.length > 0) {
         let colMetaCandidates = indexCol(col_selected_inds, "Column");
         genMetaList(colMetaCandidates, "colmeta");
         document.getElementById("colmeta-cont").classList.remove("hidden");
     }
-    document.getElementById('myModal').style.display = 'block';
+    else {
+        let article = document.createElement('article');
+        article.style.minHeight = "200px";
+        let cont = document.getElementById('modal-cont');
+        article.appendChild(document.createElement("hr"));
+        let head = document.createElement("h4");
+        head.innerText = "Possible Column Metadata Candidates";
+        article.appendChild(head);
+        let warning = document.createElement("span");
+        warning.classList.add("warning");
+        warning.innerText = "Error: No columns supplied for Column Indices."
+        article.appendChild(warning);
+        cont.appendChild(article);
+    }
+    if (row_selected_inds.length == 0 && col_selected_inds.length == 0) {
+        alert("Error: Metadata cannot be generated as no row or column indices were selected!");
+    }
+    else {
+        document.getElementById('metaModal').style.display = 'block';
+    }
 }
 
 function genMetaList(candidates, list) {
@@ -187,10 +350,14 @@ function populateModal(metaDict, header) {
         cont.innerHTML = null;
     }
     let article = document.createElement("article");
+    if (header === "Column") {
+        article.appendChild(document.createElement("hr"));
+    }
     article.id = header;
     let head = document.createElement("h4");
     head.innerText = "Possible " + header + " Metadata Candidates";
     article.appendChild(head);
+    article.style.minHeight = '200px';
     for (let i = 0; i < keys.length; i++) {
         let len = metaDict[keys[i]].length - 1
         let tab = document.createElement("div");
@@ -224,27 +391,34 @@ function populateModal(metaDict, header) {
             span.innerText = "Displaying 10 of " + len + " distinct categories.";
             text.appendChild(span);
         }
-        inner_cont.appendChild(select)
-        inner_cont.appendChild(tab)
+        inner_cont.appendChild(select);
+        inner_cont.appendChild(tab);
         article.appendChild(inner_cont);
         article.appendChild(text);
     }
-    let selectAll = document.createElement("input");
-    selectAll.onclick = function() {
-        let boxes = document.querySelectorAll("#" + header + " .cbox");
-        let checked = selectAll.checked;
-        for (let i = 0; i < boxes.length; i++) {
-            boxes[i].checked = checked;
+    if (keys.length > 0) {
+        let selectAll = document.createElement("input");
+        selectAll.onclick = function() {
+            let boxes = document.querySelectorAll("#" + header + " .cbox");
+            let checked = selectAll.checked;
+            for (let i = 0; i < boxes.length; i++) {
+                boxes[i].checked = checked;
+            }
         }
+        let txt = document.createTextNode("Select All");
+        selectAll.setAttribute("type", "checkbox");
+        article.appendChild(selectAll);
+        article.appendChild(txt);
     }
-    let txt = document.createTextNode("Select All");
-    selectAll.setAttribute("type", "checkbox");
-    article.appendChild(selectAll)
-    article.appendChild(txt);
+    else {
+        let error = document.createElement("span");
+        error.classList.add("warning");
+        error.innerText = "Error: no possible metadata candidates exist for given " + header + " Indices";
+        article.appendChild(error);
+    }
     cont.appendChild(article);
-    if (header === "Row") {
-        article.appendChild(document.createElement("hr"));
-    }
+
+
     if ($("#rowmeta").multipleSelect("getSelects").length > 0) {
         let rowmeta_sels = $("#rowmeta").multipleSelect("getSelects", "text");
         let rowboxes = document.querySelectorAll("#Row .cbox");
@@ -296,4 +470,16 @@ function mergeCols(col1, col2) {
 function dropDuplicates(arr){
     let unique_array = Array.from(new Set(arr))
     return unique_array
+}
+
+function display(upload1, upload2) {
+    document.getElementById(upload1).classList.toggle('hidden');
+    document.getElementById(upload2).classList.add('hidden');
+}
+
+function reset_html(id) {
+    $('#'+id).html($('#'+id).html());
+    if(isAPIAvailable()) {
+      $('#lfFile').bind('change', handleFileSelect);
+    }
 }

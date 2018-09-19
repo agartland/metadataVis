@@ -776,8 +776,6 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     elif orientation == 'horizontal':
         # PERFORMANCE BOTTLENECK PLEASE FIX
         for xlist, ylist in zip(dend['icoord'], dend['dcoord']):
-            print("xlist: " + str(xlist))
-            print("ylist: " + str(ylist))
             name += 1
             line = dendrogram.line(xlist, ylist, color='black', selection_color='black', nonselection_color='black',
                             selection_line_alpha=1, nonselection_line_alpha=1, hover_line_color='red', name="line")
@@ -786,7 +784,6 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
         # dendrogram.multi_line(dend['icoord'], dend['dcoord'], color='black',
         # selection_color='black', nonselection_color='black',
         # selection_line_alpha=1, nonselection_line_alpha=1)
-    print(dendrogram.select(name="2"))
     callback = CustomJS(args=dict(), code="""
         console.log(cb_obj);
     """)

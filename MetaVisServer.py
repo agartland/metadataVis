@@ -50,15 +50,13 @@ def _handleMetaVis(request):
     return _clean_and_return(request)
 
 def _processLongform(request):
+
     sio_longform = StringIO(request.args['longformFile'][0].decode("UTF-8"))
     longform = pd.read_csv(sio_longform)
     rx = None
-    if request.args['rxFile'][0]:
-        sio_rx = StringIO(request.args['rxFile'][0].decode("UTF-8"))
-        rx = pd.read_csv(sio_rx)
     unique_rows = request.args['rowIndex']
     unique_cols = request.args['colIndex']
-    value_str = request.args['valueStr'][0]
+    value_str = request.args['value'][0]
     rowmeta_columns = request.args['rowMeta']
     colmeta_columns = request.args['colMeta']
     data, row_md, col_md = _generateWideform(unique_rows=unique_rows, unique_cols=unique_cols,

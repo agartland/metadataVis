@@ -23,17 +23,12 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     wideform_df, ptid_md, measure_md = _generateWideform(uniquerow_str, uniquecol_str, value_str, row_str, col_str, longform_df)'''
 
     # Row Metadata Table
-    print(unique_rows)
-    print(unique_cols)
-    print(value_str)
-    print(rowmeta_columns)
-    print(colmeta_columns)
     #unique_rows = [x.strip() for x in (uniquerow_str + ", " + row_str).split(',')]
-    rowmeta_index = '|'.join(unique_rows)
+    rowmeta_index = "RowIndex"
 
     # Column Metadata Table
     #unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
-    colmeta_index = '|'.join(unique_cols)
+    colmeta_index = 'Measure'
 
     longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
     longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols].astype(str)), axis=1)
@@ -157,11 +152,11 @@ if __name__ == '__main__':
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
-    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097lum_gt_resp_p.csv'))
+    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097fcm_fh_39_2cyt_resp_p.csv'))
 
     rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
 
-    wideform_df, ptid_md, measure_md = _generateWideform(['ptid', 'visitno'], ['isotype', 'antigen'], 'delta', ['ptid', 'visitno'], ['isotype', 'antigen', 'filedate'], longform_df)
+    wideform_df, ptid_md, measure_md = _generateWideform(['ptid', ], ['tcellsub'], 'pctpos_pos', ['ptid', 'assayid'], ['tcellsub'], longform_df)
     # print(longform_df['delta'].count())
     # print(wideform_df.count().sum().sum())
     wideform_df.to_csv('data/wideforma.csv')

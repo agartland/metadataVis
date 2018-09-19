@@ -1,48 +1,116 @@
 
       // Get the modal
-      var modal = document.getElementById('myModal2');
+      var indexModal = document.getElementById('indexModal');
 
       // Get the button that opens the modal
-      var btn = document.getElementById("metabutton");
-
       // Get the <span> element that closes the modal
-      var span = document.getElementsByClassName("close")[0];
-
-      // When the user clicks the button, open the modal
-      btn.onclick = function() {
-          modal.style.display = "block";
-      }
+      var indexSpan = document.getElementById('close-modal1');
 
       // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
-          populateTabs("Row", "rowmeta");
-          populateTabs("Column", "colmeta");
-          modal.style.display = "none";
+      indexSpan.onclick = function() {
+          reflectChanges("row-modal-index", "rowindex");
+          reflectChanges("col-modal-index", "colindex");
+          if (document.getElementById("success").innerText == "") {
+              warning.style.display = "block";
+              warning.innerText = "Warning! " + document.getElementById("info").innerText;  
+          }
+          indexModal.style.display = "none";
+          popValueModal();
       }
 
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function(event) {
-          if (event.target == modal) {
-              populateTabs("Row", "rowmeta");
-              populateTabs("Column", "colmeta");
-              modal.style.display = "none";
-          }
-      }
-
-      function populateTabs(header, select) {
-          if ($("#rowindex").multipleSelect("getSelects").length > 0 && $("#colindex").multipleSelect("getSelects").length > 0) {
-              let boxes = document.querySelectorAll("#" + header + " .cbox");
-              let arr = [];
-              for (let i = 0; i < boxes.length; i++) {
-                  if (boxes[i].checked) {
-                      arr.push(boxes[i].value);
-                  }
+          if (event.target.className == 'modal') {
+              if (event.target.id == "metaModal") {
+                  populateTabs("Row", "rowmeta");
+                  populateTabs("Column", "colmeta");
+                  event.target.style.display = "none";
               }
-              console.log(arr)
-              $("#" + select).multipleSelect("setSelects", arr);
           }
-          else if (header == "Row"){
-              // alert("Please select both a row and column index!");
-          }
-
       }
+
+    // Get the modal
+    var metaModal = document.getElementById('metaModal');
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("metabutton");
+
+    // Get the <span> element that closes the modal
+    var metaSpan = document.getElementById("close-modal2");
+    var metaExit = document.getElementById("next3");
+
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+        metaModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    metaSpan.onclick = function() {
+        populateTabs("Row", "rowmeta");
+        populateTabs("Column", "colmeta");
+        metaModal.style.display = "none";
+    }
+
+    metaExit.onclick = function() {
+        populateTabs("Row", "rowmeta");
+        populateTabs("Column", "colmeta");
+        metaModal.style.display = "none";
+    }
+
+    // Get the modal
+    var valueModal = document.getElementById('valueModal');
+
+    // Get the button that opens the modal
+    var next1 = document.getElementById("next1");
+
+    // Get the <span> element that closes the modal
+    var valueSpan = document.getElementById("close-modal3");
+
+    // When the user clicks the button, open the modal
+    next1.onclick = function() {
+        reflectChanges("row-modal-index", "rowindex");
+        reflectChanges("col-modal-index", "colindex");
+        if (parseInt(document.getElementById("count").innerText) != parseInt(document.getElementById("total").innerText)) {
+            alert("You have not supplied enough columns to your row/column indices to make a MetaVis visualization!");
+            let warning = document.getElementById("warning");
+            warning.style.display = "block";
+            warning.innerText = "Warning! " + document.getElementById("info").innerText;
+        }
+        indexModal.style.display = "none";
+        popValueModal();
+        valueModal.style.display = "block";
+    }
+
+    var next2 = document.getElementById("next2");
+    next2.onclick = function() {
+        reflectChanges("value-modal", "value")
+        valueModal.style.display = "none";
+        introspectData();
+        metaModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    valueSpan.onclick = function() {
+        valueModal.style.display = "none";
+    }
+
+    function populateTabs(header, select) {
+        if ($("#rowindex").multipleSelect("getSelects").length > 0 && $("#colindex").multipleSelect("getSelects").length > 0) {
+            let boxes = document.querySelectorAll("#" + header + " .cbox");
+            let arr = [];
+            for (let i = 0; i < boxes.length; i++) {
+                if (boxes[i].checked) {
+                    arr.push(boxes[i].value);
+                }
+            }
+            console.log(arr)
+            $("#" + select).multipleSelect("setSelects", arr);
+        }
+        else if (header == "Row"){
+            // alert("Please select both a row and column index!");
+        }
+    }
+    function reflectChanges(modal, select) {
+        $("#" + select).multipleSelect("setSelects", $("#" + modal).multipleSelect("getSelects"));
+    }

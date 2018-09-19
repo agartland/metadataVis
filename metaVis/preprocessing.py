@@ -26,6 +26,8 @@ def initSources(data, ptid_md, measures_md):
     p_default = list(ptid_md)[1]
     m_default = list(measures_md)[1]
 
+    print(p_default)
+    print(m_default)
     likely_continuous = []
     for var in [c for c in ptid_md.columns if not c in ['PtID']]:
         if type(ptid_md[var][0]) != str and 1. * ptid_md[var].nunique() / ptid_md[var].count() > 0.1:
