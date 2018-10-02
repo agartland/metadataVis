@@ -8,10 +8,12 @@ import random
 #from bokeh.models import TableColumn, DataTable, ColumnDataSource, CustomJS
 #from bokeh.layouts import layout
 #from bokeh.models.widgets import MultiSelect, Dropdown
+import time
 
 
 # DATAFRAME CONFIGURATION:
 def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colmeta_columns, longform_df):
+    start1 = time.time()
     '''
     cd A:/gitrepo/metadataVisData/data
     fn = 'e097lum_gt_resp_p.csv'
@@ -29,9 +31,11 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     # Column Metadata Table
     #unique_cols = [x.strip() for x in (uniquecol_str + ", " + col_str).split(',')]
     colmeta_index = 'Measure'
-
+    st1 = time.time()
     longform_df[rowmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_rows].astype(str)), axis=1)
     longform_df[colmeta_index] = longform_df.apply(lambda r: '|'.join(r[unique_cols].astype(str)), axis=1)
+    st2 = time.time()
+    print("apply: " + str(st2 - st1))
     # print(len(longform_df[colmeta_index]))
 
     '''unique_rows = [x.strip() for x in (uniquerow_str).split(',')]
@@ -48,13 +52,16 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     row_metadata = row_metadata.reset_index()'''
 
     wideform_df = longform_df.pivot(index=rowmeta_index, columns=colmeta_index, values=value_str)
+    end = time.time()
+    print("pivot: " + str(end - start1))
     # print(len(wideform_df.columns.values))
     # print(wideform_df.columns.values[:15])
     # print(longform_df[colmeta_index].head(15))
     ids = list(range(1, wideform_df.shape[0] + 1))
     id_list = ['id-{0}'.format(i) for i in ids]
     rowmeta_dict = {'index': longform_df[rowmeta_index]}
-    lf_col_names = list(longform_df.columns.values)
+    lf_col_names = list(wideform_df.columns.values)
+    print(lf_col_names)
     for entry in rowmeta_columns:
         rowmeta_dict[entry] = longform_df[entry]
     ptid_md = pd.DataFrame(data=rowmeta_dict,
@@ -66,6 +73,8 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
+
+    print(measure_md['Measure'])
 
     # validity_arr1 = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
     # err_str1 = _validityMessages(wideform_df.shape[1], validity_arr1, colmeta_index, 'column')
@@ -87,8 +96,8 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     #     err_str = _validityMessages(wideform_df.shape[1], validity_arr, colmeta_index, 'column')
     #     print(err_str)
     #     return err_str, None, None
-
     measure_md.set_index(colmeta_index, inplace=True)
+    measure_md = measure_md.reindex(wideform_df.columns.values)
     wideform_df['id'] = id_list
     wideform_df.set_index("id", inplace=True)
 
@@ -152,11 +161,14 @@ if __name__ == '__main__':
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
-    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e097fcm_fh_39_2cyt_resp_p.csv'))
+    s1 = time.time()
 
-    rx = pd.read_csv(op.join(home, 'metadataVis', 'data', 'rx_v2.csv'))
+    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e602lum_gt_resp.csv'))
 
-    wideform_df, ptid_md, measure_md = _generateWideform(['ptid', ], ['tcellsub'], 'pctpos_pos', ['ptid', 'assayid'], ['tcellsub'], longform_df)
+    s2 = time.time()
+
+    print("upload: " + str(s1 - s1))
+    wideform_df, ptid_md, measure_md = _generateWideform(['ptid'], ['isotype', 'antigen'], 'delta', ['grp', 'visitno', 'control'], ['blank', 'antigen'], longform_df)
     # print(longform_df['delta'].count())
     # print(wideform_df.count().sum().sum())
     wideform_df.to_csv('data/wideforma.csv')

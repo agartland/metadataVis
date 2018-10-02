@@ -499,7 +499,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename2, mode='w', encoding='utf-8') as g:
         g.write(html)
 
-    # view(filename2)
+    view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -636,7 +636,7 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
-               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=900, plot_height=400,
+               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=400,
                tools=[TOOLS, box_select], active_drag=box_select, logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
@@ -649,8 +649,8 @@ def _createHeatmap(cbDict, colors, sources):
     # Adding colorbar
     color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
-                         formatter=PrintfTickFormatter(format="%f"),
-                         label_standoff=1, border_line_color=None, location=(0, 0))
+                         formatter=PrintfTickFormatter(format="%0.1f"),
+                         label_standoff=5, border_line_color=None, location=(0, 0))
 
     p.add_layout(color_bar, 'right')
 

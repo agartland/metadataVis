@@ -94,9 +94,9 @@ if __name__ == '__main__':
 
     # Importing files as dataframes
     #
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideforma.csv'), index_col=0)
-    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'measurea.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'ptida.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'wideform2.csv'), index_col=0)
+    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'measure2.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'ptid2.csv'), index_col=0)
 
     #
     # data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
@@ -152,4 +152,4 @@ if __name__ == '__main__':
 
     cbDict = initCallbacks(sources)
 
-    generateLayout(sources, cbDict, rowDend, colDend)
+    p = generateLayout(sources, cbDict, rowDend, colDend)

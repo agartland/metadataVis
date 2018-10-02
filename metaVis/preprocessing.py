@@ -30,7 +30,7 @@ def initSources(data, ptid_md, measures_md):
     print(m_default)
     likely_continuous = []
     for var in [c for c in ptid_md.columns if not c in ['PtID']]:
-        if type(ptid_md[var][0]) != str and 1. * ptid_md[var].nunique() / ptid_md[var].count() > 0.1:
+        if type(ptid_md[var][0]) != str and 1. * ptid_md[var].nunique() / ptid_md[var].count() > 0.1 and ptid_md[var].count() > 15:
             likely_continuous.append(var)
 
     for var in likely_continuous:
@@ -38,7 +38,7 @@ def initSources(data, ptid_md, measures_md):
 
     likely_continuous = []
     for var in [c for c in measures_md.columns if not c in ['Feature']]:
-        if type(measures_md[var][0]) != str and 1. * measures_md[var].nunique() / measures_md[var].count() > 0.4:
+        if type(measures_md[var][0]) != str and 1. * measures_md[var].nunique() / measures_md[var].count() > 0.4 and measures_md[var].count() > 15:
             likely_continuous.append(var)
 
     for var in likely_continuous:
