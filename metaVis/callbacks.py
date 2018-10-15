@@ -36,7 +36,8 @@ _reqSources = {'box_select': ['source',
                               'storage',
                               'p_legend',
                               'm_legend',
-                              'measure'],
+                              'measure',
+                              'selected_inds'],
                'multiselect_toggle': ['source',
                                       'storage'
                                       ],
@@ -81,16 +82,14 @@ _reqSources = {'box_select': ['source',
                             'col',
                             'm_table',
                             'm_data_table',
-                            'm_legend'],
-               'subsel': ['source',
-                          'subsel_source',
-                          'subsel_chart']
+                            'm_legend']
                }
 
 _js = dict(box_select="""
         var len = col.data['feature'].length; 
         var inds = [];   
         var inds_in_source = source.selected.indices;
+        selected_inds.data['indices'] = source.selected.indices;
         // sorts the indices found in source
         inds_in_source.sort(function(a, b){return a-b});
         var row_names = ptid.column_names;
@@ -574,16 +573,4 @@ _js = dict(box_select="""
         m_data_table.change.emit();
         source.change.emit();
         p_legend.change.emit();
-    """,
-           subsel="""
-        let inds = source.selected.indices;
-        console.log(inds);
-        for (let i = 0; i < inds.length; i++) {
-            subsel_source.data['features'].push(source.data['Feature'][[i]]);
-            subsel_source.data['ptids'].push(source.data['PtID'][[i]]);
-            subsel_source.data['rate'].push(source.data['rate'][[i]]);
-        }
-        subsel_source.change.emit();
-        subsel_chart.x_range.factors = subsel_source['features'];
-        subsel_chart.y_range.factors = subsel_source.data['ptids'];
     """)

@@ -46,7 +46,7 @@ def initSources(data, ptid_md, measures_md):
 
     sources = {}
     sources['source'] = ColumnDataSource(df)
-    sources['subsel_source'] = ColumnDataSource(data=dict(ptids=[], features=[], rate=[]))
+    sources['selected_inds'] = ColumnDataSource(data=dict(indices=[]))
     sources['subsel_chart'] = []
     sources['ptid'] = ColumnDataSource(ptid_md)
     sources['ptid'].data['inspect'] = sources['ptid'].data[p_default]
@@ -231,7 +231,7 @@ def _createTable(md, md_source):
     for i in range(1, len(col_names)):
         columns.append(TableColumn(field=col_names[i], title=col_names[i], width=100))
     data_table = DataTable(source=md_source, columns=columns, width=(len(col_names)) * 100 + 25,
-                           height=180, reorderable=False)
+                           height=280, reorderable=False)
     return data_table
 
 def _createBarChart(source, title, sel):
@@ -240,7 +240,7 @@ def _createBarChart(source, title, sel):
         factors.append(str(i))
     barchart = Figure(x_range=source.data['names'], y_range=Range1d(start=0, end=50, bounds=(0, None)), plot_height=200,
                       plot_width=280,
-                      tools=['xwheel_zoom', 'ywheel_zoom, ''pan', 'hover'],
+                      tools=['xwheel_zoom', 'ywheel_zoom', 'pan', 'hover'],
                       active_scroll='xwheel_zoom')
     mapper_dict = factor_cmap('factors', palette=config.palette, factors=factors)
     if sel:

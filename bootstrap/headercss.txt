@@ -96,7 +96,7 @@ footer p {
 }
 
 #spacer {
-    width: 109px;
+    width: 184px;
 }
 
 #selectors {
@@ -112,9 +112,14 @@ footer p {
     margin-right: 5px;
 }
 
+#export {
+    margin-top: 25px;
+    margin-left: 38px;
+}
+
 #reset {
     margin-top: 25px;
-    margin-left: 98px;
+    margin-left: 48px;
     height: 50px;
     width: 110px;
 }
@@ -139,18 +144,18 @@ footer p {
 }
 
 #heatmap-q {
-    margin-left: 909px;
+    margin-left: 985px;
     top: 275px;
 }
 
 #dend-q {
-    margin-left: 909px;
+    margin-left: 985px;
     top: 90px;
 }
 
 #sel-q {
-    margin-left: 925px;
-    top: 695px;
+    margin-left: 1000px;
+    top: 895px;
 }
 
 #table-q {
@@ -158,7 +163,7 @@ footer p {
 }
 
 #bar-q {
-    margin-left: 1040px;
+    margin-left: 1240px;
 }
 
 .hidden {

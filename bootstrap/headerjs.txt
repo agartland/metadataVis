@@ -1,5 +1,6 @@
 $(document).ready(function(){
-
+document.getElementById("x_leg_label").classList.remove("hidden");
+document.getElementById("y_leg_label").classList.remove("hidden");
 /**
  * This object controls the nav bar. Implement the add and remove
  * action over the elements of the nav bar that we want to change.

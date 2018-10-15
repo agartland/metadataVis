@@ -1,8 +1,6 @@
-from datetime import date
-from random import randint
+from os.path import dirname, join
 
 import io
-import random
 
 from jinja2 import Template
 
@@ -73,7 +71,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     y_colorbar, y_bar_mapper = _createColorbar(source=sources['ptid'],
                                                p=p,
-                                               fig_size=(35, 400),
+                                               fig_size=(35, 600),
                                                tools='ypan',
                                                rect_dim=(0, 'PtID'),
                                                rect_size=(3, 1),
@@ -94,7 +92,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                               palette=y_palette)
 
     y_dendrogram = _createDendrogram(rowDend,
-                                     size=(400, 75),
+                                     size=(600, 150),
                                      p=p,
                                      list=ptid_list,
                                      orientation='vertical')
@@ -103,12 +101,21 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                      p=p,
                                      list=feature_list,
                                      orientation='horizontal')
+    row_export_button = Button(label="Export Rows", button_type="success")
+    row_export_button.callback = CustomJS(args=dict(source=sources['p_table']),
+                                          code=open(join(dirname(__file__), "../bootstrap/download.js")).read())
+    col_export_button = Button(label="Export Cols", button_type="success")
+    col_export_button.callback = CustomJS(args=dict(source=sources['m_table']),
+                                          code=open(join(dirname(__file__), "../bootstrap/download.js")).read())
+    p_export_button = Button(label="Export Data", button_type="success")
+    p_export_button.callback = CustomJS(args=dict(source=sources['source'], inds=sources['selected_inds'], storage=sources['storage']),
+                                        code=open(join(dirname(__file__), "../bootstrap/p_download.js")).read())
 
     (row_reset_button, col_reset_button, selector,
      multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend, y_legend=y_legend)
     spacer = _createSpacer(p)
-    row_table = column(sources['p_data_table'], widgetbox(row_reset_button, width=50))
-    col_table = column(sources['m_data_table'], widgetbox(col_reset_button, width=50))
+    row_table = column(sources['p_data_table'], row(widgetbox(row_reset_button, width=100), widgetbox(row_export_button, width=100)))
+    col_table = column(sources['m_data_table'], row(widgetbox(col_reset_button, width=100), widgetbox(col_export_button, width=100)))
     selectors = column(widgetbox(selector, multiselect_toggle))
     legends = column(y_legend, x_legend)
     subsel_button = column(widgetbox(reset_button))
@@ -418,10 +425,12 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div id="heatmap"> 
                 {{ plot_div.heatmap }}
             </div>
-            <div class='col-flex' id='legs'>
+            <div class='col-flex' style='margin-left:20px' id='legs'>
+                <p style='margin-bottom:5px;margin-top:10px;' id="y_leg_label" class='hidden'> <b> Row Legend </b> </p>
                 <div id='y_leg'>
                     {{ plot_div.y_leg }}
                 </div>
+                <p style='margin-bottom:5px;margin-top:15px;' id="x_leg_label" class='hidden'> <b> Column Legend </b> </p>
                 <div id='x_leg'>
                     {{ plot_div.x_leg }}
                 </div>  
@@ -442,6 +451,9 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     {{ plot_div.m_selector }}
                 </div>
             </div>
+            <div id='export'>
+                {{ plot_div.export }}
+            </div>
             <div id='reset'>
                 {{ plot_div.reset }}
             </div>
@@ -459,7 +471,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div class='hidden overlay' id='bar-q' onclick="step('16');"> 
                 <span class="tooltiptext">Histograms</span>
             </div>
-            <div id='bar-tabs'>
+            <div id='bar-tabs' style="margin-left:200px;">
                 {{ plot_div.bar_tabs }}
             </div>
         </section>
@@ -483,7 +495,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     script2, div2 = components({'heatmap': p, 'y_color': y_colorbar, 'y_dend': y_dendrogram, 'x_dend': x_dendrogram,
                                 'x_leg': x_legend, 'y_leg': y_legend, 'selectors': selectors, 'p_selector': p_selector,
                                 'm_selector': m_selector, 'reset': reset_button, 'bar_tabs': barchart_tabs,
-                                'table_tabs': table_tabs, 'x_color': x_colorbar, 'colors': cust_tabs})
+                                'table_tabs': table_tabs, 'x_color': x_colorbar, 'colors': cust_tabs, 'export': p_export_button})
 
     bootstrap = {'headercss': headercss, 'headerjs': headerjs, 'introjs': introjs, 'introcss': introcss,
                  'sidebarcss': sidebarcss, 'sidebarjs': sidebarjs, 'stepjs': stepjs, 'stepcss': stepcss,
@@ -636,7 +648,7 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
-               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=400,
+               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=600,
                tools=[TOOLS, box_select], active_drag=box_select, logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
@@ -668,9 +680,9 @@ def _createHeatmap(cbDict, colors, sources):
            line_color=None,
            selection_fill_color=color,
            selection_line_color="black",
-           selection_line_alpha=0.2,
+           selection_line_alpha=0.05,
            nonselection_line_color=None,
-           nonselection_fill_alpha=0,
+           nonselection_fill_alpha=0.3,
            nonselection_fill_color=color,
            )
     return p, mapper
@@ -730,8 +742,8 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     if orientation == 'horizontal':
         """For an X dendrogram"""
         tools = 'ypan'
-        wz = WheelZoomTool(dimensions='height')
-        dendrogram = Figure(y_range=(1, (8 / 5 * len(list))),
+        wz = WheelZoomTool(dimensions='height', maintain_focus=False)
+        dendrogram = Figure(y_range=Range1d(1, (8 / 5 * len(list)), bounds=(-1, None)),
                             x_range=p.x_range,
                             plot_width=size[1],
                             plot_height=size[0],
@@ -740,14 +752,13 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     elif orientation == 'vertical':
         """For a Y dendrogram"""
         tools = 'xpan'
-        wz = WheelZoomTool(dimensions='width')
+        wz = WheelZoomTool(dimensions='width', maintain_focus=False)
         dendrogram = Figure(y_range=p.y_range,
-                            x_range=((5 / 4 * len(list) + 50), 1),
+                            x_range=Range1d((5 / 4 * len(list) + 50), 1, bounds=(-2, None)),
                             plot_width=size[1],
                             plot_height=size[0],
                             tools=[tools, wz],
                             active_scroll=wz)
-
     dendrogram.toolbar_location = None
     dendrogram.outline_line_color = 'navy'
     dendrogram.outline_line_alpha = 0.1
@@ -759,7 +770,7 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     dendrogram.axis.axis_line_color = None
     dendrogram.background_fill_color = 'white'
     dendrogram.grid.grid_line_color = None
-    dendrogram.xaxis.major_label_text_font_size = '0pt'
+    dendrogram.xaxis.major_label_text_font_size = '12pt'
     dendrogram.axis.visible = False
     name = 0
 
