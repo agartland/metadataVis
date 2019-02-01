@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from twisted.web import server, resource, static
 from twisted.internet import reactor, endpoints, task, threads
 from twisted.internet.defer import Deferred
@@ -62,7 +62,7 @@ def _processLongform(request):
     data, row_md, col_md = _generateWideform(unique_rows=unique_rows, unique_cols=unique_cols,
                                              value_str=value_str, rowmeta_columns=rowmeta_columns, colmeta_columns=colmeta_columns,
                                              longform_df=longform)
-    if type(data) is str:
+    if isinstance(data, str):
         request.write("<div>" + data + "</div>")
         sys.exit()
     return data, row_md, col_md
@@ -74,7 +74,7 @@ def _prepArgs(request):
     launcher_args[0] = config.launcher
     launcher_args[1] = tmpdirname
 
-    for k,v in request.args.iteritems():
+    for k, v in request.args.items():
         if (k.find('File') >= 0) & (request.args[k][0] != ''):
             if k == 'longformFile':
                 data, row_md, col_md = _processLongform(request)
