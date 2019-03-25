@@ -7,30 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/headercss.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/headerjs.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/introcss.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/introjs.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/sidebarcss.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/sidebarjs.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/sidemenucss.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/sidemenujs.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/stepcss.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bootstrap/stepjs.txt" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HeatmapMetaVis.py" afterPath="$PROJECT_DIR$/HeatmapMetaVis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVis.html" afterPath="$PROJECT_DIR$/MetaVis.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisLauncherConfig.py" afterPath="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisLauncherConstants.py" afterPath="$PROJECT_DIR$/MetaVisLauncherConstants.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisServer.py" afterPath="$PROJECT_DIR$/MetaVisServer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Py3MetaVisLauncher.py" afterPath="$PROJECT_DIR$/Py3MetaVisLauncher.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bootstrap/header.css" afterPath="$PROJECT_DIR$/bootstrap/header.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bootstrap/p_download.js" afterPath="$PROJECT_DIR$/bootstrap/p_download.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bootstrap/sources/step.js" afterPath="$PROJECT_DIR$/bootstrap/sources/step.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/homepage/index.html" afterPath="$PROJECT_DIR$/homepage/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metaVis/callbacks.py" afterPath="$PROJECT_DIR$/metaVis/callbacks.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metaVis/plotting.py" afterPath="$PROJECT_DIR$/metaVis/plotting.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metaVis/preprocessing.py" afterPath="$PROJECT_DIR$/metaVis/preprocessing.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -101,8 +78,8 @@
       <file leaf-file-name="MetaVisServer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="63">
-              <caret line="75" column="34" lean-forward="false" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
               </folding>
@@ -594,8 +571,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="75" column="34" lean-forward="false" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />
           </folding>
