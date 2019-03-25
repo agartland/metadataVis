@@ -1,5 +1,8 @@
 $(document).ready(function(){
 document.getElementById("x_leg_label").classList.remove("hidden");
+console.log(document.querySelector("#p_selector select").value);
+document.querySelector("#x_leg_label b").innerText = "Column Legend: " + document.querySelector("#m_selector select").value;
+document.querySelector("#y_leg_label b").innerText = "Row Legend: " + document.querySelector("#p_selector select").value;
 document.getElementById("y_leg_label").classList.remove("hidden");
 /**
  * This object controls the nav bar. Implement the add and remove

@@ -8,17 +8,17 @@ var steps = [
               },
               {
                  // 1
-                 intro: "MetaVis is an interactive visualization tool that allows you to explore data in deeper and more intuitive ways."+
+                 intro: "<div style='text-align:center'><p> Welcome to MetaVis! </p> MetaVis is an interactive visualization tool that allows you to explore data in deeper and more intuitive ways."+
                  " We hope that MetaVis can help provide a more effective interace to identify patterns, understand relationships, and interrogate data." +
                  "<br /> <br /> To these ends, MetaVis has many functionalities and tools to help streamline the experience.</div>",
               },
               {
                   // 2
                  element: '#heatmap',
-                 intro: 'This is the base heatmap visualization created by MetaVis, <br /> which serves as its centerpoint for interactivity and functionality.<br />Some notable features are:'+
-                 '<ul><li>Hover for details over each cell</li><li>Responsive integration with auxillary tools</li>'+
+                 intro: 'This is the base heatmap visualization created by MetaVis, which serves as its centerpoint for interactivity and functionality. Some notable features are:'+
+                 '<ul><li>Hover functionality for each cell to view more detailed information</li><li>Responsive integration with auxillary tools</li>'+
                  '<li>Selection by row, column, or both</li><li>Supplemental Toolbar<ul><li>Pan</li><li>Zoom Tools</li><li>Save as PNG</li><li>Viewport Reset Tool</li></ul></ul>',
-                 position: 'right'
+                 position: 'bottom'
               },
               {
                   // 3
@@ -39,42 +39,50 @@ var steps = [
               {
                   // 5
                  element: '#m_selector',
-                 intro: 'The same goes for the column selector!',
+                 intro: 'This dropdown menu is populated with the column metadata categories given to MetaVis.<br />'+
+                 ' Changing which category is selected changes which column metadata will be visualized in the colorbars and histograms.',
+                 position: 'right'
+              },
+              {
+                  // 5
+                 element: '#export',
+                 intro: 'You can export data you have selected in the heatmap to .csv!<br />' +
+                 ' Pressing the Export button while in <b>Row</b>/<b>Column</b> mode will export the selected rows or columns, while exporting when in <b>Cross</b> mode will give you data from the intersection of rows and columns.',
                  position: 'right'
               },
               {
                   // 6
                  element: '#reset',
-                 intro: 'The Reset button clears all selections on the heatmap and empties the data table.',
+                 intro: "The Reset button clears selections on the heatmap, resets it's zoom level, and empties the data tables.",
                  position: 'right'
               },
               {
                   // 7
                  element: '#x_color',
-                 intro: 'This is the responsive colorbar that corresponds to feature metadata.',
+                 intro: 'This is the responsive colorbar that corresponds to measure metadata.',
                  position: 'right'
               },
               {
                   // 8
                  element: '#y_color',
-                 intro: 'This is the responsive colorbar that corresponds to patient metadata.',
+                 intro: 'This is the responsive colorbar that corresponds to sample metadata.',
                  position: 'right'
               },
               {
                  // 9
                  intro: "Changes made to either the row or column metadata selectors will dynamically update their corresponding colorbars!<br /><br />" +
-                 "<p style='color: gray; font-size: 8pt;'><i>Supports up to 70 unique categories</i></p>",
+                 "<p style='color: gray; font-size: 8pt;'><i> 72 colors are supported. If the metadata has more than 72 categories, the extra ones will be displayed as gray.</i></p>",
               },
               {
                   // 10
                  element: '#y_leg',
-                 intro: 'This is the legend corresponding to the patient metadata colorbar.',
+                 intro: 'This is the legend corresponding to the sample metadata colorbar.',
                  position: 'right'
               },
               {
                   // 11
                  element: '#x_leg',
-                 intro: 'This is the legend corresopnding to the feature metadata colorbar.',
+                 intro: 'This is the legend corresopnding to the measure metadata colorbar.',
                  position: 'right'
               },
               {
@@ -99,7 +107,7 @@ var steps = [
               {
                   // 15
                  element: '#table-tabs',
-                 intro: 'These data tables reflect the selected rows or columns in the heatmap.',
+                 intro: 'These data tables reflect the selected rows or columns in the heatmap. Pressing the reset button will clear the respective table, and pressing the export button will export the table\'s contents to .csv.',
                  position: 'right'
               },
               {
@@ -123,8 +131,7 @@ function startIntro(){
             showProgress: true,
             exitOnOverlayClick: true,
             showStepNumbers: false,
-            keyboardNavigation: true,
-	    scrollToElement: true
+            keyboardNavigation: true
           });
           intro.start();
           intro.onexit(function(target) {

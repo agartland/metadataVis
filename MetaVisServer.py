@@ -1,4 +1,3 @@
-from __future__ import print_function
 from twisted.web import server, resource, static
 from twisted.internet import reactor, endpoints, task, threads
 from twisted.internet.defer import Deferred
@@ -33,7 +32,7 @@ def _handleMetaVis(request):
     if return_code != 0:
         request.write("Sorry, your files could not be processed at this time.")
         return _clean_and_return(request)
-        
+
     # Check for and handle errors
     if os.path.exists(os.path.join(config.error_dir, config.error_file)):
         error_file = open(os.path.join(config.error_dir, config.error_file), "r")
@@ -62,7 +61,7 @@ def _processLongform(request):
     data, row_md, col_md = _generateWideform(unique_rows=unique_rows, unique_cols=unique_cols,
                                              value_str=value_str, rowmeta_columns=rowmeta_columns, colmeta_columns=colmeta_columns,
                                              longform_df=longform)
-    if type(data) is str:
+    if isinstance(data, str):
         request.write("<div>" + data + "</div>")
         sys.exit()
     return data, row_md, col_md
@@ -74,7 +73,7 @@ def _prepArgs(request):
     launcher_args[0] = config.launcher
     launcher_args[1] = tmpdirname
 
-    for k,v in request.args.iteritems():
+    for k, v in request.args.items():
         if (k.find('File') >= 0) & (request.args[k][0] != ''):
             if k == 'longformFile':
                 data, row_md, col_md = _processLongform(request)
@@ -84,18 +83,23 @@ def _prepArgs(request):
                 launcher_args[2] = 'data'
                 launcher_args[3] = 'row_md'
                 launcher_args[4] = 'col_md'
+                launcher_args[5] = None
             else:
                 filename = str(k.replace('File', ''))
                 with open(os.path.join(tmpdirname, filename + '.csv'), 'w') as tmpFile:
                     tmpFile.write(request.args[k][0])
+                print(os.path.join(tmpdirname, filename + '.csv'), 'w')
                 if k == 'dataFile':
                     launcher_args[2] = filename
                 elif k == 'row_mdFile':
                     launcher_args[3] = filename
-                else: # k == 'col_mdFile'
+                elif k == 'col_mdFile':
                     launcher_args[4] = filename
-    launcher_args[5] = '-' + str(request.args['metric'][0])
-    launcher_args[6] = '-' + str(request.args['method'][0])
+                elif k == 'raw_dataFile':
+                    print(request.args[k][0])
+                    launcher_args[5] = filename
+    launcher_args[6] = '-' + str(request.args['metric'][0])
+    launcher_args[7] = '-' + str(request.args['method'][0])
     if 'standardize' in request.args:
         launcher_args.append('-standardize')
     if 'impute' in request.args:

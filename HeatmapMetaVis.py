@@ -47,12 +47,10 @@ def error_check(data, ptid_md, measures_md):
     return None
 
 # Generates the heatmap html at config.tmp_dir/config.output_file
-def gen_heatmap_html(data=None, row_md=None, col_md=None,
-                     longform=None, rx=None,
+def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
                      metric='euclidean', method='complete',
-                     standardize=True, impute=True, static=False):
+                     standardize=True, impute=True):
     # TODO - Metavis currently does not work without imputing
-    impute=True
 
     # if (longform is not None and rx is not None):
     #     data, row_md, col_md = _generateWideform(longform, rx)
@@ -69,7 +67,7 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None,
                                          method=method,
                                          standardize=standardize,
                                          impute=impute)
-    sources = initSources(data, ptid_md, measures_md)
+    sources = initSources(data, ptid_md, measures_md, raw_data)
 
     cbDict = initCallbacks(sources)
 
@@ -94,9 +92,11 @@ if __name__ == '__main__':
 
     # Importing files as dataframes
     #
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responsesNA.csv'), index_col=0)
     measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-metacols.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-metarow.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-metarows.csv'), index_col=0)
+    raw_data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses_raw.csv'), index_col=0)
+    # raw_data = None
 
     #
     # data = pd.read_csv(op.join('tmpdata', 'data.csv'), index_col=0)
@@ -144,11 +144,11 @@ if __name__ == '__main__':
     data, ptid_md, measures_md, rowDend, colDend = clusterData(data, ptid_md, measures_md,
                                          metric='euclidean',
                                          method='ward',
-                                         standardize=True,
-                                         impute=True)
+                                         standardize=False,
+                                         impute=False)
 
     # Creating overall data source
-    sources = initSources(data, ptid_md, measures_md)
+    sources = initSources(data, ptid_md, measures_md, raw_data)
 
     cbDict = initCallbacks(sources)
 

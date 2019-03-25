@@ -1,8 +1,9 @@
 var inds = source.selected.indices;
+console.log(inds);
 var confirm = true;
 if (storage.data['mode'] == "Cross") {
   confirm = window.confirm("Exporting on the intersection of rows and columns. \n \n (To export just rows or just columns, set the appropriate Selection Type)");
-  inds = inds.data['indices'];
+  inds = indices.data['indices'];
 }
 if (confirm) {
   var data = source.data;

@@ -89,9 +89,12 @@
           <div class="col-lg-8 mx-auto">
             <h2>Data Specifications</h2>
             <p class="lead">For usage, data provided must meet the following specifications:</p>
-			<li> 3 separate .csv files containing base data, row metadata, and column metadata respectively</li>
-			<li> Proper formatting for each file (correct number of rows/columns necessary) </li>
-			<li> For optimum performance, rows/columns should not exceed 300</li>
+  			<p> 3 separate .csv files containing base data, row metadata, and column metadata respectively</p>
+        OR
+        <p style='margin-top:10px;'> 1 .csv file containing longform data with metadata columns included </p>
+
+  			<li> Proper formatting for each file (correct number of rows/columns necessary) </li>
+  			<li> For optimum performance, rows/columns should not exceed 300</li>
 			<br />
 			<hr size=16>
           </div>
@@ -232,17 +235,21 @@
                       <div class="col-sm-8">
                         <input type="file" class="form-control" name="col_mdFile">
                       </div>
+                      <label class="control-label col-sm-10">Untransformed raw base data (Optional):</label>
+                      <div class="col-sm-8">
+                        <input type="file" class="form-control" name="raw_dataFile">
+                      </div>
                     </div>
                     <p class ="lead" style="margin-top: 30px;"> Supplementary Customization Options </p>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
-                          <label><input type="checkbox" name="standardize" checked> Standardize columns</label>
+                          <label><input type="checkbox" name="standardize"> Standardize columns</label>
                         </div>
                       </div>
                       <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
-                          <label><input type="checkbox" name="impute" checked> Impute missing values (vs. drop)</label>
+                          <label><input type="checkbox" name="impute"> Impute missing values (vs. drop)</label>
                         </div>
                       </div>
                       <div class="col-sm-offset-2 col-sm-10">

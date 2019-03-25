@@ -16,10 +16,17 @@ __all__ = ['imputeNA',
            'standardizeData',
            'initSources']
 
-def initSources(data, ptid_md, measures_md):
+def initSources(data, ptid_md, measures_md, raw_data):
     print(config.palette)
     df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
-    df.columns = ['PtID', 'Feature', 'rate']
+    if raw_data is not None:
+        raw_data = raw_data.reindex(data.index)
+        raw_data = raw_data[data.columns]
+        raw_df = pd.DataFrame(raw_data.stack(), columns=['rate']).reset_index()
+        df['raw_rate'] = raw_df['rate']
+        df.columns = ['PtID', 'Feature', 'rate', 'raw_rate']
+    else:
+        df.columns = ['PtID', 'Feature', 'rate']
     feature_list = list(data.columns)
     feature_df = pd.DataFrame(feature_list)
     feature_df.columns = ["feature"]

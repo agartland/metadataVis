@@ -53,9 +53,11 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     factors = []
     for i in range(70):
         factors.append(str(i))
+    print(data.shape)
+    fig_width = max(int(data.shape[0] * 1.02), 475)
 
     # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
-    p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources)
+    p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources, fig_width=fig_width)
     x_palette = config.palette
     y_palette = config.palette
 
@@ -71,7 +73,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     y_colorbar, y_bar_mapper = _createColorbar(source=sources['ptid'],
                                                p=p,
-                                               fig_size=(35, 600),
+                                               fig_size=(35, fig_width),
                                                tools='ypan',
                                                rect_dim=(0, 'PtID'),
                                                rect_size=(3, 1),
@@ -92,7 +94,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                               palette=y_palette)
 
     y_dendrogram = _createDendrogram(rowDend,
-                                     size=(600, 150),
+                                     size=(fig_width, 150),
                                      p=p,
                                      list=ptid_list,
                                      orientation='vertical')
@@ -108,11 +110,11 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     col_export_button.callback = CustomJS(args=dict(source=sources['m_table']),
                                           code=open(join(dirname(__file__), "../bootstrap/download.js")).read())
     p_export_button = Button(label="Export Data", button_type="success")
-    p_export_button.callback = CustomJS(args=dict(source=sources['source'], inds=sources['selected_inds'], storage=sources['storage']),
+    p_export_button.callback = CustomJS(args=dict(source=sources['source'], indices=sources['selected_inds'], storage=sources['storage']),
                                         code=open(join(dirname(__file__), "../bootstrap/p_download.js")).read())
 
     (row_reset_button, col_reset_button, selector,
-     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend, y_legend=y_legend)
+     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend, y_legend=y_legend, p=p)
     spacer = _createSpacer(p)
     row_table = column(sources['p_data_table'], row(widgetbox(row_reset_button, width=100), widgetbox(row_export_button, width=100)))
     col_table = column(sources['m_data_table'], row(widgetbox(col_reset_button, width=100), widgetbox(col_export_button, width=100)))
@@ -152,7 +154,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
         palettes = [
          ['#ffecb3','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'],
          ["#75968f","#a5bab7","#c9d9d3","#e2e2e2","#dfccce","#ddb7b1","#cc7878","#933b41", "#550b1d"],
-         ['#434268','#c19cd6','#9c9cd6','#9cc3d6','#9cd6bd','#edebaf','#edd0af','#e5c1bc','#ed6a6a']
+         ['#D3D3D3','#D3D3D3','#CCCC00','#FFFF33','#33cc00','#669900','#cc6600','#800000','#000000']
          ]
         mapper.palette = palettes[cb_obj.active];
         mapper.change.emit();
@@ -224,25 +226,6 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                 </div>
                                 </div>
                             </li>
-                            <li>
-                                <div class="container2">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
-                                            <h4 class="panel-title">
-                                                Histograms
-                                                <span class="pull-right">
-                                                    <i class="glyphicon glyphicon-chevron-down"></i>
-                                                </span>
-                                            </h4>
-                                        </div>
-                                        <div id="filterPanel2" class="panel-collapse panel-collapse collapse">
-                                            <div class="panel-body">
-                                                {{ plot_div.bars }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
                         </ul>
                 </nav>
                 <div class="navbar-header">
@@ -282,31 +265,22 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                            plot_script=script,
                            plot_div=div)
 
-    filename = 'MetaVis.html'
+    filename = 'MetaVisNA.html'
 
     with io.open(filename, mode='w', encoding='utf-8') as f:
         f.write(html)
 
-    with open('bootstrap/headercss.txt', 'r') as myfile:
-        headercss = myfile.read()
-    with open('bootstrap/headerjs.txt', 'r') as myfile:
-        headerjs = myfile.read()
-    with open('bootstrap/introjs.txt', 'r') as myfile:
-        introjs = myfile.read()
-    with open('bootstrap/introcss.txt', 'r') as myfile:
-        introcss = myfile.read()
-    with open('bootstrap/sidebarcss.txt', 'r') as myfile:
-        sidebarcss = myfile.read()
-    with open('bootstrap/sidebarjs.txt', 'r') as myfile:
-        sidebarjs = myfile.read()
-    with open('bootstrap/stepcss.txt', 'r') as myfile:
-        stepcss = myfile.read()
-    with open('bootstrap/stepjs.txt', 'r') as myfile:
-        stepjs = myfile.read()
-    with open('bootstrap/sidemenucss.txt', 'r') as myfile:
-        sidemenucss = myfile.read()
-    with open('bootstrap/sidemenujs.txt', 'r') as myfile:
-        sidemenujs = myfile.read()
+    headerjs = open(join(dirname(__file__), "../bootstrap/header.js")).read()
+    introjs = open(join(dirname(__file__), "../bootstrap/intro.js")).read()
+    sidebarjs = open(join(dirname(__file__), "../bootstrap/sidebar.js")).read()
+    stepjs = open(join(dirname(__file__), "../bootstrap/step.js")).read()
+    sidemenujs = open(join(dirname(__file__), "../bootstrap/sidemenu.js")).read()
+
+    headercss = open(join(dirname(__file__), "../bootstrap/header.css")).read()
+    introcss = open(join(dirname(__file__), "../bootstrap/intro.css")).read()
+    sidebarcss = open(join(dirname(__file__), "../bootstrap/sidebar.css")).read()
+    stepcss = open(join(dirname(__file__), "../bootstrap/step.css")).read()
+    sidemenucss = open(join(dirname(__file__), "../bootstrap/sidemenu.css")).read()
 
     template2 = Template("""\
     <!DOCTYPE html>
@@ -356,24 +330,6 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                             </div>
                             </div>
                         </li>
-                        <li>
-                            <div class="container2">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel2">
-                                        <h4 class="panel-title">
-                                            Histograms
-                                            <span class="pull-right">
-                                                <i class="glyphicon glyphicon-chevron-down"></i>
-                                            </span>
-                                        </h4>
-                                    </div>
-                                    <div id="filterPanel2" class="panel-collapse panel-collapse collapse">
-                                        <div class="panel-body">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
                     </ul>
                 </nav>
                 <div class="navbar-header">
@@ -404,13 +360,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 <div id="x_color">
                     {{ plot_div.x_color }}
                 </div>
-                <div class='hidden overlay' id='color-q' onclick="step('7');"> 
+                <div class='hidden overlay' id='color-q' onclick="step('8');"> 
                     <span class="tooltiptext">Colorbars</span>
                 </div>
             </div>
         </section>
         <section class='wrapper'>
-            <div class='hidden overlay' id='dend-q' onclick="step('13');"> 
+            <div class='hidden overlay' id='dend-q' onclick="step('14');"> 
                 <span class="tooltiptext">Dendrograms</span>
             </div>
             <div id="y_dend"> 
@@ -434,7 +390,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 <div id='x_leg'>
                     {{ plot_div.x_leg }}
                 </div>  
-                <div class='hidden overlay' id='leg-q'onclick="step('10');"> 
+                <div class='hidden overlay' id='leg-q'onclick="step('11');"> 
                     <span class="tooltiptext">Legends</span>
                 </div>
             </div>
@@ -451,7 +407,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     {{ plot_div.m_selector }}
                 </div>
             </div>
-            <div id='export'>
+            <div id='export' style="height:50px;">
                 {{ plot_div.export }}
             </div>
             <div id='reset'>
@@ -462,13 +418,13 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             </div>
         </section>
         <section class="wrapper">
-            <div class='hidden overlay' id='table-q' onclick="step('15');"> 
+            <div class='hidden overlay' id='table-q' onclick="step('16');"> 
                 <span class="tooltiptext">Data Tables</span>
             </div>
             <div id='table-tabs'>
                 {{ plot_div.table_tabs }}
             </div>
-            <div class='hidden overlay' id='bar-q' onclick="step('16');"> 
+            <div class='hidden overlay' id='bar-q' onclick="step('17');"> 
                 <span class="tooltiptext">Histograms</span>
             </div>
             <div id='bar-tabs' style="margin-left:200px;">
@@ -507,11 +463,11 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                            bootstrap=bootstrap)
 
     filename2 = 'MetaVis.html'
-
-    with io.open(filename2, mode='w', encoding='utf-8') as g:
-        g.write(html)
-
-    view(filename2)
+    #
+    # with io.open(filename2, mode='w', encoding='utf-8') as g:
+    #     g.write(html)
+    #
+    # view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -524,7 +480,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 """============================================================================================"""
 
 
-def _createWidgets(cbDict, sources, x_legend, y_legend):
+def _createWidgets(cbDict, sources, x_legend, y_legend, p):
     # Defining Buttons
     data, ptid_md, measures_md = sources['data'], sources['ptid_md'], sources['measures_md']
     row_reset_button = Button(label="Reset", callback=cbDict['row_reset'], button_type='danger')
@@ -533,11 +489,15 @@ def _createWidgets(cbDict, sources, x_legend, y_legend):
                       callback=cbDict['select_button'])
     multiselect_toggle = CheckboxGroup(labels=["multiselect"], callback=cbDict['multiselect_toggle'])
     reset_button = Button(label="Reset", callback=cbDict['reset'], button_type='danger', width=100)
+    reset_button.js_on_click(CustomJS(args=dict(p=p), code="""
+        p.reset.emit()
+    """))
     p_selector = Select(title="Choose row metadata", options=list(ptid_md)[1:], callback=CustomJS(args=dict(y_legend=y_legend, source=sources['source'], p_legend=sources['p_legend'],
                                             storage=sources['storage'], ptid=sources['ptid'], nonselect_rowbarchart=sources['nonselect_rowbarchart'],
                                             select_rowbarchart=sources['select_rowbarchart']), code='''
         y_legend.reset.emit();
         let input = cb_obj.value;
+        document.querySelector("#y_leg_label b").innerText = "Row Legend: " + input;
         storage.data['p_colname'] = input;
         let new_row = ptid.data[input];
         var factor_dict = {};
@@ -587,6 +547,7 @@ def _createWidgets(cbDict, sources, x_legend, y_legend):
                                             select_colbarchart=sources['select_colbarchart']), code='''
         x_legend.reset.emit();
         let input = cb_obj.value;
+        document.querySelector("#x_leg_label b").innerText = "Column Legend: " + input;
         storage.data['m_colname'] = input;
         let new_row = measure.data[input];
         var factor_dict = {};
@@ -636,7 +597,7 @@ def _createWidgets(cbDict, sources, x_legend, y_legend):
     return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector
 
 
-def _createHeatmap(cbDict, colors, sources):
+def _createHeatmap(cbDict, colors, sources, fig_width):
     # Defining tools/colors
     df, data = sources['df'], sources['data']
     feature_list = list(data.columns)
@@ -648,7 +609,7 @@ def _createHeatmap(cbDict, colors, sources):
 
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
-               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=600,
+               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=fig_width,
                tools=[TOOLS, box_select], active_drag=box_select, logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
@@ -667,17 +628,27 @@ def _createHeatmap(cbDict, colors, sources):
     p.add_layout(color_bar, 'right')
 
     # Adding hover functionality
-    p.select_one(HoverTool).tooltips = [
-        ('Patient ID ', '@PtID'),
-        ('Feature: ', '@Feature'),
-        ('rate', '@rate')
-    ]
+    print(sources['source'].data)
+    if 'raw_rate' in sources['source'].data:
+        p.select_one(HoverTool).tooltips = [
+            ('Participant ID: ', '@PtID'),
+            ('Measure: ', '@Feature'),
+            ('rate', '@rate'),
+            ('untranformed', '@raw_rate')
+        ]
+    else:
+        p.select_one(HoverTool).tooltips = [
+            ('Participant ID: ', '@PtID'),
+            ('Measure: ', '@Feature'),
+            ('rate', '@rate')
+        ]
 
     # Creating individual rectangle glyphs for heatmap
     p.rect(x="Feature", y="PtID", width=1, height=1,
            source=sources['source'],
            fill_color=color,
            line_color=None,
+           line_width=0,
            selection_fill_color=color,
            selection_line_color="black",
            selection_line_alpha=0.05,
@@ -686,7 +657,6 @@ def _createHeatmap(cbDict, colors, sources):
            nonselection_fill_color=color,
            )
     return p, mapper
-
 
 def _createSubsel(colors, sources, mapper):
     # Defining tools/colors
@@ -795,9 +765,7 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
         # dendrogram.multi_line(dend['icoord'], dend['dcoord'], color='black',
         # selection_color='black', nonselection_color='black',
         # selection_line_alpha=1, nonselection_line_alpha=1)
-    callback = CustomJS(args=dict(), code="""
-        console.log(cb_obj);
-    """)
+
     dendrogram.add_tools(TapTool())
     return dendrogram
 

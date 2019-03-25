@@ -39,42 +39,50 @@ var steps = [
               {
                   // 5
                  element: '#m_selector',
-                 intro: 'The same goes for the column selector!',
+                 intro: 'This dropdown menu is populated with the column metadata categories given to MetaVis.<br />'+
+                 ' Changing which category is selected changes which column metadata will be visualized in the colorbars and histograms.',
+                 position: 'right'
+              },
+              {
+                  // 5
+                 element: '#export',
+                 intro: 'You can export data you have selected in the heatmap to .csv!<br />' +
+                 ' Pressing the Export button while in <b>Row</b>/<b>Column</b> mode will export the selected rows or columns, while exporting when in <b>Cross</b> mode will give you data from the intersection of rows and columns.',
                  position: 'right'
               },
               {
                   // 6
                  element: '#reset',
-                 intro: 'The Reset button clears all selections on the heatmap and empties the data table.',
+                 intro: 'The Reset button clears all selections on the heatmap and empties the data tables.',
                  position: 'right'
               },
               {
                   // 7
                  element: '#x_color',
-                 intro: 'This is the responsive colorbar that corresponds to feature metadata.',
+                 intro: 'This is the responsive colorbar that corresponds to measure metadata.',
                  position: 'right'
               },
               {
                   // 8
                  element: '#y_color',
-                 intro: 'This is the responsive colorbar that corresponds to patient metadata.',
+                 intro: 'This is the responsive colorbar that corresponds to sample metadata.',
                  position: 'right'
               },
               {
                  // 9
                  intro: "Changes made to either the row or column metadata selectors will dynamically update their corresponding colorbars!<br /><br />" +
-                 "<p style='color: gray; font-size: 8pt;'><i>Currently only 12 colors are supported. If the metadata has more than 12 categories, the extra ones will be displayed as gray.</i></p>",
+                 "<p style='color: gray; font-size: 8pt;'><i> 72 colors are supported. If the metadata has more than 72 categories, the extra ones will be displayed as gray.</i></p>",
               },
               {
                   // 10
                  element: '#y_leg',
-                 intro: 'This is the legend corresponding to the patient metadata colorbar.',
+                 intro: 'This is the legend corresponding to the sample metadata colorbar.',
                  position: 'right'
               },
               {
                   // 11
                  element: '#x_leg',
-                 intro: 'This is the legend corresopnding to the feature metadata colorbar.',
+                 intro: 'This is the legend corresopnding to the measure metadata colorbar.',
                  position: 'right'
               },
               {
@@ -99,7 +107,7 @@ var steps = [
               {
                   // 15
                  element: '#table-tabs',
-                 intro: 'These data tables reflect the selected rows or columns in the heatmap.',
+                 intro: 'These data tables reflect the selected rows or columns in the heatmap. Pressing the reset button will clear the respective table, and pressing the export button will export the table\'s contents to .csv.',
                  position: 'right'
               },
               {

@@ -303,8 +303,6 @@ _js = dict(box_select="""
         p_legend.data['nonsel_count'] = storage.data['total_rowbar']
         p_legend.data['sel_count'] = new Array(storage.data['total_rowbar'].length).fill(0);
         m_legend.data['sel_count'] = new Array(storage.data['total_colbar'].length).fill(0);
-        document.getElementById('temp').style.display = "block";
-        console.log(document.getElementById('temp'));
         source.change.emit();
         storage.change.emit();
         p_legend.change.emit();
@@ -333,8 +331,13 @@ _js = dict(box_select="""
         m_data_table.change.emit();
     """,
 
+## OUT OF USE CHECK PLOTTING FOR NEW CALLBACK!!!
            p_select="""
         let input = cb_obj.value;
+        console.log("helppp");
+        alert("asdf");        
+        console.log(document.querySelector("#p_leg_label b").innerText);
+        document.querySelector("#y_leg_label b").innerText = "Row Legend: " + input;
         storage.data['p_colname'] = input;
         let new_row = ptid.data[input];
         var factor_dict = {};
@@ -370,7 +373,6 @@ _js = dict(box_select="""
         }
         let sel_count = new Array(freq_list.length).fill(0);
         p_legend.data = {'factors': factors, 'names': names, 'nonsel_count': freq_list, 'sel_count': sel_count};
-        console.log(p_legend.data);
         p_legend.change.emit();
         p_legend.data['nonsel_count'] = storage.data['total_rowbar'];
         p_legend.selected.indices = [];
@@ -378,8 +380,12 @@ _js = dict(box_select="""
         nonselect_rowbarchart.x_range.factors = p_legend.data['names'];
         select_rowbarchart.x_range.factors = p_legend.data['names'];
     """,
+
+## OUT OF USE CHECK PLOTTING FOR NEW CALLBACK!!!
            m_select=""" 
         let input = cb_obj.value;
+        console.log(document.querySelector("#x_leg_label b").innerText);
+        document.querySelector("#x_leg_label b").innerText = "Column Legend: " + input;
         storage.data['m_colname'] = input;
         let new_row = measure.data[input];
         var factor_dict = {};
