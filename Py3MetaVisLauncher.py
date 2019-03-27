@@ -38,7 +38,7 @@ def _parse_args():
         and sys.argv[7] != '-single'
         and sys.argv[7] != '-ward'
         and sys.argv[7] != '-average'):
-        error = "Error: Unexpected 6th argument"
+        error =  "Error: Unexpected 6th argument"
         error += "\n\tGiven: " + sys.argv[7]
         error += "\n\tExpected: [-complete | -single | -ward | -average]"
     for i in range(8, len(sys.argv)):
