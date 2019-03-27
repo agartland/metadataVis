@@ -2,10 +2,10 @@
 # Edit python path here
 
 # MZ Personal Path
-python3_path = "C:/Users/mihuz/Anaconda3/python.exe"
+# python3_path = "C:/Users/mihuz/Anaconda3/python.exe"
 
 # MZ Work Path
-# python3_path = "C:/Users/mzhao/Documents/anaconda/python.exe"
+python3_path = "C:/Users/mzhao/Documents/anaconda/python.exe"
 
 launcher = "Py3MetaVisLauncher.py"
 

@@ -75,9 +75,24 @@ def _checkCounts(data, row_md, col_md):
     rowmeta_count = row_md.shape[0]
     colmeta_count = col_md.shape[0]
     if (row_count != rowmeta_count):
-        return
+        return false, "row"
     if (col_count != colmeta_count):
-        return
+        return false, "col"
+    return true, ""
+
+def _checkNames(data, row_md, col_md):
+    data_colnames = list(data.columns.values)
+    data_rownames = list(data.index)
+    rowmd_names = list(row_md.index)
+    colmd_names = list(col_md.index)
+    if (data_colnames != colmd_names):
+        return false, "col"
+    if (data_rownames != rowmd_names):
+        return false, "row"
+    return true, ""
+
+def _checkNA(data, row_md, col_md):
+    df.isnull().sum()
 
 _empty_prev_error()
 _parse_args()
