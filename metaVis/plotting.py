@@ -463,11 +463,11 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                            bootstrap=bootstrap)
 
     filename2 = 'MetaVis.html'
-    #
-    # with io.open(filename2, mode='w', encoding='utf-8') as g:
-    #     g.write(html)
-    #
-    # view(filename2)
+
+    with io.open(filename2, mode='w', encoding='utf-8') as g:
+        g.write(html)
+
+    view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],

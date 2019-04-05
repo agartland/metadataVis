@@ -139,21 +139,21 @@ def _cleanup_tmp():
     if os.path.exists(config.tmp_dir):
         shutil.rmtree(config.tmp_dir)
 
-def _check_ver():
-    if sys.version_info[0] != 2:
-        raise Exception("MetaVisServer must be launched with python 2")
+# def _check_ver():
+    # if sys.version_info[0] != 2:
+        # raise Exception("MetaVisServer must be launched with python 2")
 
 redirectHome = Redirect('home')
 
 if __name__ == '__main__':
-    _check_ver()
+    # _check_ver()
     parser = argparse.ArgumentParser(description='Start metadataVis web server.')
     parser.add_argument('--port', metavar='PORT', type=int, default=5097)
     args = parser.parse_args()
 
     root = RootResource()
-    root.putChild('home', static.File('./homepage'))
-    root.putChild('viz', FileUpload())
+    root.putChild(b'home', static.File('./homepage'))
+    root.putChild(b'viz', FileUpload())
 
     site = server.Site(root)
     reactor.listenTCP(args.port, site)

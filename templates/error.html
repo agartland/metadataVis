@@ -3,16 +3,19 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="./templates/error.css">
-    <title>Simple tables</title>
+    <title>MetaVis Error </title>
 
 </head>
 <body>
 <div class="page">
-  <h1>Surfer groups</h1>
+  <h1>{{ title }}</h1>
+  <span> {{ message }} </span>
   <div class="table-cont">
   {% for table in tables %}
+  <div class="table">
     <h2>{{titles[loop.index]}}</h2>
     {{ table|safe }}
+  </div>
   {% endfor %}
   </div>
 </div>

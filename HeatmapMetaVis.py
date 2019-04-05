@@ -12,6 +12,7 @@ from LongformReader import _generateWideform
 from bokeh.util.browser import view
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from metaVis import *
+import numpy as np
 
 
 
@@ -82,21 +83,91 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
     return ret_val
 
 def _errorDisplay(data, row_md, col_md):
+    data_colnames = list(data.columns.values)
+    data_rownames = list(data.index)
+    rowmd_names = list(row_md.index)
+    colmd_names = list(col_md.index)
     env = Environment(
         loader=FileSystemLoader('templates'),
         autoescape=select_autoescape(['html', 'xml'])
     )
     template = env.get_template("error.html")
     # html = template.render(tables=[data.to_html(), row_md.to_html(), col_md.to_html()], titles=['na', 'Base Data', 'Row Metadata', 'Column Metadata'])
-    count_err, loc = _checkCounts(data, row_md, col_md)
+    count_err, count_loc, base_count, meta_count = _checkCounts(data, row_md, col_md)
     html = ""
+    has_error = False
     if count_err is True:
+        has_error = True
         print(count_err)
-        if loc == 'col':
-            data_colnames = pd.DataFrame({"Columns from data": list(data.columns.values)})
-            colmd_names = pd.DataFrame({"Columns from Col Metadata": list(col_md.index)})
-            html = template.render(tables=[data_colnames.to_html(), colmd_names.to_html()], titles=['na', "Columns from Data", "Columns from Column Metadata"])
-    return True, html
+        message = "Error: There are mismatched counts between your metadata and your base data. "
+        if count_loc == 'col':
+            message += "Your base data has " + str(data.shape[1]) + " columns but your Column Metadata has " + str(col_md.shape[0]) + " entries."
+            data_col_df = pd.DataFrame({"Columns from data": data_colnames})
+            colmd_df = pd.DataFrame({"Columns from Col Metadata": colmd_names})
+            html = template.render(title="Mismatched column counts", message=message, tables=[data_col_df.to_html(), colmd_df.to_html()],
+                                   titles=['na', "Columns from Data", "Columns from Column Metadata"])
+        if count_loc == 'row':
+            message += "Your base data has " + str(data.shape[0]) + " rows but your Row Metadata has " + str(row_md.shape[0]) + " entries."
+            data_row_df = pd.DataFrame({"Rows from data": data_rownames})
+            rowmd_df = pd.DataFrame({"Columns from Row Metadata": rowmd_names})
+            html = template.render(title="Mismatched row counts", message=message, tables=[data_row_df.to_html(), rowmd_df.to_html()],
+                                   titles=['na', "Rows from Data", "Columns from Row Metadata"])
+    na_err, data_na = _checkNA(data)
+    if na_err is True:
+        has_error = True
+        message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
+        if (len(data_na[0]) > 20):
+            print(data_na[0][:20])
+            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0][:20], data_na[1][:20])]
+            print(na_inds)
+            message += "The indices of the first 20 are shown below."
+        else:
+            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
+        na_df = pd.DataFrame(na_inds, columns="NA Value Indices")
+        html = template.render(title="Data contains NA Values", message=message,
+                               tables=[na_df.to_html()],
+                               titles=['na', "Data Indices with NA Values"])
+    name_err, name_loc = _checkNames(data_colnames, data_rownames, rowmd_names, colmd_names)
+    if name_err is True:
+        has_error = True
+        if name_loc == 'col':
+            diffs = (list(set(data_colnames) - set(colmd_names)))
+            if len(diffs) == 0:
+                message = "Error: The ordering of the column names in the base dataset do not match the ordering of the entries in the Column Metadata."
+                html = template.render(title="Misnamed column names", message=message)
+            else:
+                basecol_comparison = []
+                metacol_diffs = []
+                for i in range(min(20, len(data_colnames))):
+                    if data_colnames[i] != colmd_names[i]:
+                        metacol_diffs.append(colmd_names[i])
+                        basecol_comparison.append(data_colnames[i])
+                data_col_df = pd.DataFrame({"Columns from data": basecol_comparison})
+                colmd_df = pd.DataFrame({"Misnamed Entries from Column Metadata": metacol_diffs})
+                message = "Error: The column names in the base dataset do not match the entries in the Column Metadata. (Showing a max of 20 entries)"
+                html = template.render(title="Misnamed column names", message=message,
+                                       tables=[data_col_df.to_html(), colmd_df.to_html()],
+                                       titles=['na', "Columns from Data", "Misnamed Entries from Column Metadata"])
+        if name_loc == 'row':
+            diffs = (list(set(data_rownames) - set(rowmd_names)))
+            print(diffs)
+            if len(diffs) == 0:
+                message = "Error: The ordering of the row names in the base dataset do not match the ordering of the entries in the Row Metadata."
+                html = template.render(title="Misnamed column names", message=message)
+            else:
+                baserow_comparison = []
+                metarow_diffs = []
+                for i in range(min(20, len(data_rownames))):
+                    if data_rownames[i] != rowmd_names[i]:
+                        metarow_diffs.append(rowmd_names[i])
+                        baserow_comparison.append(data_rownames[i])
+                data_row_df = pd.DataFrame({"Rows from data": baserow_comparison})
+                rowmd_df = pd.DataFrame({"Misnamed Entries from Row Metadata": metarow_diffs})
+                message = "Error: The row names in the base dataset do not match the entries in the Row Metadata. (Showing a max of 20 entries)"
+                html = template.render(title="Misnamed row names", message=message,
+                                       tables=[data_row_df.to_html(), rowmd_df.to_html()],
+                                       titles=['na', "Rows from Data", "Misnamed Entries from Row Metadata"])
+    return has_error, html
 
 
 def _checkCounts(data, row_md, col_md):
@@ -105,25 +176,24 @@ def _checkCounts(data, row_md, col_md):
     rowmeta_count = row_md.shape[0]
     colmeta_count = col_md.shape[0]
     if (row_count != rowmeta_count):
-        return True, "row"
+        return True, "row", row_count, rowmeta_count
     if (col_count != colmeta_count):
-        return True, "col"
-    return False, ""
+        return True, "col", col_count, colmeta_count
+    return False, "", 0, 0
 
-def _checkNames(data, row_md, col_md):
-    data_colnames = list(data.columns.values)
-    data_rownames = list(data.index)
-    rowmd_names = list(row_md.index)
-    colmd_names = list(col_md.index)
-    if (data_colnames != colmd_names):
+def _checkNA(data):
+    data_na_inds = np.where(np.asanyarray(np.isnan(data)))
+    print(data_na_inds)
+    if len(data_na_inds[0]) > 0:
+        return True, data_na_inds
+    return False, None
+
+def _checkNames(data_colnames, data_rownames, rowmd_names, colmd_names):
+    if data_colnames != colmd_names:
         return True, "col"
-    if (data_rownames != rowmd_names):
+    elif data_rownames != rowmd_names:
         return True, "row"
     return False, ""
-
-def _checkNA(data, row_md, col_md):
-    data.isnull().sum()
-
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -131,15 +201,15 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
+    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
     # Importing files as dataframes
     #
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/mismatched_counts', 'MetaViz-responsesNA.csv'), index_col=0)
-    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/mismatched_counts', 'MetaViz-metacols-mis.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/mismatched_counts', 'MetaViz-metarows.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
+    measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows-misordered.csv'), index_col=0)
     # raw_data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses_raw.csv'), index_col=0)
     raw_data = None
 
@@ -186,11 +256,6 @@ if __name__ == '__main__':
     # data, ptid_md = filterData(data, ptid_md, method='pass')
 
     isError, err_html = _errorDisplay(data, ptid_md, measures_md)
-    with io.open('MetaVisError.html', mode='w', encoding='utf-8') as g:
-        g.write(err_html)
-
-    view('MetaVisError.html')
-    print(isError)
     if isError is False:
         data, ptid_md, measures_md, rowDend, colDend = clusterData(data, ptid_md, measures_md,
                                              metric='euclidean',
@@ -203,3 +268,9 @@ if __name__ == '__main__':
 
         cbDict = initCallbacks(sources)
         p = generateLayout(sources, cbDict, rowDend, colDend)
+    else:
+        with io.open('MetaVisError.html', mode='w', encoding='utf-8') as g:
+            g.write(err_html)
+
+        view('MetaVisError.html')
+        print(isError)

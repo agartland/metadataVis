@@ -18,6 +18,7 @@ __all__ = ['imputeNA',
 
 def initSources(data, ptid_md, measures_md, raw_data):
     print(config.palette)
+    print(list(measures_md.index))
     df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
     if raw_data is not None:
         raw_data = raw_data.reindex(data.index)
@@ -141,6 +142,8 @@ def clusterData(data, ptid_md, measures_md, metric='euclidean', method='Ward', s
     # data.rename(columns=data.iloc[0])
     # print(metric,method)
 
+    print("hello")
+    print(measures_md)
     Z = linkage(data, metric=metric, method=method)
     rowDend = dendrogram(Z, no_plot=True)
     reorderedDf = data.iloc[rowDend['leaves']]
@@ -156,9 +159,10 @@ def clusterData(data, ptid_md, measures_md, metric='euclidean', method='Ward', s
     # ptid_md.drop('index', axis=1, inplace=True)
 
     df_b = pd.DataFrame({'Feature': data.columns})
+    print(df_b)
     measures_md = pd.merge(df_b, measures_md, left_on='Feature', right_index=True, how='outer')
     # measures_md.drop('index', axis=1, inplace=True)
-
+    print(measures_md.index)
     data.index.name = 'PtID'
     return data, ptid_md, measures_md, rowDend, colDend
 
