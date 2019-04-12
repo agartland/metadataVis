@@ -474,6 +474,18 @@ function dropDuplicates(arr){
 
 function display(upload1, upload2) {
     document.getElementById(upload1).classList.toggle('hidden');
+    if (upload1 === 'longform') {
+        document.getElementById('lfFile').required = true;
+        document.getElementById('dataFile').required = false;
+        document.getElementById('row_mdFile').required = false;
+        document.getElementById('col_mdFile').required = false;
+    }
+    else {
+        document.getElementById('lfFile').required = false;
+        document.getElementById('dataFile').required = true;
+        document.getElementById('row_mdFile').required = true;
+        document.getElementById('col_mdFile').required = true;
+    }
     document.getElementById(upload2).classList.add('hidden');
 }
 

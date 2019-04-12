@@ -6,6 +6,7 @@ from twisted.web.util import redirectTo
 from twisted.python import log
 
 from io import StringIO
+import io
 import os.path as op
 import argparse
 #import pandas as pd
@@ -65,7 +66,7 @@ def _handleMetaVis(request):
     res_html = output_file.read()
     output_file.close()
 
-    request.write(res_html)
+    request.write(res_html.encode('utf-8'))
     return _clean_and_return(request)
 
 def _processLongform(request):
@@ -184,9 +185,10 @@ def _launchMetaVis(launcher_args):
     kwargs['impute'] = '-impute' in launcher_args
 
     has_error, err_html = _errorDisplay(kwargs['data'], kwargs['row_md'], kwargs['col_md'])
-    if (has_error):
+    if has_error:
         logger.info("not generating html")
-        ret_map = err_html
+        with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
+            f.write(err_html)
     else:
         logger.info("generating html")
         ret_map = gen_heatmap_html(**kwargs)
