@@ -7,17 +7,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afacc954-8fbf-4899-a471-d40dda2f11be" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/metadataVis.iml" afterPath="$PROJECT_DIR$/.idea/metadataVis.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HeatmapMetaVis.py" afterPath="$PROJECT_DIR$/HeatmapMetaVis.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVis.html" afterPath="$PROJECT_DIR$/MetaVis.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MetaVisServer.py" afterPath="$PROJECT_DIR$/MetaVisServer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Py3MetaVisLauncher.py" afterPath="$PROJECT_DIR$/Py3MetaVisLauncher.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metaVis/plotting.py" afterPath="$PROJECT_DIR$/metaVis/plotting.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metaVis/preprocessing.py" afterPath="$PROJECT_DIR$/metaVis/preprocessing.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/error.css" afterPath="$PROJECT_DIR$/templates/error.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/error.html" afterPath="$PROJECT_DIR$/templates/error.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,8 +25,8 @@
       <file leaf-file-name="plotting.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8862">
-              <caret line="460" column="47" lean-forward="false" selection-start-line="460" selection-start-column="47" selection-end-line="460" selection-end-column="47" />
+            <state relative-caret-position="455">
+              <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -40,21 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="callbacks.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8106">
-              <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="HeatmapMetaVis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="195" selection-end-column="20" />
+            <state relative-caret-position="420">
+              <caret line="80" column="24" lean-forward="true" selection-start-line="80" selection-start-column="24" selection-end-line="80" selection-end-column="24" />
               <folding>
                 <element signature="e#151#170#0" expanded="true" />
               </folding>
@@ -65,7 +49,7 @@
       <file leaf-file-name="preprocessing.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3171">
+            <state relative-caret-position="-96">
               <caret line="161" column="14" lean-forward="false" selection-start-line="161" selection-start-column="14" selection-end-line="161" selection-end-column="14" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
@@ -85,11 +69,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MetaVisServer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetaVisServer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="588">
-              <caret line="80" column="69" lean-forward="true" selection-start-line="80" selection-start-column="69" selection-end-line="80" selection-end-column="69" />
+            <state relative-caret-position="318">
+              <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="42" selection-end-column="21" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
               </folding>
@@ -97,21 +91,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MetaVisLauncherConfig.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="LongformReader.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LongformReader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="98" column="34" lean-forward="false" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
+            <state relative-caret-position="21">
+              <caret line="91" column="22" lean-forward="false" selection-start-line="91" selection-start-column="22" selection-end-line="91" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -120,11 +104,21 @@
       <file leaf-file-name="Py3MetaVisLauncher.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Py3MetaVisLauncher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="173" column="26" lean-forward="false" selection-start-line="173" selection-start-column="26" selection-end-line="173" selection-end-column="26" />
+            <state relative-caret-position="273">
+              <caret line="13" column="26" lean-forward="false" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetaVisLauncherConstants.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MetaVisLauncherConstants.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -140,9 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>inspe</find>
-      <find>inspect</find>
-      <find>cdn</find>
       <find>source</find>
       <find>fact</find>
       <find>factor_dict</find>
@@ -170,6 +161,9 @@
       <find>clusterData</find>
       <find>version</find>
       <find>ver</find>
+      <find>logger</find>
+      <find>mapper</find>
+      <find>logger.info</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -210,9 +204,9 @@
         <option value="$PROJECT_DIR$/MetaVisLauncherConfig.py" />
         <option value="$PROJECT_DIR$/metaVis/plotting.py" />
         <option value="$PROJECT_DIR$/metaVis/preprocessing.py" />
-        <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
         <option value="$PROJECT_DIR$/Py3MetaVisLauncher.py" />
         <option value="$PROJECT_DIR$/MetaVisServer.py" />
+        <option value="$PROJECT_DIR$/HeatmapMetaVis.py" />
       </list>
     </option>
   </component>
@@ -374,7 +368,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1098" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -408,22 +401,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="9" />
+      <option name="time" value="10" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3171">
-          <caret line="161" column="14" lean-forward="false" selection-start-line="161" selection-start-column="14" selection-end-line="161" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-            <marker date="1553900119326" expanded="true" signature="1415:1516" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -484,7 +466,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8106">
           <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -567,7 +548,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8106">
           <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -650,7 +630,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8106">
           <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -733,7 +712,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8106">
           <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -802,6 +780,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8106">
+          <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConstants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/example_server_plot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="399">
@@ -810,9 +803,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/LongformReader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="91" column="22" lean-forward="false" selection-start-line="91" selection-start-column="22" selection-end-line="91" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/preprocessing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3171">
+        <state relative-caret-position="-96">
           <caret line="161" column="14" lean-forward="false" selection-start-line="161" selection-start-column="14" selection-end-line="161" selection-end-column="14" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
@@ -821,66 +830,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/metaVis/callbacks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8106">
-          <caret line="387" column="26" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="388" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/metaVis/plotting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8862">
-          <caret line="460" column="47" lean-forward="false" selection-start-line="460" selection-start-column="47" selection-end-line="460" selection-end-column="47" />
+        <state relative-caret-position="455">
+          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="195" selection-end-column="20" />
-          <folding>
-            <element signature="e#151#170#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Py3MetaVisLauncher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="173" column="26" lean-forward="false" selection-start-line="173" selection-start-column="26" selection-end-line="173" selection-end-column="26" />
+        <state relative-caret-position="273">
+          <caret line="13" column="26" lean-forward="false" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LongformReader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="98" column="34" lean-forward="false" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MetaVisLauncherConfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="9" lean-forward="false" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MetaVisServer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="80" column="69" lean-forward="true" selection-start-line="80" selection-start-column="69" selection-end-line="80" selection-end-column="69" />
+        <state relative-caret-position="318">
+          <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="42" selection-end-column="21" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HeatmapMetaVis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="80" column="24" lean-forward="true" selection-start-line="80" selection-start-column="24" selection-end-line="80" selection-end-column="24" />
+          <folding>
+            <element signature="e#151#170#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -13,8 +13,23 @@ from bokeh.util.browser import view
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from metaVis import *
 import numpy as np
+import logging
 
-
+logger = logging.getLogger('spam_application')
+logger.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh = logging.FileHandler('spam2.log')
+fh.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 
 def error_check(data, ptid_md, measures_md):
@@ -64,6 +79,12 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
 
     ptid_md = row_md
     measures_md = col_md
+    if metric[-1] == "'":
+        metric = metric[2: -1]
+        method = method[2: -1]
+
+    logger.info(type(metric))
+    logger.info(metric)
     # TODO - double check clusterData param handling
     data, ptid_md, measures_md, rowDend, colDend = clusterData(data, ptid_md, measures_md,
                                          metric=metric,
@@ -209,7 +230,7 @@ if __name__ == '__main__':
     #
     data = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
     measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows-misordered.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows-mis.csv'), index_col=0)
     # raw_data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses_raw.csv'), index_col=0)
     raw_data = None
 

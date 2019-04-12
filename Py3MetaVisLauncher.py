@@ -184,8 +184,8 @@ if sys.argv[5] != "":
 else:
     kwargs['raw_data'] = None
 
-kwargs['metric'] = str(sys.argv[6].replace('-',''))
-kwargs['method'] = str(sys.argv[7].replace('-',''))
+kwargs['metric'] = str(sys.argv[6].replace('-', ''))
+kwargs['method'] = str(sys.argv[7].replace('-', ''))
 kwargs['standardize'] = '-standardize' in sys.argv
 kwargs['impute'] = '-impute' in sys.argv
 
