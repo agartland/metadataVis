@@ -193,7 +193,6 @@ def _launchMetaVis(launcher_args):
         logger.info("not generating html")
         with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
             f.write(err_html)
-
     else:
         logger.info("generating html")
         ret_map = gen_heatmap_html(**kwargs)
