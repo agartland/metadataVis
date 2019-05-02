@@ -6,6 +6,7 @@ from twisted.web.util import redirectTo
 from twisted.python import log
 
 from io import StringIO
+import io
 import os.path as op
 import argparse
 #import pandas as pd
@@ -64,22 +65,22 @@ def _handleMetaVis(request):
     output_file = open(os.path.join(tmpdirname, config.output_file), "r")
     res_html = output_file.read()
     output_file.close()
-
+    res_html = res_html.encode('utf-8')
     request.write(res_html)
     return _clean_and_return(request)
 
 def _processLongform(request):
 
-    sio_longform = StringIO(request.args['longformFile'][0].decode("UTF-8"))
+    sio_longform = StringIO(request.args[b'longformFile'][0].decode("UTF-8"))
     longform = pd.read_csv(sio_longform)
     rx = None
-    unique_rows = request.args['rowIndex']
-    unique_cols = request.args['colIndex']
-    value_str = request.args['value'][0]
-    rowmeta_columns = request.args['rowMeta']
-    colmeta_columns = request.args['colMeta']
-    data, row_md, col_md = _generateWideform(unique_rows=unique_rows, unique_cols=unique_cols,
-                                             value_str=value_str, rowmeta_columns=rowmeta_columns, colmeta_columns=colmeta_columns,
+    unique_rows = request.args[b'rowIndex']
+    unique_cols = request.args[b'colIndex']
+    value_str = request.args[b'value'][0]
+    rowmeta_columns = request.args[b'rowMeta']
+    colmeta_columns = request.args[b'colMeta']
+    data, row_md, col_md = _generateWideform(unique_rows_b=unique_rows, unique_cols_b=unique_cols,
+                                             value_str_b=value_str, rowmeta_columns_b=rowmeta_columns, colmeta_columns_b=colmeta_columns,
                                              longform_df=longform)
     return data, row_md, col_md
 
@@ -93,17 +94,19 @@ def _prepArgs(request):
         print(type(k))
         print(type(v))
         if (k.find(b'File') >= 0) & (request.args[k][0] != ''):
-            if k == 'longformFile':
+            if k == b'longformFile':
+                logger.info("found longform")
                 data, row_md, col_md = _processLongform(request)
-                data.to_csv(os.path.join(tmpdirname, 'data.csv'))
-                row_md.to_csv(os.path.join(tmpdirname, 'row_md.csv'))
-                col_md.to_csv(os.path.join(tmpdirname, 'col_md.csv'))
+                data.to_csv(os.path.join(tmpdirname, "data.csv"))
+                row_md.to_csv(os.path.join(tmpdirname, "row_md.csv"))
+                col_md.to_csv(os.path.join(tmpdirname, "col_md.csv"))
                 launcher_args[2] = 'data'
                 launcher_args[3] = 'row_md'
                 launcher_args[4] = 'col_md'
                 launcher_args[5] = None
+                break
             else:
-                filename = str(k.replace(b'File', b''))
+                filename = k.replace(b'File', b'').decode("UTF-8")
                 logger.info("hello: " + filename)
                 with open(os.path.join(tmpdirname, filename + '.csv'), 'wb') as tmpFile:
                     tmpFile.write(request.args[k][0])
@@ -144,7 +147,7 @@ def _parse_args_err(launcher_args):
         error = "Error: Too few arguments"
     elif(launcher_args[6] != '-euclidean' and launcher_args[6] != '-correlation'):
         error = "Error: Unexpected 6th argument"
-        error += "\n\tGiven: " + launcher_args[5]
+        error += "\n\tGiven: " + launcher_args[6]
         error += "\n\tExpected: [-euclidean | -correlation]"
     elif (launcher_args[7] != '-complete'
         and launcher_args[7] != '-single'
@@ -173,7 +176,7 @@ def _launchMetaVis(launcher_args):
     kwargs['data'] = pd.read_csv(op.join(dirname, launcher_args[2] + '.csv'), index_col=0)
     kwargs['row_md'] = pd.read_csv(op.join(dirname, launcher_args[3] + '.csv'), index_col=0)
     kwargs['col_md'] = pd.read_csv(op.join(dirname, launcher_args[4] + '.csv'), index_col=0)
-    if launcher_args[5] != "":
+    if launcher_args[5] is not None and launcher_args[5] != "":
         kwargs['raw_data'] = pd.read_csv(op.join(dirname, launcher_args[5] + '.csv'), index_col=0)
     else:
         kwargs['raw_data'] = None
@@ -183,10 +186,14 @@ def _launchMetaVis(launcher_args):
     kwargs['standardize'] = '-standardize' in launcher_args
     kwargs['impute'] = '-impute' in launcher_args
 
+    # If you want to fillNA values
+    kwargs['data'].fillna(0, inplace=True)
     has_error, err_html = _errorDisplay(kwargs['data'], kwargs['row_md'], kwargs['col_md'])
-    if (has_error):
+    if has_error:
         logger.info("not generating html")
-        ret_map = err_html
+        with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
+            f.write(err_html)
+
     else:
         logger.info("generating html")
         ret_map = gen_heatmap_html(**kwargs)
@@ -228,19 +235,21 @@ def _errorDisplay(data, row_md, col_md):
     na_err, data_na = _checkNA(data)
     logger.info("check na values: " + str(na_err))
     if na_err is True:
-        has_error = True
-        message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
-        if (len(data_na[0]) > 20):
-            print(data_na[0][:20])
-            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0][:20], data_na[1][:20])]
-            print(na_inds)
-            message += "The indices of the first 20 are shown below."
-        else:
-            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
-        na_df = pd.DataFrame(na_inds, columns="NA Value Indices")
-        html = template.render(title="Data contains NA Values", message=message,
-                               tables=[na_df.to_html()],
-                               titles=['na', "Data Indices with NA Values"])
+        data.fillna(-1)
+    # If we want to throw errors if they have an NA value.
+    #     has_error = True
+    #     message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
+    #     if (len(data_na[0]) > 20):
+    #         print(data_na[0][:20])
+    #         na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0][:20], data_na[1][:20])]
+    #         print(na_inds)
+    #         message += "The indices of the first 20 are shown below."
+    #     else:
+    #         na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
+    #     na_df = pd.DataFrame(na_inds)
+    #     html = template.render(title="Data contains NA Values", message=message,
+    #                            tables=[na_df.to_html()],
+    #                            titles=['na', "Data Indices with NA Values"])
     name_err, name_loc = _checkNames(data_colnames, data_rownames, rowmd_names, colmd_names)
     logger.info("check names: " + str(name_err))
     if name_err is True:

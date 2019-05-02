@@ -76,13 +76,13 @@ var steps = [
               {
                   // 10
                  element: '#y_leg',
-                 intro: 'This is the legend corresponding to the sample metadata colorbar.',
+                 intro: 'This is the legend corresponding to the sample metadata colorbar. Use the mouse wheel or click and drag if necessary, in order to scroll to see all categories.',
                  position: 'right'
               },
               {
                   // 11
                  element: '#x_leg',
-                 intro: 'This is the legend corresopnding to the measure metadata colorbar.',
+                 intro: 'This is the legend corresopnding to the measure metadata colorbar. Use the mouse wheel or click and drag if necessary, in order to scroll to see all categories.',
                  position: 'right'
               },
               {

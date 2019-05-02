@@ -9,11 +9,46 @@ import random
 #from bokeh.layouts import layout
 #from bokeh.models.widgets import MultiSelect, Dropdown
 import time
+import logging
+
+logger = logging.getLogger('spam_application')
+logger.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh = logging.FileHandler('spam3.log')
+fh.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 
 # DATAFRAME CONFIGURATION:
-def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colmeta_columns, longform_df):
-    start1 = time.time()
+def _generateWideform(unique_rows_b, unique_cols_b, value_str_b, rowmeta_columns_b, colmeta_columns_b, longform_df):
+    unique_rows = []
+    unique_cols = []
+    value_str = value_str_b.decode('utf-8')
+    rowmeta_columns = []
+    colmeta_columns = []
+    for byte in unique_rows_b:
+        unique_rows.append(byte.decode('utf-8'))
+    for byte in unique_cols_b:
+        unique_cols.append(byte.decode('utf-8'))
+    for byte in rowmeta_columns_b:
+        rowmeta_columns.append(byte.decode('utf-8'))
+    for byte in colmeta_columns_b:
+        colmeta_columns.append(byte.decode('utf-8'))
+    logger.info(unique_rows)
+    logger.info(unique_cols)
+    logger.info(value_str)
+    logger.info(rowmeta_columns)
+    logger.info(colmeta_columns)
+    logger.info(longform_df.shape)
     '''
     cd A:/gitrepo/metadataVisData/data
     fn = 'e097lum_gt_resp_p.csv'
@@ -52,8 +87,8 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     row_metadata = row_metadata.reset_index()'''
 
     wideform_df = longform_df.pivot(index=rowmeta_index, columns=colmeta_index, values=value_str)
+    wideform_df.to_csv('data/wideformc.csv')
     end = time.time()
-    print("pivot: " + str(end - start1))
     # print(len(wideform_df.columns.values))
     # print(wideform_df.columns.values[:15])
     # print(longform_df[colmeta_index].head(15))
@@ -67,14 +102,18 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     ptid_md = pd.DataFrame(data=rowmeta_dict,
                            columns=rowmeta_dict.keys())
     ptid_md = ptid_md.drop_duplicates()
+    ptid_md.set_index('index', inplace=True)
+    print(ptid_md.index)
+    print(wideform_df.index)
+    ptid_md = ptid_md.loc[list(wideform_df.index)]
+    print(ptid_md.index)
+    ptid_md.to_csv('data/ptidc.csv')
     colmeta_dict = {colmeta_index: longform_df[colmeta_index]}
     for entry in colmeta_columns:
         colmeta_dict[entry] = longform_df[entry]
     measure_md = pd.DataFrame(data=colmeta_dict,
                               columns=colmeta_dict.keys())
     measure_md = measure_md.drop_duplicates()
-
-    print(measure_md['Measure'])
 
     # validity_arr1 = _validMetadata(wideform_df.shape[1], colmeta_index, longform_df)
     # err_str1 = _validityMessages(wideform_df.shape[1], validity_arr1, colmeta_index, 'column')
@@ -100,7 +139,7 @@ def _generateWideform(unique_rows, unique_cols, value_str, rowmeta_columns, colm
     measure_md = measure_md.reindex(wideform_df.columns.values)
     wideform_df['id'] = id_list
     wideform_df.set_index("id", inplace=True)
-
+    logger.info(ptid_md.index)
     return wideform_df, ptid_md, measure_md
 
 def _validMetadata(num, index, longform_df):
@@ -157,18 +196,18 @@ if __name__ == '__main__':
     else:
         homeParam = 'mzWork'
 
-    homeFolders = dict(mzWork='C:/Users/mzhao/Documents',
+    homeFolders = dict(mzWork='C:/Users/mihuz/Documents',
                        afgWork='A:/gitrepo')
     home = homeFolders[homeParam]
 
     s1 = time.time()
 
-    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'e602lum_gt_resp.csv'))
+    longform_df = pd.read_csv(op.join(home, 'metadataVis', 'data', 'immune_response_data.csv'))
 
     s2 = time.time()
 
     print("upload: " + str(s1 - s1))
-    wideform_df, ptid_md, measure_md = _generateWideform(['ptid'], ['isotype', 'antigen'], 'delta', ['grp', 'visitno', 'control'], ['blank', 'antigen'], longform_df)
+    wideform_df, ptid_md, measure_md = _generateWideform([b'ptid'], [b'tcellsub'], b'pctpos_adj', [b'samp_ord', b'visitno'], [b'tcellsub', b'antigen'], longform_df)
     # print(longform_df['delta'].count())
     # print(wideform_df.count().sum().sum())
     wideform_df.to_csv('data/wideforma.csv')

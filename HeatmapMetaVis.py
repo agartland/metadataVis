@@ -144,7 +144,7 @@ def _errorDisplay(data, row_md, col_md):
             message += "The indices of the first 20 are shown below."
         else:
             na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
-        na_df = pd.DataFrame(na_inds, columns="NA Value Indices")
+        na_df = pd.DataFrame(na_inds)
         html = template.render(title="Data contains NA Values", message=message,
                                tables=[na_df.to_html()],
                                titles=['na', "Data Indices with NA Values"])
