@@ -27,10 +27,10 @@ import MetaVisLauncherConstants as constants
 from LongformReader import _generateWideform
 
 
-logger = logging.getLogger('spam_application')
+logger = logging.getLogger('activity_logger')
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
-fh = logging.FileHandler('spam.log')
+fh = logging.FileHandler('process.log')
 fh.setLevel(logging.DEBUG)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
