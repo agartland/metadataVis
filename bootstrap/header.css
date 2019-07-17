@@ -96,7 +96,7 @@ footer p {
 }
 
 #spacer {
-    width: 184px;
+    width: 220px;
 }
 
 #selectors {
@@ -141,6 +141,11 @@ footer p {
 #leg-q {
     margin-left: 185px;
     top: 275px;
+}
+
+#heatmap {
+    display: flex;
+    flex-direction: row;
 }
 
 #heatmap-q {

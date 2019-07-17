@@ -230,7 +230,7 @@ if __name__ == '__main__':
     #
     data = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
     measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
-    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows-mis.csv'), index_col=0)
+    ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows.csv'), index_col=0)
     # raw_data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses_raw.csv'), index_col=0)
     raw_data = None
 

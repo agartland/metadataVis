@@ -32,7 +32,9 @@ def initSources(data, ptid_md, measures_md, raw_data):
     feature_df = pd.DataFrame(feature_list)
     feature_df.columns = ["feature"]
     p_default = list(ptid_md)[1]
+    p_default2 = list(ptid_md)[2]
     m_default = list(measures_md)[1]
+    m_default2 = list(measures_md)[2]
 
     print(p_default)
     print(m_default)
@@ -58,8 +60,10 @@ def initSources(data, ptid_md, measures_md, raw_data):
     sources['subsel_chart'] = []
     sources['ptid'] = ColumnDataSource(ptid_md)
     sources['ptid'].data['inspect'] = sources['ptid'].data[p_default]
+    sources['ptid'].data['inspect2'] = sources['ptid'].data[p_default2]
     sources['measure'] = ColumnDataSource(measures_md)
     sources['measure'].data['inspect'] = sources['measure'].data[m_default]
+    sources['measure'].data['inspect2'] = sources['measure'].data[m_default2]
 
     """Move to storage source?"""
     sources['col'] = ColumnDataSource(feature_df)
@@ -68,14 +72,18 @@ def initSources(data, ptid_md, measures_md, raw_data):
     sources['storage'] = ColumnDataSource(data=dict(PtID=sources['ptid'].data['PtID'], Feature=sources['measure'].data['Feature'],
                                                     mode=['Cross'], indices=[], multiselect=['False'],
                                                     s_rowbar=[], s_colbar=[], total_rowbar=[], total_colbar=[],
-                                                    p_colname=[p_default], m_colname=[m_default],
-                                                    p_legend_index=[], m_legend_index=[], intersect=[0]))
+                                                    p_colname=[p_default], m_colname=[m_default], p_colname2=[p_default2], m_colname2=[m_default2],
+                                                    p_legend_index=[], m_legend_index=[], intersect=[0], p_legend2_index=[], m_legend2_index=[]))
     sources['p_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
                                                      nonsel_count=[], sel_count=[]))
     sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
                                                      nonsel_count=[], sel_count=[]))
-    sources['ptid'], sources['p_legend'], sources['storage'].data['total_rowbar'] = initSupplementSources(sources['ptid'], sources['p_legend'], default=p_default)
-    sources['measure'], sources['m_legend'], sources['storage'].data['total_colbar'] = initSupplementSources(sources['measure'], sources['m_legend'], default=m_default)
+    sources['p_legend2'] = ColumnDataSource(data=dict(factors=[], names=[],
+                                                     nonsel_count=[], sel_count=[]))
+    sources['m_legend2'] = ColumnDataSource(data=dict(factors=[], names=[],
+                                                     nonsel_count=[], sel_count=[]))
+    sources['ptid'], sources['p_legend'], sources['p_legend2'], sources['storage'].data['total_rowbar'] = initSupplementSources(sources['ptid'], sources['p_legend'], sources['p_legend2'], default=p_default, default2=p_default2)
+    sources['measure'], sources['m_legend'], sources['m_legend2'], sources['storage'].data['total_colbar'] = initSupplementSources(sources['measure'], sources['m_legend'], sources['m_legend2'], default=m_default, default2=m_default2)
     sources['p_data_table'] = _createTable(md=ptid_md, md_source=sources['p_table'])
     sources['m_data_table'] = _createTable(md=measures_md, md_source=sources['m_table'])
     sources['select_rowbarchart'], sources['ybar_mapper1'] = _createBarChart(source=sources['p_legend'],
@@ -211,7 +219,7 @@ def imputeNA(df, method='median', dropThresh=0.):
     return outDf
 
 
-def initSupplementSources(metadata, legend, default):
+def initSupplementSources(metadata, legend, legend2, default, default2):
     factor_dict = {}
     iterator = -1
     key_array = []
@@ -233,7 +241,29 @@ def initSupplementSources(metadata, legend, default):
     storage = list(counts.values())
     legend.data['nonsel_count'] = list(counts.values())
     legend.data['sel_count'] = [0] * len(legend.data['nonsel_count'])
-    return metadata, legend, storage
+
+    factor_dict = {}
+    iterator = -1
+    key_array = []
+    counts = {}
+    for i in range(len(metadata.data[default2])):
+        entry = metadata.data[default2][i]
+        if entry not in factor_dict:
+            iterator += 1
+            factor_dict[entry] = iterator
+            counts[entry] = 1
+        else:
+            counts[entry] = counts[entry] + 1
+        key_array.append(factor_dict[entry])
+    key_array = list(map(str, key_array))
+    metadata.data['inspect2'] = key_array
+    for entry in factor_dict:
+        legend2.data['names'].append(str(entry))
+        legend2.data['factors'].append(str(factor_dict[entry]))
+    storage = list(counts.values())
+    legend2.data['nonsel_count'] = list(counts.values())
+    legend2.data['sel_count'] = [0] * len(legend2.data['nonsel_count'])
+    return metadata, legend, legend2, storage
 
 
 def _createTable(md, md_source):

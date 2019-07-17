@@ -58,6 +58,9 @@
         metaModal.style.display = "none";
     }
 
+    var bamaButton = document.getElementById("preset-bama");
+    bamaButton.onclick = bamaPreset;
+
     // Get the modal
     var valueModal = document.getElementById('valueModal');
 
@@ -79,12 +82,13 @@
         }
         indexModal.style.display = "none";
         popValueModal();
+        reflectChanges("value-modal", "value")  
         valueModal.style.display = "block";
     }
 
     var next2 = document.getElementById("next2");
     next2.onclick = function() {
-        reflectChanges("value-modal", "value")
+        reflectChanges("value-modal", "value")  
         valueModal.style.display = "none";
         introspectData();
         metaModal.style.display = "block";
@@ -103,7 +107,7 @@
                 if (boxes[i].checked) {
                     arr.push(boxes[i].value);
                 }
-            }
+            }['ptid', 'visitno']
             console.log(arr)
             $("#" + select).multipleSelect("setSelects", arr);
         }
@@ -112,5 +116,16 @@
         }
     }
     function reflectChanges(modal, select) {
+        console.log($("#" + modal).multipleSelect("getSelects"))
         $("#" + select).multipleSelect("setSelects", $("#" + modal).multipleSelect("getSelects"));
+    }
+
+    function bamaPreset() {
+        popValueModal();
+        console.log($("#value").multipleSelect("getSelects"));
+        $("#rowindex").multipleSelect("setSelects", ['ptid', 'visitno']);
+        $("#colindex").multipleSelect("setSelects", ['isotype', 'antigen']);
+        $("#value").multipleSelect("setSelects", ['delta']);
+        console.log($("#value").multipleSelect("getSelects"));
+        indexModal.style.display = "none";
     }

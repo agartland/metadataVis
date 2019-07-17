@@ -90,10 +90,13 @@ def _prepArgs(request):
     launcher_args = [''] * constants.REQ_ARG_NUM
     launcher_args[0] = config.launcher
     launcher_args[1] = tmpdirname
+    logger.info(request.args.items())
     for k, v in request.args.items():
         print(type(k))
         print(type(v))
-        if (k.find(b'File') >= 0) & (request.args[k][0] != ''):
+        logger.info(k)
+        logger.info(k[0])
+        if (k.find(b'File') >= 0) & (request.args[k][0] != b''):
             if k == b'longformFile':
                 logger.info("found longform")
                 data, row_md, col_md = _processLongform(request)

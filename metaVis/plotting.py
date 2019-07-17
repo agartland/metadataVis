@@ -19,6 +19,7 @@ from bokeh.layouts import layout, column, widgetbox, row
 from bokeh.models import (
     BasicTicker,
     BoxSelectTool,
+    BasicTickFormatter,
     Button,
     CategoricalColorMapper,
     ColorBar,
@@ -57,19 +58,24 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     fig_width = max(int(data.shape[0] * 1.02), 475)
 
     # mapper2 = LinearColorMapper(palette=Set3[12], low=0, high=11)
-    p, heatmap_mapper = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources, fig_width=fig_width)
+    p, heatmap_mapper, color_bar = _createHeatmap(cbDict=cbDict, colors=colors, sources=sources, fig_width=fig_width)
+    print(color_bar)
     x_palette = config.palette
     y_palette = config.palette
-
+    x_palette2 = config.palette2
+    y_palette2 = config.palette2
+    print("heallo")
+    print(sources['storage'].data['p_legend_index'])
     x_colorbar, x_bar_mapper = _createColorbar(source=sources['measure'],
                                                p=p,
-                                               fig_size=(815, 35),
+                                               fig_size=(815, 30),
                                                tools='xpan',
                                                rect_dim=('Feature', 0),
-                                               rect_size=(1, 3),
+                                               rect_size=(1.2, 3),
                                                orientation='x',
                                                factors=factors,
-                                               palette=x_palette)
+                                               palette=x_palette,
+                                               inspect='inspect')
 
     y_colorbar, y_bar_mapper = _createColorbar(source=sources['ptid'],
                                                p=p,
@@ -79,7 +85,30 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                                rect_size=(3, 1),
                                                orientation='y',
                                                factors=factors,
-                                               palette=y_palette)
+                                               palette=y_palette,
+                                               inspect='inspect')
+
+    x_colorbar2, x_bar_mapper2 = _createColorbar(source=sources['measure'],
+                                               p=p,
+                                               fig_size=(815, 35),
+                                               tools='xpan',
+                                               rect_dim=('Feature', 0),
+                                               rect_size=(1.2, 3),
+                                               orientation='x',
+                                               factors=factors,
+                                               palette=x_palette2,
+                                               inspect='inspect2')
+
+    y_colorbar2, y_bar_mapper2 = _createColorbar(source=sources['ptid'],
+                                               p=p,
+                                               fig_size=(35, fig_width),
+                                               tools='ypan',
+                                               rect_dim=(0, 'PtID'),
+                                               rect_size=(3, 1),
+                                               orientation='y',
+                                               factors=factors,
+                                               palette=y_palette2,
+                                               inspect='inspect2')
 
     x_legend, x_legend_mapper = _createLegend(callback=cbDict['m_legend'],
                                               source=sources['m_legend'],
@@ -92,6 +121,22 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                               factors=factors,
                                               title="Row Colorbar",
                                               palette=y_palette)
+
+    print("here")
+    print(sources['m_legend'].data)
+
+    print(sources['m_legend2'].data)
+    x_legend2, x_legend_mapper2 = _createLegend(callback=cbDict['m_legend2'],
+                                              source=sources['m_legend2'],
+                                              factors=factors,
+                                              title="Column Colorbar",
+                                              palette=x_palette2)
+
+    y_legend2, y_legend_mapper2 = _createLegend(callback=cbDict['p_legend2'],
+                                              source=sources['p_legend2'],
+                                              factors=factors,
+                                              title="Row Colorbar",
+                                              palette=y_palette2)
 
     y_dendrogram = _createDendrogram(rowDend,
                                      size=(fig_width, 150),
@@ -114,7 +159,8 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                                         code=open(join(dirname(__file__), "../bootstrap/p_download.js")).read())
 
     (row_reset_button, col_reset_button, selector,
-     multiselect_toggle, reset_button, p_selector, m_selector) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend, y_legend=y_legend, p=p)
+     multiselect_toggle, reset_button, p_selector, m_selector, p_selector2, m_selector2) = _createWidgets(cbDict=cbDict, sources=sources, x_legend=x_legend,
+                                                                                             y_legend=y_legend, p=p, x_legend2=x_legend2, y_legend2=y_legend2)
     spacer = _createSpacer(p)
     row_table = column(sources['p_data_table'], row(widgetbox(row_reset_button, width=100), widgetbox(row_export_button, width=100)))
     col_table = column(sources['m_data_table'], row(widgetbox(col_reset_button, width=100), widgetbox(col_export_button, width=100)))
@@ -359,6 +405,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                 </div>
                 <div id="x_color">
                     {{ plot_div.x_color }}
+                    {{ plot_div.x_color2 }}
                 </div>
                 <div class='hidden overlay' id='color-q' onclick="step('8');"> 
                     <span class="tooltiptext">Colorbars</span>
@@ -375,11 +422,15 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div id="y_color">
                 {{ plot_div.y_color }}
             </div>
+            <div id="y_color2">
+                {{ plot_div.y_color2 }}
+            </div>
             <div class='hidden overlay' id='heatmap-q' onclick="step('2');">
                 <span class="tooltiptext">Heatmap</span>
             </div>
             <div id="heatmap"> 
                 {{ plot_div.heatmap }}
+                {{ plot_div.color_bar}}
             </div>
             <div class='col-flex' style='margin-left:20px' id='legs'>
                 <p style='margin-bottom:5px;margin-top:10px;' id="y_leg_label" class='hidden'> <b> Row Legend </b> </p>
@@ -394,6 +445,20 @@ def generateLayout(sources, cbDict, rowDend, colDend):
                     <span class="tooltiptext">Legends</span>
                 </div>
             </div>
+            
+            <div class='col-flex' style='margin-left:20px' id='legs2'>
+                <p style='margin-bottom:5px;margin-top:10px;' id="y_leg_label2" class='hidden'> <b> Row Legend </b> </p>
+                <div id='y_leg2'>
+                    {{ plot_div.y_leg2 }}
+                </div>
+                <p style='margin-bottom:5px;margin-top:15px;' id="x_leg_label2" class='hidden'> <b> Column Legend </b> </p>
+                <div id='x_leg2'>
+                    {{ plot_div.x_leg2 }}
+                </div>  
+                <div class='hidden overlay' id='leg-q'onclick="step('11');"> 
+                    <span class="tooltiptext">Legends</span>
+                </div>
+            </div>
         </section>
         <section class='wrapper'> 
             <div id='selectors'>
@@ -402,9 +467,11 @@ def generateLayout(sources, cbDict, rowDend, colDend):
             <div id='meta-select'>
                 <div id='p_selector'>
                     {{ plot_div.p_selector }}
+                    {{ plot_div.p_selector2 }}
                 </div>
                 <div id='m_selector'>
                     {{ plot_div.m_selector }}
+                    {{ plot_div.m_selector2 }}
                 </div>
             </div>
             <div id='export' style="height:50px;">
@@ -450,8 +517,9 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 
     script2, div2 = components({'heatmap': p, 'y_color': y_colorbar, 'y_dend': y_dendrogram, 'x_dend': x_dendrogram,
                                 'x_leg': x_legend, 'y_leg': y_legend, 'selectors': selectors, 'p_selector': p_selector,
-                                'm_selector': m_selector, 'reset': reset_button, 'bar_tabs': barchart_tabs,
-                                'table_tabs': table_tabs, 'x_color': x_colorbar, 'colors': cust_tabs, 'export': p_export_button})
+                                'y_color2': y_colorbar2, 'x_color2': x_colorbar2, 'm_selector2': m_selector2, 'p_selector2': p_selector2,
+                                'm_selector': m_selector, 'reset': reset_button, 'bar_tabs': barchart_tabs, 'color_bar': color_bar,
+                                'table_tabs': table_tabs, 'x_color': x_colorbar, 'colors': cust_tabs, 'export': p_export_button, 'x_leg2': x_legend2, 'y_leg2': y_legend2,})
 
     bootstrap = {'headercss': headercss, 'headerjs': headerjs, 'introjs': introjs, 'introcss': introcss,
                  'sidebarcss': sidebarcss, 'sidebarjs': sidebarjs, 'stepjs': stepjs, 'stepcss': stepcss,
@@ -480,7 +548,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
 """============================================================================================"""
 
 
-def _createWidgets(cbDict, sources, x_legend, y_legend, p):
+def _createWidgets(cbDict, sources, x_legend, y_legend, p, x_legend2, y_legend2):
     # Defining Buttons
     data, ptid_md, measures_md = sources['data'], sources['ptid_md'], sources['measures_md']
     row_reset_button = Button(label="Reset", callback=cbDict['row_reset'], button_type='danger')
@@ -489,6 +557,10 @@ def _createWidgets(cbDict, sources, x_legend, y_legend, p):
                       callback=cbDict['select_button'])
     multiselect_toggle = CheckboxGroup(labels=["multiselect"], callback=cbDict['multiselect_toggle'])
     reset_button = Button(label="Reset", callback=cbDict['reset'], button_type='danger', width=100)
+    p_default = list(ptid_md)[1]
+    p_default2 = list(ptid_md)[2]
+    m_default = list(measures_md)[1]
+    m_default2 = list(measures_md)[2]
     reset_button.js_on_click(CustomJS(args=dict(p=p), code="""
         p.reset.emit()
     """))
@@ -542,7 +614,7 @@ def _createWidgets(cbDict, sources, x_legend, y_legend, p):
         select_rowbarchart.x_range.factors = p_legend.data['names'];
     '''), width=175)
     m_selector = Select(title="Choose column metadata", options=list(measures_md)[1:], callback=CustomJS(args=dict(x_legend=x_legend, source=sources['source'], p_legend=sources['p_legend'],
-                                            storage=sources['storage'], measure=sources['measure'], col=sources['col'], m_table=sources['m_table'],
+                                            storage=sources['storage'], measure=sources['measure'], m_table=sources['m_table'],
                                             m_data_table=sources['m_data_table'], m_legend=sources['m_legend'], nonselect_colbarchart=sources['nonselect_colbarchart'],
                                             select_colbarchart=sources['select_colbarchart']), code='''
         x_legend.reset.emit();
@@ -594,7 +666,106 @@ def _createWidgets(cbDict, sources, x_legend, y_legend, p):
         select_colbarchart.x_range.factors = m_legend.data['names'];
                                             '''), width=175)
 
-    return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector
+    p_selector2 = Select(title="Choose row metadata", value=p_default2, options=list(ptid_md)[1:], callback=CustomJS(args=dict(source=sources['source'], p_legend2=sources['p_legend2'],
+                                            storage=sources['storage'], ptid=sources['ptid']), code='''
+        let input = cb_obj.value;
+        document.querySelector("#y_leg_label2 b").innerText = "Row Legend: " + input;
+        storage.data['p_colname2'] = input;
+        let new_row = ptid.data[input];
+        var factor_dict = {};
+        var count = -1;
+        var freq = {};
+        var key_array = [];
+        for (i = 0; i < new_row.length; i++) {
+            var entry = new_row[i];
+            if (!(factor_dict.hasOwnProperty(entry))) {
+                count++;
+                factor_dict[entry] = count;
+                freq[entry] = 1;
+            }
+            else {
+                freq[entry] = freq[entry] + 1;
+            }
+            key_array.push(factor_dict[entry]);
+        }
+        ptid.data['inspect2'] = key_array.map(String);
+        ptid.change.emit();
+        freq_list = [];
+        for (var key in freq) {
+            freq_list.push(freq[key]);
+        }
+        //storage.data['total_rowbar'] = freq_list;
+        p_legend2.data['factors'] = [];
+        p_legend2.data['names'] = [];
+        let names = [];
+        let factors = [];
+        for (entry in factor_dict) {
+            names.push(entry);
+            factors.push(factor_dict[entry].toString());
+        }
+        let sel_count = new Array(freq_list.length).fill(0);
+        p_legend2.data = {'factors': factors, 'names': names, 'nonsel_count': freq_list, 'sel_count': sel_count};
+        console.log(p_legend2.data);
+        p_legend2.change.emit();
+        p_legend2.data['nonsel_count'] = storage.data['total_rowbar'];
+        p_legend2.selected.indices = [];
+        p_legend2.change.emit();
+        //nonselect_rowbarchart.x_range.factors = p_legend.data['names'];
+        //select_rowbarchart.x_range.factors = p_legend2.data['names'];
+    '''), width=175)
+
+    m_selector2 = Select(title="Choose column metadata", value=m_default2, options=list(measures_md)[1:],
+                         callback=CustomJS(args=dict(source=sources['source'], m_legend2=sources['m_legend2'],
+                                                     storage=sources['storage'], measure=sources['measure'], m_table=sources['m_table'],
+                                                     m_data_table=sources['m_data_table']), code='''
+         let input = cb_obj.value;
+         document.querySelector("#x_leg_label2 b").innerText = "Column Legend: " + input;
+         storage.data['m_colname2'] = input;
+         let new_row = measure.data[input];
+         var factor_dict = {};
+         var count = -1;
+         var freq = {};
+         var key_array = [];
+         for (i = 0; i < new_row.length; i++) {
+             var entry = new_row[i];
+             if (!(factor_dict.hasOwnProperty(entry))) {
+                 count++;
+                 factor_dict[entry] = count;
+                 freq[entry] = 1;
+             }
+             else {
+                 freq[entry] = freq[entry] + 1;
+             }
+             key_array.push(factor_dict[entry]);
+         }
+         measure.data['inspect2'] = key_array.map(String);
+         measure.change.emit();
+         freq_list = [];
+         for (var key in freq) {
+             freq_list.push(freq[key]);
+         }
+         //storage.data['total_colbar'] = freq_list;
+         m_legend2.data['factors'] = [];
+         m_legend2.data['names'] = [];
+         let names = [];
+         let factors = [];
+         for (entry in factor_dict) {
+             names.push(entry);
+             factors.push(factor_dict[entry].toString());
+         }
+         //console.log(m_legend.data);
+         let sel_count = new Array(freq_list.length).fill(0);
+         m_legend2.data = {'factors': factors, 'names': names, 'nonsel_count': freq_list, 'sel_count': sel_count};
+         console.log(m_legend2.data);
+         m_legend2.change.emit();
+         console.log(m_legend2.data['factors']);
+         //m_legend2.data['nonsel_count'] = storage.data['total_colbar'];
+         //m_legend2.selected.indices = [];
+         m_legend2.change.emit();
+         //nonselect_colbarchart.x_range.factors = m_legend.data['names'];
+         //select_colbarchart.x_range.factors = m_legend.data['names'];
+                                             '''), width=175)
+    return row_reset_button, col_reset_button, selector, multiselect_toggle, reset_button, p_selector, m_selector, p_selector2, m_selector2
 
 
 def _createHeatmap(cbDict, colors, sources, fig_width):
@@ -609,7 +780,7 @@ def _createHeatmap(cbDict, colors, sources, fig_width):
 
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
-               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=905, plot_height=fig_width,
+               y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=844, plot_height=fig_width,
                tools=[TOOLS, box_select], active_drag=box_select, logo=None,
                toolbar_location='right', toolbar_sticky=False)
 
@@ -622,10 +793,17 @@ def _createHeatmap(cbDict, colors, sources, fig_width):
     # Adding colorbar
     color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
-                         formatter=PrintfTickFormatter(format="%0.1f"),
+                         formatter=BasicTickFormatter(use_scientific=False, precision=1),
                          label_standoff=5, border_line_color=None, location=(0, 0))
 
-    p.add_layout(color_bar, 'right')
+    color_bar_fig = Figure(plot_height=fig_width, plot_width=90)
+    color_bar_fig.toolbar_location = None
+    color_bar_fig.outline_line_color = None
+    color_bar_fig.min_border = 0
+    color_bar_fig.background_fill_color = 'white'
+    color_bar_fig.grid.grid_line_color = None
+    color_bar_fig.axis.visible = False
+    color_bar_fig.add_layout(color_bar, 'left')
 
     # Adding hover functionality
     print(sources['source'].data)
@@ -656,7 +834,7 @@ def _createHeatmap(cbDict, colors, sources, fig_width):
            nonselection_fill_alpha=0.3,
            nonselection_fill_color=color,
            )
-    return p, mapper
+    return p, mapper, color_bar_fig
 
 def _createSubsel(colors, sources, mapper):
     # Defining tools/colors
@@ -770,7 +948,7 @@ def _createDendrogram(dend, size, p, list, orientation='horizontal'):
     return dendrogram
 
 
-def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation, factors, palette):
+def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation, factors, palette, inspect):
     if orientation == 'y':
         colorbar = Figure(
             y_range=p.y_range,
@@ -790,7 +968,7 @@ def _createColorbar(source, p, fig_size, tools, rect_dim, rect_size, orientation
     colorbar.grid.grid_line_color = None
     colorbar.axis.visible = False
 
-    mapper_dict = factor_cmap('inspect', palette=palette, factors=factors)
+    mapper_dict = factor_cmap(inspect, palette=palette, factors=factors)
 
     colorbar.rect(source=source, x=rect_dim[0], y=rect_dim[1], width=rect_size[0], height=rect_size[1], line_color=None,
                   fill_color=mapper_dict,
@@ -817,7 +995,7 @@ def _createLegend(callback, source, factors, title, palette):
     mapper_dict = factor_cmap('factors', palette=palette, factors=factors)
 
     legend.text(source=source, x=0.3, y='factors', text_font_size='9pt', text='names', y_offset=7,
-                selection_text_alpha=1.3, nonselection_text_alpha=0.75)
+                selection_text_alpha=1.3, nonselection_text_alpha=0.75, selection_text_color='red')
     legend.rect(source=source, x=0, y='factors', width=0.3, height=0.5, line_color='black',
                 fill_color=mapper_dict,
                 selection_fill_color=mapper_dict,
@@ -833,7 +1011,7 @@ def _createLegend(callback, source, factors, title, palette):
 def _createSpacer(p):
     spacer = Figure(
         x_range=p.x_range,
-        plot_width=109, plot_height=10
+        plot_width=115, plot_height=10
     )
     spacer.outline_line_color = None
     spacer.toolbar_location = None

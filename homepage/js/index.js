@@ -216,6 +216,7 @@ function popValueModal() {
             optgrp2.appendChild(opt);
         }
     }
+    console.log("hello")
     document.getElementById("value-modal").appendChild(optgrp1);
     document.getElementById("value-modal").appendChild(optgrp2);
     let value = document.getElementById('value');
@@ -233,7 +234,7 @@ function popValueModal() {
         multipleWidth: 120,
         single: true,
     })
-    value.classList.remove("hidden");
+    $("#value").multipleSelect("refresh");
 }
 
 function dataCapture() {
