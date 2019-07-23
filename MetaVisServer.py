@@ -43,6 +43,9 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+log.startLogging(sys.stdout)
+log.msg("Starting Server")
+
 
 # TODO - Popup if file upload is empty; popup for errors
 # Must call _cleanup_tmp before returning
@@ -94,8 +97,6 @@ def _prepArgs(request):
     for k, v in request.args.items():
         print(type(k))
         print(type(v))
-        logger.info(k)
-        logger.info(k[0])
         if (k.find(b'File') >= 0) & (request.args[k][0] != b''):
             if k == b'longformFile':
                 logger.info("found longform")
@@ -125,11 +126,14 @@ def _prepArgs(request):
                         launcher_args[5] = filename
     launcher_args[6] = '-' + str(request.args[b'metric'][0])
     launcher_args[7] = '-' + str(request.args[b'method'][0])
-    if 'standardize' in request.args:
+    launcher_args[8] = '-' + str(request.args[b'transformation'][0])
+    logger.info(launcher_args[8])
+    if b'standardize' in request.args:
         launcher_args.append('-standardize')
-    if 'impute' in request.args:
+        logger.info("standardized")
+    if b'impute' in request.args:
         launcher_args.append('-impute')
-    if 'static' in request.args:
+    if b'static' in request.args:
         launcher_args.append('-static')
     return launcher_args
 
@@ -156,10 +160,11 @@ def _parse_args_err(launcher_args):
         and launcher_args[7] != '-single'
         and launcher_args[7] != '-ward'
         and launcher_args[7] != '-average'):
-        error = "Error: Unexpected 6th argument"
+        error = "Error: Unexpected 7th argument"
         error += "\n\tGiven: " + launcher_args[7]
         error += "\n\tExpected: [-complete | -single | -ward | -average]"
-    for i in range(8, len(launcher_args)):
+
+    for i in range(9, len(launcher_args)):
         if launcher_args[i] not in ['-standardize', '-impute', '-static']:
             error = "Error: Unexpected flag"
             error += "\n\tGiven: " + launcher_args[i]
@@ -176,9 +181,13 @@ def _launchMetaVis(launcher_args):
     dirname = launcher_args[1]
     logger.info("launching")
     logger.info(launcher_args)
-    kwargs['data'] = pd.read_csv(op.join(dirname, launcher_args[2] + '.csv'), index_col=0)
-    kwargs['row_md'] = pd.read_csv(op.join(dirname, launcher_args[3] + '.csv'), index_col=0)
-    kwargs['col_md'] = pd.read_csv(op.join(dirname, launcher_args[4] + '.csv'), index_col=0)
+    # kwargs['data'] = pd.read_csv(op.join(dirname, launcher_args[2] + '.csv'), index_col=0)
+    # kwargs['row_md'] = pd.read_csv(op.join(dirname, launcher_args[3] + '.csv'), index_col=0)
+    # kwargs['col_md'] = pd.read_csv(op.join(dirname, launcher_args[4] + '.csv'), index_col=0)
+
+    kwargs['data'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
+    kwargs['col_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
+    kwargs['row_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows.csv'), index_col=0)
     if launcher_args[5] is not None and launcher_args[5] != "":
         kwargs['raw_data'] = pd.read_csv(op.join(dirname, launcher_args[5] + '.csv'), index_col=0)
     else:
@@ -188,20 +197,23 @@ def _launchMetaVis(launcher_args):
     kwargs['method'] = str(launcher_args[7].replace('-', ''))
     kwargs['standardize'] = '-standardize' in launcher_args
     kwargs['impute'] = '-impute' in launcher_args
+    kwargs['transform'] = str(launcher_args[8].replace('-', ''))
 
     # If you want to fillNA values
     kwargs['data'].fillna(0, inplace=True)
     has_error, err_html = _errorDisplay(kwargs['data'], kwargs['row_md'], kwargs['col_md'])
     if has_error:
         logger.info("not generating html")
+        log.msg("Error in generating MetaVis visualization")
         with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
             f.write(err_html)
     else:
         logger.info("generating html")
+        log.msg("Generating MetaVis visualization.. Please wait")
+        logger.info("transformation " + kwargs['transform'])
         ret_map = gen_heatmap_html(**kwargs)
         if (ret_map['error'] is not None):
             _write_to_error(ret_map['error'])
-
 
 def _errorDisplay(data, row_md, col_md):
     data_colnames = list(data.columns.values)

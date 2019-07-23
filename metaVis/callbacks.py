@@ -71,38 +71,49 @@ _reqSources = {'box_select': ['source',
                             'select_colbarchart'],
                'p_legend': ['source',
                             'p_legend',
+                            'm_legend',
                             'p_legend2',
                             'm_legend2',
+                            'm_table',
+                            'measure',
                             'storage',
                             'ptid',
                             'col',
                             'p_table',
-                            'p_data_table',
-                            'm_legend'],
+                            'p_data_table'],
                'm_legend': ['source',
                             'p_legend',
-                            'storage',
-                            'measure',
-                            'col',
-                            'm_table',
-                            'm_data_table',
-                            'm_legend'],
-               'p_legend2': ['source',
+                            'm_legend',
                             'p_legend2',
-                            'storage',
-                            'ptid',
-                            'col',
-                            'p_table',
-                            'p_data_table',
-                            'm_legend2'],
-               'm_legend2': ['source',
                             'm_legend2',
+                            'ptid',
                             'storage',
                             'measure',
                             'col',
                             'm_table',
-                            'm_data_table',
-                            'p_legend2'],
+                            'm_data_table'],
+               'p_legend2': ['source',
+                             'p_legend',
+                             'm_legend',
+                             'm_legend2',
+                             'p_legend2',
+                             'storage',
+                             'ptid',
+                             'measure',
+                             'col',
+                             'p_table',
+                             'p_data_table'],
+               'm_legend2': ['source',
+                             'p_legend',
+                             'm_legend',
+                             'p_legend2',
+                             'm_legend2',
+                             'storage',
+                             'ptid',
+                             'measure',
+                             'col',
+                             'm_table',
+                             'm_data_table'],
                }
 
 _js = dict(box_select="""
@@ -331,6 +342,8 @@ _js = dict(box_select="""
         storage.change.emit();
         p_legend.change.emit();
         m_legend.change.emit();
+        p_legend2.change.emit();
+        m_legend2.change.emit();
         p_table.change.emit();
         p_data_table.change.emit();
         m_table.change.emit();
@@ -460,13 +473,7 @@ _js = dict(box_select="""
         console.log("here");
         console.log(storage.data['p_legend_index']);
         console.log(p_legend.selected.indices[0]);
-        if (p_legend.selected.indices[0] === storage.data['p_legend_index'][0]) {
-            console.log("resetting...");
-            m_legend.selected.indices = [];
-            p_legend.selected.indices = [];
-            storage.data['p_legend_index'] = [];
-        }
-        else {
+        
         let p_colname = storage.data['p_colname'];
         let p_colname2 = storage.data['p_colname2'];
         let m_colname = storage.data['m_colname'];
@@ -481,6 +488,13 @@ _js = dict(box_select="""
         m_dict[m_colname2] = m_legend2.selected.indices;
         let row_inds = [];
         let col_inds = [];
+        if (p_legend.selected.indices[0] === storage.data['p_legend_index'][0]) {
+            console.log("resetting...");
+            p_legend.selected.indices = [];
+            storage.data['p_legend_index'] = [];
+            p_dict[p_colname] = [];
+        }
+        console.log("dicts");
         console.log(p_dict)
         console.log(m_dict)
         let is_row = false;
@@ -510,11 +524,16 @@ _js = dict(box_select="""
             else {
                 let keys = Object.keys(p_dict);
                 let p_col = keys[0]
+                let row_name = p_legend.data['names'][p_dict[p_col]];
                 if (p_dict[p_keys[1]].length > 0) {
                     p_col = keys[1]; 
+                    row_name =  p_legend2.data['names'][p_dict[p_col]];
                 }
+                console.log(p_col);
                 for (i = 0; i < ptid.data[p_colname].length; i++) {
-                    if (ptid.data[p_col][i] == p_legend.data['names'][p_dict[p_col]]) {
+                    console.log(ptid.data[p_col][i])
+                    console.log(p_legend.data['names'][p_dict[p_col]]);
+                    if (ptid.data[p_col][i] == row_name) {
                         row_reduced_inds.push(i);
                     }
                 }
@@ -535,6 +554,7 @@ _js = dict(box_select="""
         console.log("row inds")
         console.log(row_inds);
         let m_keys = Object.keys(m_dict);
+        console.log(m_dict);
         if (m_dict[m_keys[0]].length > 0 || m_dict[m_keys[1]].length > 0) {
             is_col = true;
             var col_reduced_inds = [];
@@ -543,11 +563,9 @@ _js = dict(box_select="""
             if (col_names.indexOf("inspect") == -1 ) {
                 col_names.push('inspect');
             }            
-            for (let b = 0; b < col_names.length; b++) {
-                m_table.data[col_names[b]] = [];
-            }
             // If 2 row filters active
             if (m_dict[m_keys[0]].length > 0 && m_dict[m_keys[1]].length > 0) {
+                console.log("2 row filters")
                 col_name = m_legend.data['names'][m_legend.selected.indices];
                 col_name2 = m_legend2.data['names'][m_legend2.selected.indices];
                 for (let j = 0; j < measure.data[m_colname].length; j++) {
@@ -559,15 +577,19 @@ _js = dict(box_select="""
             else {
                 let col_keys = Object.keys(m_dict);
                 let m_col = col_keys[0]
-                if (m_dict[m_keys[1]].length > 0) {
-                    m_col = col_keys[1]; 
-                }
-                for (let k = 0; k < measure.data[m_colname].length; k++) {
-                    if (measure.data[m_col][k] ==  m_legend.data['names'][m_dict[m_col]]) {
-                        col_reduced_inds.push(i);
+                let col_name = m_legend.data['names'][m_dict[m_col]];
+                    if (m_dict[m_keys[1]].length > 0) {
+                        m_col = col_keys[1];
+                        col_name = m_legend2.data['names'][m_dict[m_col]]; 
+                    }
+                    for (let k = 0; k < measure.data[m_colname].length; k++) {
+                        if (measure.data[m_col][k] ==  col_name) {
+                            col_reduced_inds.push(k);
+                            console.log("pushing col ind");
+                        }
                     }
                 }
-            }
+                console.log(col_reduced_inds);
             let len = col.data['feature'].length;
             let col_selected_inds = col_reduced_inds.slice();
             for (let i = 0; i < col_selected_inds.length; i++) {
@@ -577,255 +599,515 @@ _js = dict(box_select="""
                 }
             }  
         }
+        console.log("col_inds")
+        console.log(col_inds)
         if (is_col && is_row) {
-            total_inds = row_inds.filter(value => -1 !== col_inds.indexOf(value));            
+            console.log("both col and row filters, total inds:")
+            console.log(row_inds)
+            console.log(col_inds);
+            total_inds = col_inds.filter(value => row_inds.includes(value));
+            console.log(total_inds);
         }
         else {
             total_inds = row_inds.concat(col_inds);
         }
+        console.log(col_inds);
         source.selected.indices = total_inds;
+        console.log(source.selected.indices);
+        source.change.emit();
         for (let j = 0; j < row_reduced_inds.length; j++) {
             let col = row_reduced_inds[j];
             for (let k = 0; k < row_names.length; k++) {
                 p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
             }
         }
-        }
         console.log(p_table.data);
         source.change.emit();
+        console.log("final source")
+        console.log(source.selected.indices);
         p_legend.change.emit();
         p_table.change.emit();
         p_data_table.change.emit();
         m_legend.change.emit();
     """,
            m_legend="""
-        if (m_legend.selected.indices[0] == storage.data['m_legend_index'][0] && source.selected.indices.length != 0) {
-            source.selected.indices = [];
+        console.log("here");
+        console.log(storage.data['m_legend_index']);
+        console.log(m_legend.selected.indices[0]);
+        
+        let p_colname = storage.data['p_colname'];
+        let p_colname2 = storage.data['p_colname2'];
+        let m_colname = storage.data['m_colname'];
+        let m_colname2 = storage.data['m_colname2'];
+        let row_reduced_inds = [];
+        let total_inds = [];
+        let p_dict = {};
+        p_dict[p_colname] = p_legend.selected.indices;
+        p_dict[p_colname2] = p_legend2.selected.indices;
+        let m_dict = {};
+        m_dict[m_colname] = m_legend.selected.indices;
+        m_dict[m_colname2] = m_legend2.selected.indices;
+        let row_inds = [];
+        let col_inds = [];
+        if (m_legend.selected.indices[0] === storage.data['m_legend_index'][0]) {
+            console.log("resetting...");
             m_legend.selected.indices = [];
-            p_legend.selected.indices = []; 
-            let m_col_names = m_table.column_names;
-            for (let i = 0; i < m_col_names.length; i++) {
-                m_table.data[m_col_names[i]] = [];
-            }
+            storage.data['m_legend_index'] = [];
+            m_dict[m_colname] = [];
         }
-        else {
-            if (storage.data['intersect'][0]) {
-                console.log("resetting...");
-                p_legend.selected.indices = [];
-                storage.data['intersect'][0] = 0;
-            }
-            storage.data['m_legend_index'] = m_legend.selected.indices;
-            storage.data['p_legend_index'] = [];
-            let index = m_legend.selected.indices;
-            let names = m_legend.data['names'];
-            let name = names[index];
-            let reduced_inds = [];
-            let inds = [];
-            let col_names = measure.column_names;
+        console.log("dicts");
+        console.log(p_dict)
+        console.log(m_dict)
+        let is_row = false;
+        let is_col = false;
+        // If user is toggling same selection
+        let p_keys = Object.keys(p_dict);
+        if (p_dict[p_keys[0]].length > 0 || p_dict[p_keys[1]].length > 0) {
+            is_row = true;
+            var col_names = measure.column_names;
             if (col_names.indexOf("inspect") == -1 ) {
                 col_names.push('inspect');
-            }
-            for (let b = 0; b < col_names.length; b++) {
-                m_table.data[col_names[b]] = [];
-            }
-            // Getting min indices for selected column_names
-            let colname = storage.data['m_colname'];
-            for (let i = 0; i < measure.data[colname].length; i++) {
-                if (measure.data[colname][i] == name) {
-                 reduced_inds.push(i);
+            }            
+            // If 2 row filters active
+            if (p_dict[p_keys[0]].length > 0 && p_dict[p_keys[1]].length > 0) {
+                row_name = p_legend.data['names'][p_legend.selected.indices];
+                row_name2 = p_legend2.data['names'][p_legend2.selected.indices];
+                for (i = 0; i < ptid.data[p_colname].length; i++) {
+                    if (ptid.data[p_colname][i] == row_name && ptid.data[p_colname2][i] == row_name2) {
+                        row_reduced_inds.push(i);
+                    }
                 }
-            }
-            console.log(reduced_inds)
-            // Selecting the entire column from each column's min index
-            let len = col.data['feature'].length;
-            let selected_inds = reduced_inds.slice();
-            for (let i = 0; i < selected_inds.length; i++) {
-                while (selected_inds[i] < source.data['Feature'].length) {
-                    inds.push(selected_inds[i]);
-                    selected_inds[i] += len;
-                }
-            }
-            console.log("selected inds")
-            console.log(selected_inds)
-            let intersect = [];
-            // If this is a filtering selection on a p_legend select
-            if (p_legend.selected.indices.length != 0) {
-                intersect = inds.filter(value => -1 !== source.selected.indices.indexOf(value));
-                source.selected.indices = intersect;
-                storage.data['intersect'][0] = 1;
             }
             else {
-                source.selected.indices = inds;      
-                storage.data['intersect'][0] = 0;
-            }
-            console.log(col_names);
-            for (let j = 0; j < reduced_inds.length; j++) {
-                let col = reduced_inds[j];
-                for (let k = 0; k < col_names.length; k++) {
-                    if (col_names[k] == 'inspect') {
-                        console.log(col);
-                    }
-                    m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
+                let keys = Object.keys(p_dict);
+                let p_col = keys[0]
+                let row_name = p_legend.data['names'][p_dict[p_col]];
+                if (p_dict[p_keys[1]].length > 0) {
+                    p_col = keys[1]; 
+                    row_name =  p_legend2.data['names'][p_dict[p_col]];
                 }
+                console.log(p_col);
+                for (i = 0; i < ptid.data[p_colname].length; i++) {
+                    console.log(ptid.data[p_col][i])
+                    console.log(p_legend.data['names'][p_dict[p_col]]);
+                    if (ptid.data[p_col][i] == row_name) {
+                        row_reduced_inds.push(i);
+                    }
+                }
+            }
+            console.log("row reduced inds");
+            console.log(row_reduced_inds)
+            var len = col.data['feature'].length;
+            var indices = row_reduced_inds.map(function(x) { return x * len; });
+            for (let i = 0; i < indices.length; i++) {
+                var min_index = Math.floor(indices[i] / len) * len;
+                var max_index = min_index + len;
+                while (min_index < max_index) {
+                    row_inds.push(min_index);
+                    min_index++;
+                }
+            }
+        }
+        console.log("row inds")
+        console.log(row_inds);
+        let m_keys = Object.keys(m_dict);
+        console.log(m_dict);
+        if (m_dict[m_keys[0]].length > 0 || m_dict[m_keys[1]].length > 0) {
+            storage.data['m_legend_index'] = m_legend.selected.indices;
+            is_col = true;
+            var col_reduced_inds = [];
+            storage.data['col_legend_index'] = m_legend.selected.indices;
+            var col_names = measure.column_names;
+            if (col_names.indexOf("inspect") == -1 ) {
+                col_names.push('inspect');
+            }            
+            // If 2 row filters active
+            if (m_dict[m_keys[0]].length > 0 && m_dict[m_keys[1]].length > 0) {
+                console.log("2 row filters")
+                col_name = m_legend.data['names'][m_legend.selected.indices];
+                col_name2 = m_legend2.data['names'][m_legend2.selected.indices];
+                for (let j = 0; j < measure.data[m_colname].length; j++) {
+                    if (measure.data[m_colname][j] == col_name && measure.data[m_colname2][j] == col_name2) {
+                        col_reduced_inds.push(j);
+                    }
+                }
+            }
+            else {
+                let col_keys = Object.keys(m_dict);
+                let m_col = col_keys[0]
+                let col_name = m_legend.data['names'][m_dict[m_col]];
+                    if (m_dict[m_keys[1]].length > 0) {
+                        m_col = col_keys[1];
+                        col_name = m_legend2.data['names'][m_dict[m_col]]; 
+                    }
+                    for (let k = 0; k < measure.data[m_colname].length; k++) {
+                        if (measure.data[m_col][k] ==  col_name) {
+                            col_reduced_inds.push(k);
+                            console.log("pushing col ind");
+                        }
+                    }
+                }
+                console.log(col_reduced_inds);
+            let len = col.data['feature'].length;
+            let col_selected_inds = col_reduced_inds.slice();
+            for (let i = 0; i < col_selected_inds.length; i++) {
+                while (col_selected_inds[i] < source.data['Feature'].length) {
+                    col_inds.push(col_selected_inds[i]);
+                    col_selected_inds[i] += len;
+                }
+            }  
+        }
+        console.log("col_inds")
+        console.log(col_inds)
+        if (is_col && is_row) {
+            console.log("both col and row filters, total inds:")
+            console.log(row_inds)
+            console.log(col_inds);
+            total_inds = col_inds.filter(value => row_inds.includes(value));
+            console.log(total_inds);
+        }
+        else {
+            total_inds = row_inds.concat(col_inds);
+        }
+        console.log(col_inds);
+        source.selected.indices = total_inds;
+        console.log(source.selected.indices);
+        source.change.emit();
+        for (let j = 0; j < col_reduced_inds.length; j++) {
+            let col = col_reduced_inds[j];
+            for (let k = 0; k < col_names.length; k++) {
+                m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
             }
         }
         console.log(m_table.data);
+        source.change.emit();
+        console.log("final source")
+        console.log(source.selected.indices);
         m_legend.change.emit();
         m_table.change.emit();
         m_data_table.change.emit();
-        source.change.emit();
-        p_legend.change.emit();
     """,
 
         p_legend2 = """
-               console.log(p_table.data);
-            if (p_legend2.selected.indices[0] == storage.data['p_legend2_index'][0] && source.selected.indices.length != 0) {
-                source.selected.indices = [];
-                p_legend2.selected.indices = [];
-                m_legend2.selected.indices = []; 
-                // resetting p_table
-                let p_col_names = p_table.column_names;
-                for (i = 0; i < p_col_names.length; i++) {
-                    p_table.data[p_col_names[i]] = [];
+        console.log("here");
+        console.log(storage.data['p_legend_index']);
+        console.log(p_legend.selected.indices[0]);
+        
+        let p_colname = storage.data['p_colname'];
+        let p_colname2 = storage.data['p_colname2'];
+        let m_colname = storage.data['m_colname'];
+        let m_colname2 = storage.data['m_colname2'];
+        let row_reduced_inds = [];
+        let total_inds = [];
+        let p_dict = {};
+        p_dict[p_colname] = p_legend.selected.indices;
+        p_dict[p_colname2] = p_legend2.selected.indices;
+        let m_dict = {};
+        m_dict[m_colname] = m_legend.selected.indices;
+        m_dict[m_colname2] = m_legend2.selected.indices;
+        let row_inds = [];
+        let col_inds = [];
+        if (p_legend2.selected.indices[0] === storage.data['p_legend2_index'][0]) {
+            console.log("resetting...");
+            p_legend2.selected.indices = [];
+            storage.data['p_legend2_index'] = [];
+            p_dict[p_colname2] = [];
+        }
+        console.log("dicts");
+        console.log(p_dict)
+        console.log(m_dict)
+        let is_row = false;
+        let is_col = false;
+        // If user is toggling same selection
+        let p_keys = Object.keys(p_dict);
+        if (p_dict[p_keys[0]].length > 0 || p_dict[p_keys[1]].length > 0) {
+            is_row = true;
+            storage.data['p_legend2_index'] = p_legend2.selected.indices;
+            var row_names = ptid.column_names;
+            if (row_names.indexOf("inspect") == -1 ) {
+                row_names.push('inspect');
+            }            
+            for (a = 0; a < row_names.length; a++) {
+                p_table.data[row_names[a]] = [];
+            }
+            // If 2 row filters active
+            if (p_dict[p_keys[0]].length > 0 && p_dict[p_keys[1]].length > 0) {
+                row_name = p_legend.data['names'][p_legend.selected.indices];
+                row_name2 = p_legend2.data['names'][p_legend2.selected.indices];
+                for (i = 0; i < ptid.data[p_colname].length; i++) {
+                    if (ptid.data[p_colname][i] == row_name && ptid.data[p_colname2][i] == row_name2) {
+                        row_reduced_inds.push(i);
+                    }
                 }
             }
             else {
-                if (storage.data['intersect'][0]) {
-                    console.log("resetting...");
-                    m_legend2.selected.indices = [];
-                    storage.data['intersect'][0] = 0;
+                let keys = Object.keys(p_dict);
+                let p_col = keys[0]
+                let row_name = p_legend.data['names'][p_dict[p_col]];
+                if (p_dict[p_keys[1]].length > 0) {
+                    p_col = keys[1]; 
+                    row_name =  p_legend2.data['names'][p_dict[p_col]];
                 }
-                storage.data['p_legend2_index'] = p_legend2.selected.indices;
-                storage.data['m_legend2_index'] = [];
-                var index = p_legend2.selected.indices;
-                var names = p_legend2.data['names'];
-                var name = names[index];
-                var reduced_inds = [];
-                var colname = storage.data['p_colname2'];
-                var row_names = ptid.column_names;
-                if (row_names.indexOf("inspect2") == -1 ) {
-                    row_names.push('inspect2');
-                }
-                for (a = 0; a < row_names.length; a++) {
-                    p_table.data[row_names[a]] = [];
-                }
-                for (i = 0; i < ptid.data[colname].length; i++) {
-                    if (ptid.data[colname][i] == name) {
-                        reduced_inds.push(i);
+                console.log(p_col);
+                for (i = 0; i < ptid.data[p_colname].length; i++) {
+                    console.log(ptid.data[p_col][i])
+                    console.log(p_legend.data['names'][p_dict[p_col]]);
+                    if (ptid.data[p_col][i] == row_name) {
+                        row_reduced_inds.push(i);
                     }
                 }
-                console.log(reduced_inds)
+            }
+            console.log("row reduced inds");
+            console.log(row_reduced_inds)
+            var len = col.data['feature'].length;
+            var indices = row_reduced_inds.map(function(x) { return x * len; });
+            for (let i = 0; i < indices.length; i++) {
+                var min_index = Math.floor(indices[i] / len) * len;
+                var max_index = min_index + len;
+                while (min_index < max_index) {
+                    row_inds.push(min_index);
+                    min_index++;
+                }
+            }
+        }
+        console.log("row inds")
+        console.log(row_inds);
+        let m_keys = Object.keys(m_dict);
+        console.log(m_dict);
+        if (m_dict[m_keys[0]].length > 0 || m_dict[m_keys[1]].length > 0) {
+            is_col = true;
+            var col_reduced_inds = [];
+            storage.data['col_legend_index'] = m_legend.selected.indices;
+            var col_names = measure.column_names;
+            if (col_names.indexOf("inspect") == -1 ) {
+                col_names.push('inspect');
+            }            
+            // If 2 row filters active
+            if (m_dict[m_keys[0]].length > 0 && m_dict[m_keys[1]].length > 0) {
+                console.log("2 row filters")
+                col_name = m_legend.data['names'][m_legend.selected.indices];
+                col_name2 = m_legend2.data['names'][m_legend2.selected.indices];
+                for (let j = 0; j < measure.data[m_colname].length; j++) {
+                    if (measure.data[m_colname][j] == col_name && measure.data[m_colname2][j] == col_name2) {
+                        col_reduced_inds.push(j);
+                    }
+                }
+            }
+            else {
+                let col_keys = Object.keys(m_dict);
+                let m_col = col_keys[0]
+                let col_name = m_legend.data['names'][m_dict[m_col]];
+                    if (m_dict[m_keys[1]].length > 0) {
+                        m_col = col_keys[1];
+                        col_name = m_legend2.data['names'][m_dict[m_col]]; 
+                    }
+                    for (let k = 0; k < measure.data[m_colname].length; k++) {
+                        if (measure.data[m_col][k] ==  col_name) {
+                            col_reduced_inds.push(k);
+                            console.log("pushing col ind");
+                        }
+                    }
+                }
+                console.log(col_reduced_inds);
+            let len = col.data['feature'].length;
+            let col_selected_inds = col_reduced_inds.slice();
+            for (let i = 0; i < col_selected_inds.length; i++) {
+                while (col_selected_inds[i] < source.data['Feature'].length) {
+                    col_inds.push(col_selected_inds[i]);
+                    col_selected_inds[i] += len;
+                }
+            }  
+        }
+        console.log("col_inds")
+        console.log(col_inds)
+        if (is_col && is_row) {
+            console.log("both col and row filters, total inds:")
+            console.log(row_inds)
+            console.log(col_inds);
+            total_inds = col_inds.filter(value => row_inds.includes(value));
+            console.log(total_inds);
+        }
+        else {
+            total_inds = row_inds.concat(col_inds);
+        }
+        console.log(col_inds);
+        source.selected.indices = total_inds;
+        console.log(source.selected.indices);
+        source.change.emit();
+        for (let j = 0; j < row_reduced_inds.length; j++) {
+            let col = row_reduced_inds[j];
+            for (let k = 0; k < row_names.length; k++) {
+                p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
+            }
+        }
+        console.log(p_table.data);
+        source.change.emit();
+        console.log("final source")
+        console.log(source.selected.indices);
+        p_legend2.change.emit();
+        p_table.change.emit();
+        p_data_table.change.emit();
+        m_table.change.emit();
+        """,
+        m_legend2 = """
+            console.log("here");
+            console.log(storage.data['m_legend_index']);
+            console.log(m_legend.selected.indices[0]);
+            
+            let p_colname = storage.data['p_colname'];
+            let p_colname2 = storage.data['p_colname2'];
+            let m_colname = storage.data['m_colname'];
+            let m_colname2 = storage.data['m_colname2'];
+            let row_reduced_inds = [];
+            let total_inds = [];
+            let p_dict = {};
+            p_dict[p_colname] = p_legend.selected.indices;
+            p_dict[p_colname2] = p_legend2.selected.indices;
+            let m_dict = {};
+            m_dict[m_colname] = m_legend.selected.indices;
+            m_dict[m_colname2] = m_legend2.selected.indices;
+            let row_inds = [];
+            let col_inds = [];
+            if (m_legend2.selected.indices[0] === storage.data['m_legend2_index'][0]) {
+                console.log("resetting...");
+                m_legend2.selected.indices = [];
+                storage.data['m_legend_index2'] = [];
+                m_dict[m_colname2] = [];
+            }
+            console.log("dicts");
+            console.log(p_dict)
+            console.log(m_dict)
+            let is_row = false;
+            let is_col = false;
+            // If user is toggling same selection
+            let p_keys = Object.keys(p_dict);
+            if (p_dict[p_keys[0]].length > 0 || p_dict[p_keys[1]].length > 0) {
+                is_row = true;
+                var col_names = measure.column_names;
+                if (col_names.indexOf("inspect") == -1 ) {
+                    col_names.push('inspect');
+                }            
+                for (a = 0; a < col_names.length; a++) {
+                    m_table.data[col_names[a]] = [];
+                }
+                // If 2 row filters active
+                if (p_dict[p_keys[0]].length > 0 && p_dict[p_keys[1]].length > 0) {
+                    row_name = p_legend.data['names'][p_legend.selected.indices];
+                    row_name2 = p_legend2.data['names'][p_legend2.selected.indices];
+                    for (i = 0; i < ptid.data[p_colname].length; i++) {
+                        if (ptid.data[p_colname][i] == row_name && ptid.data[p_colname2][i] == row_name2) {
+                            row_reduced_inds.push(i);
+                        }
+                    }
+                }
+                else {
+                    let keys = Object.keys(p_dict);
+                    let p_col = keys[0]
+                    let row_name = p_legend.data['names'][p_dict[p_col]];
+                    if (p_dict[p_keys[1]].length > 0) {
+                        p_col = keys[1]; 
+                        row_name =  p_legend2.data['names'][p_dict[p_col]];
+                    }
+                    console.log(p_col);
+                    for (i = 0; i < ptid.data[p_colname].length; i++) {
+                        console.log(ptid.data[p_col][i])
+                        console.log(p_legend.data['names'][p_dict[p_col]]);
+                        if (ptid.data[p_col][i] == row_name) {
+                            row_reduced_inds.push(i);
+                        }
+                    }
+                }
+                console.log("row reduced inds");
+                console.log(row_reduced_inds)
                 var len = col.data['feature'].length;
-                var indices = reduced_inds.map(function(x) { return x * len; });
-                var inds = [];
-                for (i = 0; i < indices.length; i++) {
+                var indices = row_reduced_inds.map(function(x) { return x * len; });
+                for (let i = 0; i < indices.length; i++) {
                     var min_index = Math.floor(indices[i] / len) * len;
                     var max_index = min_index + len;
                     while (min_index < max_index) {
-                        inds.push(min_index);
+                        row_inds.push(min_index);
                         min_index++;
                     }
                 }
-                console.log("selected");
-                console.log(inds);
-                let intersect = [];
-                // If this is a filtering selection on a m_legend select
-                if (m_legend2.selected.indices.length != 0) {
-                    intersect = inds.filter(value => -1 !== source.selected.indices.indexOf(value));
-                    source.selected.indices = intersect;
-                    storage.data['intersect'][0] = 1;
-                }
-                else {
-                    source.selected.indices = inds;      
-                    storage.data['intersect'][0] = 0;
-                }
-                for (let j = 0; j < reduced_inds.length; j++) {
-                    let col = reduced_inds[j];
-                    for (let k = 0; k < row_names.length; k++) {
-                        p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
-                    }
-                }
             }
-            console.log(p_table.data);
-            source.change.emit();
-            p_legend2.change.emit();
-            p_table.change.emit();
-            p_data_table.change.emit();
-            m_legend2.change.emit();
-        """,
-        m_legend2 = """
-            if (m_legend2.selected.indices[0] == storage.data['m_legend2_index'][0] && source.selected.indices.length != 0) {
-                source.selected.indices = [];
-                m_legend2.selected.indices = [];
-                p_legend2.selected.indices = []; 
-                let m_col_names = m_table.column_names;
-                for (let i = 0; i < m_col_names.length; i++) {
-                    m_table.data[m_col_names[i]] = [];
-                }
-            }
-            else {
-                if (storage.data['intersect'][0]) {
-                    console.log("resetting...");
-                    p_legend2.selected.indices = [];
-                    storage.data['intersect'][0] = 0;
-                }
-                storage.data['m_legend2_index'] = m_legend2.selected.indices;
-                storage.data['p_legend2_index'] = [];
-                let index = m_legend2.selected.indices;
-                let names = m_legend2.data['names'];
-                let name = names[index];
-                let reduced_inds = [];
-                let inds = [];
-                let col_names = measure.column_names;
-                if (col_names.indexOf("inspect2") == -1 ) {
-                    col_names.push('inspect2');
-                }
+            console.log("row inds")
+            console.log(row_inds);
+            let m_keys = Object.keys(m_dict);
+            console.log(m_dict);
+            if (m_dict[m_keys[0]].length > 0 || m_dict[m_keys[1]].length > 0) {
+                storage.data['m_legend_index'] = m_legend.selected.indices;
+                is_col = true;
+                var col_reduced_inds = [];
+                storage.data['col_legend_index'] = m_legend.selected.indices;
+                var col_names = measure.column_names;
+                if (col_names.indexOf("inspect") == -1 ) {
+                    col_names.push('inspect');
+                }            
                 for (let b = 0; b < col_names.length; b++) {
                     m_table.data[col_names[b]] = [];
                 }
-                // Getting min indices for selected column_names
-                let colname = storage.data['m_colname2'];
-                for (let i = 0; i < measure.data[colname].length; i++) {
-                    if (measure.data[colname][i] == name) {
-                     reduced_inds.push(i);
+                // If 2 row filters active
+                if (m_dict[m_keys[0]].length > 0 && m_dict[m_keys[1]].length > 0) {
+                    console.log("2 row filters")
+                    col_name = m_legend.data['names'][m_legend.selected.indices];
+                    col_name2 = m_legend2.data['names'][m_legend2.selected.indices];
+                    for (let j = 0; j < measure.data[m_colname].length; j++) {
+                        if (measure.data[m_colname][j] == col_name && measure.data[m_colname2][j] == col_name2) {
+                            col_reduced_inds.push(j);
+                        }
                     }
-                }
-                // Selecting the entire column from each column's min index
-                let len = col.data['feature'].length;
-                let selected_inds = reduced_inds.slice();
-                for (let i = 0; i < selected_inds.length; i++) {
-                    while (selected_inds[i] < source.data['Feature'].length) {
-                        inds.push(selected_inds[i]);
-                        selected_inds[i] += len;
-                    }
-                }
-                let intersect = [];
-                // If this is a filtering selection on a p_legend select
-                if (p_legend2.selected.indices.length != 0) {
-                    intersect = inds.filter(value => -1 !== source.selected.indices.indexOf(value));
-                    source.selected.indices = intersect;
-                    storage.data['intersect'][0] = 1;
                 }
                 else {
-                    source.selected.indices = inds;      
-                    storage.data['intersect'][0] = 0;
-                }
-                console.log(col_names);
-                for (let j = 0; j < reduced_inds.length; j++) {
-                    let col = reduced_inds[j];
-                    for (let k = 0; k < col_names.length; k++) {
-                        if (col_names[k] == 'inspect') {
-                            console.log(col);
+                    let col_keys = Object.keys(m_dict);
+                    let m_col = col_keys[0]
+                    let col_name = m_legend.data['names'][m_dict[m_col]];
+                        if (m_dict[m_keys[1]].length > 0) {
+                            m_col = col_keys[1];
+                            col_name = m_legend2.data['names'][m_dict[m_col]]; 
                         }
-                        m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
+                        for (let k = 0; k < measure.data[m_colname].length; k++) {
+                            if (measure.data[m_col][k] ==  col_name) {
+                                col_reduced_inds.push(k);
+                                console.log("pushing col ind");
+                            }
+                        }
                     }
+                    console.log(col_reduced_inds);
+                let len = col.data['feature'].length;
+                let col_selected_inds = col_reduced_inds.slice();
+                for (let i = 0; i < col_selected_inds.length; i++) {
+                    while (col_selected_inds[i] < source.data['Feature'].length) {
+                        col_inds.push(col_selected_inds[i]);
+                        col_selected_inds[i] += len;
+                    }
+                }  
+            }
+            console.log("col_inds")
+            console.log(col_inds)
+            if (is_col && is_row) {
+                console.log("both col and row filters, total inds:")
+                console.log(row_inds)
+                console.log(col_inds);
+                total_inds = col_inds.filter(value => row_inds.includes(value));
+                console.log(total_inds);
+            }
+            else {
+                total_inds = row_inds.concat(col_inds);
+            }
+            console.log(col_inds);
+            source.selected.indices = total_inds;
+            for (let j = 0; j < col_reduced_inds.length; j++) {
+                let col = col_reduced_inds[j];
+                for (let k = 0; k < col_names.length; k++) {
+                    m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
                 }
             }
             console.log(m_table.data);
+            source.change.emit();
+            console.log("final source")
+            console.log(source.selected.indices);
             m_legend2.change.emit();
             m_table.change.emit();
             m_data_table.change.emit();
-            source.change.emit();
-            p_legend2.change.emit();
 """)
 

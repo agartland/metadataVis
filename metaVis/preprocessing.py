@@ -1,6 +1,7 @@
 import sklearn
 from bokeh.palettes import Set3
 import numpy as np
+from scipy import stats
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import squareform, pdist
 import pandas as pd
@@ -9,6 +10,25 @@ from bokeh.models import TableColumn, DataTable, ColumnDataSource, HoverTool, Ra
 from bokeh.plotting import Figure
 import MetaVisLauncherConfig as config
 from metaVis import *
+import math
+
+import logging
+
+logger = logging.getLogger('preprocessing_log')
+logger.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh = logging.FileHandler('preprocessing.log')
+fh.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 __all__ = ['imputeNA',
            'clusterData',
@@ -16,17 +36,22 @@ __all__ = ['imputeNA',
            'standardizeData',
            'initSources']
 
-def initSources(data, ptid_md, measures_md, raw_data):
+def initSources(data, ptid_md, measures_md, raw_data, transform):
+    transform = transform[2:len(transform) - 1]
     print(config.palette)
     print(list(measures_md.index))
     df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
+    if transform != 'none':
+        print("transforming " + transform)
+        df = transformData(df, transform)
+        df.columns = ['PtID', 'Feature', 'rate', 'transformed']
     if raw_data is not None:
         raw_data = raw_data.reindex(data.index)
         raw_data = raw_data[data.columns]
         raw_df = pd.DataFrame(raw_data.stack(), columns=['rate']).reset_index()
         df['raw_rate'] = raw_df['rate']
         df.columns = ['PtID', 'Feature', 'rate', 'raw_rate']
-    else:
+    elif transform == 'none':
         df.columns = ['PtID', 'Feature', 'rate']
     feature_list = list(data.columns)
     feature_df = pd.DataFrame(feature_list)
@@ -103,6 +128,16 @@ def initSources(data, ptid_md, measures_md, raw_data):
     sources['measures_md'] = measures_md
     sources['df'] = df
     return sources
+
+def transformData(df, transform):
+    logger.info("Found transformation" + transform)
+    if (transform == 'logarithmic'):
+        datamin = min(df['rate']) * -1
+        df['transformed'] = [math.log1p(datamin + x + 0.01) for x in df['rate']]
+    else:
+        df['transformed'] = stats.boxcox(df['rate'])
+    return df
+
 
 def standardizeData(data, allSame=True):
     if allSame:

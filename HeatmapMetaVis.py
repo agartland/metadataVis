@@ -66,7 +66,7 @@ def error_check(data, ptid_md, measures_md):
 
 # Generates the heatmap html at config.tmp_dir/config.output_file
 def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
-                     metric='euclidean', method='complete',
+                     metric='euclidean', method='complete', transform='none',
                      standardize=True, impute=True):
     # TODO - Metavis currently does not work without imputing
 
@@ -91,15 +91,13 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
                                          method=method,
                                          standardize=standardize,
                                          impute=impute)
-    sources = initSources(data, ptid_md, measures_md, raw_data)
+    sources = initSources(data, ptid_md, measures_md, raw_data, transform=transform)
 
     cbDict = initCallbacks(sources)
 
     html = generateLayout(sources, cbDict, rowDend, colDend)
 
     with io.open(op.join(config.tmp_dir, config.output_file), mode='w', encoding='utf-8') as f:
-        f.write(html)
-    with io.open("MetaVis.html", mode='w', encoding='utf-8') as f:
         f.write(html)
     return ret_val
 
@@ -285,7 +283,7 @@ if __name__ == '__main__':
                                              impute=False)
 
         # Creating overall data source
-        sources = initSources(data, ptid_md, measures_md, raw_data)
+        sources = initSources(data, ptid_md, measures_md, raw_data, transform='none')
 
         cbDict = initCallbacks(sources)
         p = generateLayout(sources, cbDict, rowDend, colDend)

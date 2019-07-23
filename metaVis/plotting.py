@@ -224,97 +224,97 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     #                  sources['nonselect_colbarchart']))
 
     # INCLUDES DENDROGRAMS
-    page = layout([[spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, reset_button],
-                   [selectors, p_selector, m_selector],[table_tabs]])
-    heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
-
-    template = Template("""\
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="utf-8">
-            <title>MetaVis</title>
-            {{ resources }}
-            <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
-            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-            <link rel="stylesheet" href="bootstrap/header.css">
-            <link rel="stylesheet" href="bootstrap/sidebar.css">
-            <link rel="stylesheet" href="bootstrap/sidemenu.css">
-            <script src="bootstrap/sidebar.js"></script>
-            <script src="bootstrap/sidemenu.js"></script>
-            <script src="bootstrap/header.js"></script>
-        </head>
-        <body>
-        <nav id="header" class="navbar navbar-fixed-top">
-            <div id="header-container" class="container navbar-container">
-                <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
-                        <div class="navbar-toggler animate">
-                            <span class="menu-icon"></span>
-                        </div>
-                        <ul class=" navbar-menu animate">
-                            <li>
-                                <div class="container2">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
-                                        <h4 class="panel-title">
-                                            Color Palette
-                                            <span class="pull-right">
-                                                <i class="glyphicon glyphicon-chevron-down"></i>
-                                            </span>
-                                        </h4>
-                                    </div>
-                                    <div id="filterPanel" class="panel-collapse panel-collapse collapse">
-                                        <div class="panel-body">
-                                            {{ plot_div.colors }}
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                            </li>
-                        </ul>
-                </nav>
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a id="brand" class="navbar-brand" href="#">MetaVis: <span id="brand-span">Interactive Exploratory Visualizations</span> </a>
-                </div>
-                <div id="navbar" class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#tutorial">Tutorial</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div><!-- /.nav-collapse -->
-            </div><!-- /.container -->
-        </nav><!-- /.navbar -->
-        {{ plot_div.page }}
-        <footer>
-            <p>(c) 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
-        </footer>
-        {{ plot_script }}
-
-
-        </body>
-    </html>
-    """)
-
-    resources = INLINE.render()
-
-    script, div = components({'page': page, 'colors': cust_tabs, 'bars': barchart_tabs})
-
-    html = template.render(resources=resources,
-                           plot_script=script,
-                           plot_div=div)
-
-    filename = 'MetaVisNA.html'
-
-    with io.open(filename, mode='w', encoding='utf-8') as f:
-        f.write(html)
+    # page = layout([[spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends, reset_button],
+    #                [selectors, p_selector, m_selector],[table_tabs]])
+    # heatmap = layout([spacer, column(x_dendrogram, x_colorbar)], [y_dendrogram, y_colorbar, p, legends])
+    #
+    # template = Template("""\
+    # <!DOCTYPE html>
+    # <html lang="en">
+    #     <head>
+    #         <meta charset="utf-8">
+    #         <title>MetaVis</title>
+    #         {{ resources }}
+    #         <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    #         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    #         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    #         <link rel="stylesheet" href="bootstrap/header.css">
+    #         <link rel="stylesheet" href="bootstrap/sidebar.css">
+    #         <link rel="stylesheet" href="bootstrap/sidemenu.css">
+    #         <script src="bootstrap/sidebar.js"></script>
+    #         <script src="bootstrap/sidemenu.js"></script>
+    #         <script src="bootstrap/header.js"></script>
+    #     </head>
+    #     <body>
+    #     <nav id="header" class="navbar navbar-fixed-top">
+    #         <div id="header-container" class="container navbar-container">
+    #             <nav class="navbar navbar-fixed-left navbar-minimal animate" role="navigation">
+    #                     <div class="navbar-toggler animate">
+    #                         <span class="menu-icon"></span>
+    #                     </div>
+    #                     <ul class=" navbar-menu animate">
+    #                         <li>
+    #                             <div class="container2">
+    #                             <div class="panel panel-default">
+    #                                 <div class="panel-heading panel-collapse-clickable" data-toggle="collapse" data-parent="#accordion" href="#filterPanel">
+    #                                     <h4 class="panel-title">
+    #                                         Color Palette
+    #                                         <span class="pull-right">
+    #                                             <i class="glyphicon glyphicon-chevron-down"></i>
+    #                                         </span>
+    #                                     </h4>
+    #                                 </div>
+    #                                 <div id="filterPanel" class="panel-collapse panel-collapse collapse">
+    #                                     <div class="panel-body">
+    #                                         {{ plot_div.colors }}
+    #                                     </div>
+    #                                 </div>
+    #                             </div>
+    #                             </div>
+    #                         </li>
+    #                     </ul>
+    #             </nav>
+    #             <div class="navbar-header">
+    #                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+    #                     <span class="sr-only">Toggle navigation</span>
+    #                     <span class="icon-bar"></span>
+    #                     <span class="icon-bar"></span>
+    #                     <span class="icon-bar"></span>
+    #                 </button>
+    #                 <a id="brand" class="navbar-brand" href="#">MetaVis: <span id="brand-span">Interactive Exploratory Visualizations</span> </a>
+    #             </div>
+    #             <div id="navbar" class="collapse navbar-collapse">
+    #                 <ul class="nav navbar-nav">
+    #                     <li class="active"><a href="#">Home</a></li>
+    #                     <li><a href="#tutorial">Tutorial</a></li>
+    #                     <li><a href="#contact">Contact</a></li>
+    #                 </ul>
+    #             </div><!-- /.nav-collapse -->
+    #         </div><!-- /.container -->
+    #     </nav><!-- /.navbar -->
+    #     {{ plot_div.page }}
+    #     <footer>
+    #         <p>(c) 2018 Michael Zhao, All Rights Reserved. Visualizations provided by <a style="color:#0a93a6; text-decoration:none;" href="https://bokeh.pydata.org/en/latest/"> Bokeh</a></p>
+    #     </footer>
+    #     {{ plot_script }}
+    #
+    #
+    #     </body>
+    # </html>
+    # """)
+    #
+    # resources = INLINE.render()
+    #
+    # script, div = components({'page': page, 'colors': cust_tabs, 'bars': barchart_tabs})
+    #
+    # html = template.render(resources=resources,
+    #                        plot_script=script,
+    #                        plot_div=div)
+    #
+    # filename = 'MetaVisNA.html'
+    #
+    # with io.open(filename, mode='w', encoding='utf-8') as f:
+    #     f.write(html)
 
     headerjs = open(join(dirname(__file__), "../bootstrap/header.js")).read()
     introjs = open(join(dirname(__file__), "../bootstrap/intro.js")).read()
@@ -535,7 +535,7 @@ def generateLayout(sources, cbDict, rowDend, colDend):
     with io.open(filename2, mode='w', encoding='utf-8') as g:
         g.write(html)
 
-    view(filename2)
+    #view(filename2)
 
     # DOES NOT INCLUDE DENDROGRAMS
     # page = layout([[div], [column(x_colorbar)], [y_colorbar, p, legends],
@@ -781,7 +781,7 @@ def _createHeatmap(cbDict, colors, sources, fig_width):
     # Creating heatmap figure
     p = Figure(x_range=FactorRange(factors=feature_list, bounds='auto'),
                y_range=FactorRange(factors=list(reversed(ptid)), bounds='auto'), plot_width=844, plot_height=fig_width,
-               tools=[TOOLS, box_select], active_drag=box_select, logo=None,
+               tools=[TOOLS, box_select], active_drag=box_select,
                toolbar_location='right', toolbar_sticky=False)
 
     # Adjusting plot details
@@ -814,11 +814,19 @@ def _createHeatmap(cbDict, colors, sources, fig_width):
             ('rate', '@rate'),
             ('untranformed', '@raw_rate')
         ]
+    elif 'transformed' in sources['source'].data:
+        p.select_one(HoverTool).tooltips = [
+            ('Participant ID: ', '@PtID'),
+            ('Measure: ', '@Feature'),
+            ('rate', '@transformed'),
+            ('untrasformed', '@rate')
+        ]
     else:
         p.select_one(HoverTool).tooltips = [
             ('Participant ID: ', '@PtID'),
             ('Measure: ', '@Feature'),
-            ('rate', '@rate')
+            ('rate', '@rate'),
+            ('index', "$index")
         ]
 
     # Creating individual rectangle glyphs for heatmap
