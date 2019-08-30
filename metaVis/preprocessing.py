@@ -36,14 +36,15 @@ __all__ = ['imputeNA',
            'standardizeData',
            'initSources']
 
-def initSources(data, ptid_md, measures_md, raw_data, transform):
+def initSources(data, ptid_md, measures_md, raw_data, transform, params):
     transform = transform[2:len(transform) - 1]
     print(config.palette)
     print(list(measures_md.index))
-    df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
+    df = pd.DataFrame(data.stack(dropna=False), columns=['rate']).reset_index()
+    df.to_csv('to_transform.csv')
     if transform != 'none':
         print("transforming " + transform)
-        df = transformData(df, transform)
+        df = transformData(df, transform, params)
         df.columns = ['PtID', 'Feature', 'rate', 'transformed']
     if raw_data is not None:
         raw_data = raw_data.reindex(data.index)
@@ -57,10 +58,13 @@ def initSources(data, ptid_md, measures_md, raw_data, transform):
     feature_df = pd.DataFrame(feature_list)
     feature_df.columns = ["feature"]
     p_default = list(ptid_md)[1]
-    p_default2 = list(ptid_md)[2]
+    p_default2 = list(ptid_md)[1]
     m_default = list(measures_md)[1]
-    m_default2 = list(measures_md)[2]
-
+    m_default2 = list(measures_md)[1]
+    if (len(list(measures_md)) > 2):
+        m_default2 = list(measures_md)[2]
+    if (len(list(ptid_md)) > 2):
+        p_default2 = list(ptid_md)[2]
     print(p_default)
     print(m_default)
     likely_continuous = []
@@ -104,39 +108,70 @@ def initSources(data, ptid_md, measures_md, raw_data, transform):
     sources['m_legend'] = ColumnDataSource(data=dict(factors=[], names=[],
                                                      nonsel_count=[], sel_count=[]))
     sources['p_legend2'] = ColumnDataSource(data=dict(factors=[], names=[],
-                                                     nonsel_count=[], sel_count=[]))
+                                                      nonsel_count=[], sel_count=[]))
     sources['m_legend2'] = ColumnDataSource(data=dict(factors=[], names=[],
-                                                     nonsel_count=[], sel_count=[]))
+                                                      nonsel_count=[], sel_count=[]))
     sources['ptid'], sources['p_legend'], sources['p_legend2'], sources['storage'].data['total_rowbar'] = initSupplementSources(sources['ptid'], sources['p_legend'], sources['p_legend2'], default=p_default, default2=p_default2)
     sources['measure'], sources['m_legend'], sources['m_legend2'], sources['storage'].data['total_colbar'] = initSupplementSources(sources['measure'], sources['m_legend'], sources['m_legend2'], default=m_default, default2=m_default2)
     sources['p_data_table'] = _createTable(md=ptid_md, md_source=sources['p_table'])
     sources['m_data_table'] = _createTable(md=measures_md, md_source=sources['m_table'])
     sources['select_rowbarchart'], sources['ybar_mapper1'] = _createBarChart(source=sources['p_legend'],
-                                                    title='Selected Row Metadata',
-                                                    sel=True)
+                                                                             title='Selected Row Metadata',
+                                                                             sel=True)
     sources['nonselect_rowbarchart'], sources['ybar_mapper2'] = _createBarChart(source=sources['p_legend'],
-                                                       title='Unselected Row Metadata',
-                                                       sel=False)
+                                                                                title='Unselected Row Metadata',
+                                                                                sel=False)
     sources['select_colbarchart'], sources['xbar_mapper1'] = _createBarChart(source=sources['m_legend'],
-                                                    title='Selected Column Metadata',
-                                                    sel=True)
+                                                                             title='Selected Column Metadata',
+                                                                             sel=True)
     sources['nonselect_colbarchart'], sources['xbar_mapper2'] = _createBarChart(source=sources['m_legend'],
-                                                       title='Unselected Column Metadata',
-                                                       sel=False)
+                                                                                title='Unselected Column Metadata',
+                                                                                sel=False)
     sources['data'] = data
     sources['ptid_md'] = ptid_md
     sources['measures_md'] = measures_md
     sources['df'] = df
     return sources
 
-def transformData(df, transform):
+def transformData(df, transform, params):
     logger.info("Found transformation" + transform)
+    logger.info("Found params" + str(params))
     if (transform == 'logarithmic'):
-        datamin = min(df['rate']) * -1
-        df['transformed'] = [math.log1p(datamin + x + 0.01) for x in df['rate']]
+        if min(df['rate']) < 0:
+            datamin = min(df['rate']) * -1
+            df['transformed'] = [math.log1p(datamin + x + 0.01) for x in df['rate']]
+        else:
+            df['transformed'] = [math.log1p(x) for x in df['rate']]
+    elif (transform == 'power'):
+        df['transformed'] = BDPT(df, params[0], params[1], params[2])
     else:
         df['transformed'] = stats.boxcox(df['rate'])
     return df
+
+def BDPT(df, theta=0, param2="1, 1", param3="1, 1"):
+    if "," in param2:
+        power = param2.split(',')
+        power_neg = int(power[0])
+        power_pos = int(power[1])
+    else:
+        power_neg, power_pos = int(param2)
+    if "," in param3:
+        scale = param3.split(',')
+        scale_neg = int(scale[0])
+        scale_pos = int(scale[1])
+    else:
+        scale_neg, scale_pos = int(param3)
+
+    y_tran = df['rate'].copy()
+    if (y_tran.hasnans):
+        inds = y_tran.notnull()
+        y_obs = y_tran.loc[inds]
+    else:
+        y_obs = y_tran
+    y_obs = y_obs - int(theta)
+    y_tran.loc[y_tran < 0] = (-(y_obs.loc[y_obs < 0] / y_obs.loc[y_obs < 0].median()) ** power_neg) * scale_neg
+    y_tran.loc[y_tran >= 0] = ((y_obs.loc[y_obs >= 0] / y_obs.loc[y_obs >= 0].median()) ** power_pos) * scale_pos
+    return y_tran
 
 
 def standardizeData(data, allSame=True):
@@ -174,48 +209,43 @@ def filterData(data, md, method='mean', params={'thresh':0.0001}):
     return data, md
 
 
-def clusterData(data, ptid_md, measures_md, metric='euclidean', method='Ward', standardize=True, impute=True):
+def clusterData(data, ptid_md, measures_md, metric='euclidean', method='Ward', standardize=False, impute=True):
     """
     """
-    if impute:
-        data = imputeNA(data)
+
+    imputed_df = imputeNA(data)
     if standardize:
         data = standardizeData(data)
 
     # data.rename(columns=data.iloc[0])
     # print(metric,method)
 
-    print("hello")
-    print(measures_md)
-    Z = linkage(data, metric=metric, method=method)
+    Z = linkage(imputed_df, metric=metric, method=method)
     rowDend = dendrogram(Z, no_plot=True)
     reorderedDf = data.iloc[rowDend['leaves']]
     data = reorderedDf
 
-    Z2 = linkage(data.T, metric=metric, method=method)
+    Z2 = linkage(imputed_df.T, metric=metric, method=method)
     colDend = dendrogram(Z2, no_plot=True)
-    reorderedDf2 = data.T.iloc[colDend['leaves']]
-    data = reorderedDf2.T
+    data = (data.T.iloc[colDend['leaves']]).T
 
     df_a = pd.DataFrame({'PtID': data.index})
     ptid_md = pd.merge(df_a, ptid_md, left_on='PtID', right_index=True, how='outer')
     # ptid_md.drop('index', axis=1, inplace=True)
 
     df_b = pd.DataFrame({'Feature': data.columns})
-    print(df_b)
     measures_md = pd.merge(df_b, measures_md, left_on='Feature', right_index=True, how='outer')
     # measures_md.drop('index', axis=1, inplace=True)
-    print(measures_md.index)
     data.index.name = 'PtID'
     return data, ptid_md, measures_md, rowDend, colDend
 
 
-def imputeNA(df, method='median', dropThresh=0.):
+def imputeNA(df, method='median', dropThresh=0.9):
     """Impute missing values in a pd.DataFrame
 
     Parameters
     ----------
-    df : pd.DataFrame
+    imputed_df : pd.DataFrame
         Data containing missing values.
     method : str
         Method fo imputation: median, mean, sample, regression
@@ -226,32 +256,31 @@ def imputeNA(df, method='median', dropThresh=0.):
     -------
     df : pd.DataFrame
         Copy of the input data with no missing values."""
-
-    outDf = df.dropna(axis=0, thresh=np.round(df.shape[1] * dropThresh)).copy()
+    imputed_df = df.copy()
     if method == 'sample':
-        for col in outDf.columns:
-            naInd = outDf[col].isnull()
-            outDf.loc[naInd, col] = outDf.loc[~naInd, col].sample(naInd.sum(), replace=True).values
+        for col in imputed_df.columns:
+            naInd = imputed_df[col].isnull()
+            imputed_df.loc[naInd, col] = imputed_df.loc[~naInd, col].sample(naInd.sum(), replace=True).values
     elif method == 'mean':
-        for col in outDf.columns:
-            naInd = outDf[col].isnull()
-            outDf.loc[naInd, col] = outDf.loc[~naInd, col].mean()
+        for col in imputed_df.columns:
+            naInd = imputed_df[col].isnull()
+            imputed_df.loc[naInd, col] = imputed_df.loc[~naInd, col].mean()
     elif method == 'median':
-        for col in outDf.columns:
-            naInd = outDf[col].isnull()
-            outDf.loc[naInd, col] = outDf.loc[~naInd, col].median()
+        for col in imputed_df.columns:
+            naInd = imputed_df[col].isnull()
+            imputed_df.loc[naInd, col] = imputed_df.loc[~naInd, col].median()
     elif method == 'regression':
         naInds = []
-        for col in outDf.columns:
-            naInd = outDf[col].isnull()
-            outDf.loc[naInd, col] = outDf.loc[~naInd, col].mean()
+        for col in imputed_df.columns:
+            naInd = imputed_df[col].isnull()
+            imputed_df.loc[naInd, col] = imputed_df.loc[~naInd, col].mean()
             naInds.append(naInd)
-        for naInd, col in zip(naInds, outDf.columns):
+        for naInd, col in zip(naInds, imputed_df.columns):
             if naInd.sum() > 0:
-                otherCols = [c for c in outDf.columns if not c == col]
-                mod = sklearn.linear_model.LinearRegression().fit(outDf[otherCols], outDf[col])
-                outDf.loc[naInd, col] = mod.predict(outDf.loc[naInd, otherCols])
-    return outDf
+                otherCols = [c for c in imputed_df.columns if not c == col]
+                mod = sklearn.linear_model.LinearRegression().fit(imputed_df[otherCols], imputed_df[col])
+                imputed_df.loc[naInd, col] = mod.predict(imputed_df.loc[naInd, otherCols])
+    return imputed_df
 
 
 def initSupplementSources(metadata, legend, legend2, default, default2):
@@ -259,6 +288,9 @@ def initSupplementSources(metadata, legend, legend2, default, default2):
     iterator = -1
     key_array = []
     counts = {}
+    inspect_names = []
+    print("default " + default)
+    print("default2 " + default2)
     for i in range(len(metadata.data[default])):
         entry = metadata.data[default][i]
         if entry not in factor_dict:
@@ -268,8 +300,10 @@ def initSupplementSources(metadata, legend, legend2, default, default2):
         else:
             counts[entry] = counts[entry] + 1
         key_array.append(factor_dict[entry])
+        inspect_names.append(entry)
     key_array = list(map(str, key_array))
     metadata.data['inspect'] = key_array
+    metadata.data['inspect_names'] = inspect_names
     for entry in factor_dict:
         legend.data['names'].append(str(entry))
         legend.data['factors'].append(str(factor_dict[entry]))
@@ -281,6 +315,7 @@ def initSupplementSources(metadata, legend, legend2, default, default2):
     iterator = -1
     key_array = []
     counts = {}
+    inspect_names2 = []
     for i in range(len(metadata.data[default2])):
         entry = metadata.data[default2][i]
         if entry not in factor_dict:
@@ -290,8 +325,10 @@ def initSupplementSources(metadata, legend, legend2, default, default2):
         else:
             counts[entry] = counts[entry] + 1
         key_array.append(factor_dict[entry])
+        inspect_names2.append(entry)
     key_array = list(map(str, key_array))
     metadata.data['inspect2'] = key_array
+    metadata.data['inspect_names2'] = inspect_names2
     for entry in factor_dict:
         legend2.data['names'].append(str(entry))
         legend2.data['factors'].append(str(factor_dict[entry]))

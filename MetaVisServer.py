@@ -4,6 +4,8 @@ from twisted.internet.defer import Deferred
 from twisted.web.util import Redirect
 from twisted.web.util import redirectTo
 from twisted.python import log
+from os.path import dirname, join
+import time
 
 from io import StringIO
 import io
@@ -43,13 +45,36 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+telemetry = logging.getLogger('telemetry.log')
+telemetry.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh2 = logging.FileHandler('telemetry.log')
+fh2.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch2 = logging.StreamHandler()
+ch2.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter2 = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh2.setFormatter(formatter2)
+ch2.setFormatter(formatter2)
+# add the handlers to the logger
+telemetry.addHandler(fh2)
+telemetry.addHandler(ch2)
+telemetry_msg = ""
+print(telemetry_msg)
+
+
 log.startLogging(sys.stdout)
+log.addObserver(log.FileLogObserver(open("logs/server-log.txt", 'w')).emit)
 log.msg("Starting Server")
+
 
 
 # TODO - Popup if file upload is empty; popup for errors
 # Must call _cleanup_tmp before returning
 def _handleMetaVis(request):
+    start = time.time()
+    global telemetry_msg
     tmpdirname = config.tmp_dir
     if not os.path.exists(tmpdirname):
         os.makedirs(tmpdirname)
@@ -70,10 +95,11 @@ def _handleMetaVis(request):
     output_file.close()
     res_html = res_html.encode('utf-8')
     request.write(res_html)
+    end = time.time()
+    telemetry_msg += " - upload time: " + (end - start)
     return _clean_and_return(request)
 
 def _processLongform(request):
-
     sio_longform = StringIO(request.args[b'longformFile'][0].decode("UTF-8"))
     longform = pd.read_csv(sio_longform)
     rx = None
@@ -89,18 +115,21 @@ def _processLongform(request):
 
 def _prepArgs(request):
     # See Py3MetaVisLauncher.py for format
+    global telemetry_msg
     tmpdirname = config.tmp_dir
     launcher_args = [''] * constants.REQ_ARG_NUM
     launcher_args[0] = config.launcher
     launcher_args[1] = tmpdirname
     logger.info(request.args.items())
     for k, v in request.args.items():
-        print(type(k))
-        print(type(v))
         if (k.find(b'File') >= 0) & (request.args[k][0] != b''):
             if k == b'longformFile':
-                logger.info("found longform")
-                data, row_md, col_md = _processLongform(request)
+                telemetry_msg += "Longform upload - "
+                try:
+                    data, row_md, col_md = _processLongform(request)
+                except:
+                    telemetry_msg += "Error in longform generation - "
+                    sys.exit()
                 data.to_csv(os.path.join(tmpdirname, "data.csv"))
                 row_md.to_csv(os.path.join(tmpdirname, "row_md.csv"))
                 col_md.to_csv(os.path.join(tmpdirname, "col_md.csv"))
@@ -110,6 +139,7 @@ def _prepArgs(request):
                 launcher_args[5] = None
                 break
             else:
+                telemetry_msg += "Wideform upload - "
                 filename = k.replace(b'File', b'').decode("UTF-8")
                 logger.info("hello: " + filename)
                 with open(os.path.join(tmpdirname, filename + '.csv'), 'wb') as tmpFile:
@@ -122,12 +152,15 @@ def _prepArgs(request):
                     launcher_args[4] = filename
                 elif k == b'raw_dataFile':
                     if len(request.args[k][0]) > 0:
-                        print(request.args[k][0])
                         launcher_args[5] = filename
+    logger.info("here")
     launcher_args[6] = '-' + str(request.args[b'metric'][0])
     launcher_args[7] = '-' + str(request.args[b'method'][0])
     launcher_args[8] = '-' + str(request.args[b'transformation'][0])
-    logger.info(launcher_args[8])
+    launcher_args[9] = '-' + str(request.args[b'param1'][0])
+    launcher_args[10] = '-' + str(request.args[b'param2'][0])
+    launcher_args[11] = '-' + str(request.args[b'param3'][0])
+    logger.info(launcher_args[6:])
     if b'standardize' in request.args:
         launcher_args.append('-standardize')
         logger.info("standardized")
@@ -149,7 +182,6 @@ def _write_to_error(error):
 
 def _parse_args_err(launcher_args):
     error = None
-    print(launcher_args)
     if len(launcher_args) < 8:
         error = "Error: Too few arguments"
     elif(launcher_args[6] != '-euclidean' and launcher_args[6] != '-correlation'):
@@ -181,13 +213,13 @@ def _launchMetaVis(launcher_args):
     dirname = launcher_args[1]
     logger.info("launching")
     logger.info(launcher_args)
-    # kwargs['data'] = pd.read_csv(op.join(dirname, launcher_args[2] + '.csv'), index_col=0)
-    # kwargs['row_md'] = pd.read_csv(op.join(dirname, launcher_args[3] + '.csv'), index_col=0)
-    # kwargs['col_md'] = pd.read_csv(op.join(dirname, launcher_args[4] + '.csv'), index_col=0)
+    kwargs['data'] = pd.read_csv(op.join(dirname, launcher_args[2] + '.csv'), index_col=0)
+    kwargs['row_md'] = pd.read_csv(op.join(dirname, launcher_args[3] + '.csv'), index_col=0)
+    kwargs['col_md'] = pd.read_csv(op.join(dirname, launcher_args[4] + '.csv'), index_col=0)
 
-    kwargs['data'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
-    kwargs['col_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
-    kwargs['row_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows.csv'), index_col=0)
+    # kwargs['data'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
+    # kwargs['col_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
+    # kwargs['row_md'] = pd.read_csv(op.join('C:/Users/mihuz/Documents', 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows.csv'), index_col=0)
     if launcher_args[5] is not None and launcher_args[5] != "":
         kwargs['raw_data'] = pd.read_csv(op.join(dirname, launcher_args[5] + '.csv'), index_col=0)
     else:
@@ -198,6 +230,7 @@ def _launchMetaVis(launcher_args):
     kwargs['standardize'] = '-standardize' in launcher_args
     kwargs['impute'] = '-impute' in launcher_args
     kwargs['transform'] = str(launcher_args[8].replace('-', ''))
+    kwargs['params'] = [str(launcher_args[9].replace('-', '')), str(launcher_args[10].replace('-', '')), str(launcher_args[11].replace('-', ''))]
 
     # If you want to fillNA values
     kwargs['data'].fillna(0, inplace=True)
@@ -232,7 +265,6 @@ def _errorDisplay(data, row_md, col_md):
     logger.info("check counts: " + str(count_err))
     if count_err is True:
         has_error = True
-        print(count_err)
         message = "Error: There are mismatched counts between your metadata and your base data. "
         if count_loc == 'col':
             message += "Your base data has " + str(data.shape[1]) + " columns but your Column Metadata has " + str(col_md.shape[0]) + " entries."
@@ -246,10 +278,10 @@ def _errorDisplay(data, row_md, col_md):
             rowmd_df = pd.DataFrame({"Columns from Row Metadata": rowmd_names})
             html = template.render(title="Mismatched row counts", message=message, tables=[data_row_df.to_html(), rowmd_df.to_html()],
                                    titles=['na', "Rows from Data", "Columns from Row Metadata"])
-    na_err, data_na = _checkNA(data)
-    logger.info("check na values: " + str(na_err))
-    if na_err is True:
-        data.fillna(-1)
+    # na_err, data_na = _checkNA(data)
+    # logger.info("check na values: " + str(na_err))
+    # if na_err is True:
+    #     data.fillna(-1)
     # If we want to throw errors if they have an NA value.
     #     has_error = True
     #     message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
@@ -282,16 +314,15 @@ def _errorDisplay(data, row_md, col_md):
                         basecol_comparison.append(data_colnames[i])
                 data_col_df = pd.DataFrame({"Columns from data": basecol_comparison})
                 colmd_df = pd.DataFrame({"Misnamed Entries from Column Metadata": metacol_diffs})
-                message = "Error: The column names in the base dataset do not match the entries in the Column Metadata. (Showing a max of 20 entries)"
+                message = "Error: The column names in the base dataset do not match the entries in the Column Metadata. (Showing a max of 20 entries) Number of mismatched indices: " + str(len(diffs)) + str(diffs)
                 html = template.render(title="Misnamed column names", message=message,
                                        tables=[data_col_df.to_html(), colmd_df.to_html()],
                                        titles=['na', "Columns from Data", "Misnamed Entries from Column Metadata"])
         if name_loc == 'row':
             diffs = (list(set(data_rownames) - set(rowmd_names)))
-            print(diffs)
             if len(diffs) == 0:
                 message = "Error: The ordering of the row names in the base dataset do not match the ordering of the entries in the Row Metadata."
-                html = template.render(title="Misnamed column names", message=message)
+                html = template.render(title="Misnamed row names", message=message)
             else:
                 baserow_comparison = []
                 metarow_diffs = []
@@ -322,7 +353,6 @@ def _checkCounts(data, row_md, col_md):
 
 def _checkNA(data):
     data_na_inds = np.where(np.asanyarray(np.isnan(data)))
-    print(data_na_inds)
     if len(data_na_inds[0]) > 0:
         return True, data_na_inds
     return False, None

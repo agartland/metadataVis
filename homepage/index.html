@@ -10,8 +10,8 @@
     <title>MetaVis: Interactive Exploratory Visualizations </title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- Custom styles for this template -->
     <link href="css/homepage.css" rel="stylesheet">
 	<link href="css/checkboxes.css" rel="stylesheet">
@@ -132,7 +132,7 @@
 
 			 <h2>Visualize your data</h2>
 			  <p class="lead"> Select files from your computer</p>
-				<form action="/viz" enctype="multipart/form-data" method="post" class="form-horizontal">
+				<form id="metavis" action="/viz" enctype="multipart/form-data" method="post" class="form-horizontal">
                     <div class="form-group">
                         <div id='uploads'>
                     <p class="btn btn-outlined btn-primary" style="margin-right:25px" onclick="display('longform', 'wideform')">Longform Data Upload</p>
@@ -189,7 +189,7 @@
                       <div class="modal-body">
                           <div class="container" id="modal2-cont">
                               <h6> Select columns from your dataset to serve as your rows and columns for MetaVis: </h6>
-                              <p id='info'> <span id='success'></span> You are currently encapsulating <span id='count'></span> of <span id='total'></span> data points. </p>
+                              <p id='info'> <span id='success'></span> You are currently encapsulating <span id='count'></span> of <span id='total'></span> data points. <span id='subinfo'> </span></p>
                               <p style='margin-bottom:5px;font-size:20px;margin-top:20px;'> Row Index </p>
                               <select id='row-modal-index' name='rowModalIndex' multiple='multiple' style='width:90%; display: block;'>
                               </select>
@@ -296,23 +296,40 @@
                       </div>
                     </div>
 
-                    <div class="form-group">
-                      <div class="col-sm-offset-2 col-sm-10">
-                        <label class="control-label col-sm-15">Transformation to Apply to Heatmap Rate Values</label>
-                        <div class="col-sm-offset-2 col-sm-10">
-                              <select name="transformation">
-                                <option value="none">None</option>
-                                <option value="quantile">Quantile</option>
-                                <option value="power">Power</option>
-                                <option value="logarithmic">Logarithmic</option> 
-                              </select>
-                        </div>
-                    </div>
+                    <label class="control-label col-sm-15">Transformation to Apply to Heatmap Rate Values</label>
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                      </div>
+                      <select class="transformation" name='transformation'>
+                        <option selected value="none">None</option>
+                        <option value="quantile">Quantile</option>
+                        <option value="power">Power</option>
+                        <option value="logarithmic">Logarithmic</option>
+                      </select>
+                      <input type="text" name='param1' class="form-control" placeholder="Parameter 1">
+                      <input type="text" name='param2' class="form-control" placeholder="Parameter 2">
+                      <input type="text" name='param3' class="form-control" placeholder="Parameter 3">
                     </div>
 
+                    <div id="runModal" class="modal">
+                      <!-- Modal content -->
+                      <div class="modal-content" style="min-height:200px">
+                        <div class="modal-header" style='background-color:#CD4A4C;'>
+                          <span id="close-modal4" class="close">&times;</span>
+                          <h3 style="position:relative;left:10px;line-height:1.5;margin-bottom:0px;">Your visualization is loading..</h3>
+                        </div>
+                        <div class="modal-body">
+                          <div> <span id="dupes" class="hidden"></span> </div>
+                          <div class="loading">
+                            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
                     <div class="form-group">
                       <div class="col-sm-offset-2 col-sm-10">
-                        <input type="submit" value="Run MetaVis" class="btn btn-outlined btn-primary" style="">
+                        <input id="run" type="submit" value="Run MetaVis" class="btn btn-outlined btn-primary" style="">
                       </div>
                     </div>
 				</form>

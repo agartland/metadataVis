@@ -1,6 +1,10 @@
 var colnames = {};
 var data = [];
 var indices = [];
+var isLongform = false;
+var isWideform = false;
+var undroppedIndex = [];
+var hasDuplicates = false;
 
 $(document).ready(function() {
       if(isAPIAvailable()) {
@@ -9,11 +13,49 @@ $(document).ready(function() {
       var file_input_index = 0;
         $('input[type=file]').each(function() {
             file_input_index++;
-            $(this).wrap('<div style="display:flex;align-items:center" id="file_input_container_'+file_input_index+'"></div>');
-            $(this).after('<span class="clear" onclick="reset_html(\'file_input_container_'+file_input_index+'\')"> X </span>');
+            $(this).wrap('<div style="display:flex;align-items:center" id="file_input_container_' + file_input_index + '"></div>');
+            $(this).after('<span class="clear" onclick="reset_html(\'file_input_container_' + file_input_index + '\')"> X </span>');
         });
+        
+        $('#metavis').submit(function() {
+            if (isLongform) {
+                console.log("here they are")
+                let rowind = $('#rowindex').multipleSelect('getSelects');
+                console.log(rowind)
+                let colind = $('#colindex').multipleSelect('getSelects');
+                let value = $('#value').multipleSelect('getSelects');
+                let rowmeta = $('#rowmeta').multipleSelect('getSelects');
+                let colmeta = $('#colmeta').multipleSelect('getSelects');
+                
+                console.log(colind)
+                console.log(value)
+                console.log(rowmeta)
+                console.log(colmeta)
+                if (rowind.length == 0 || rowind.length == 0 || value.length == 0 || rowmeta.length == 0 || colmeta.length == 0) {
+                    alert("Error: Data upload is incomplete")
+                    return false;
+                }
+            }
+            if (hasDuplicates) {
+                    let sorted_index = undroppedIndex.slice().sort();
+                    let dupes = [];
+                    let prevStr = "";
+                    for (let i = 0; i < sorted_index.length - 1; i++) {
+                        if (sorted_index[i + 1] == sorted_index[i] && sorted_index[i] != prevStr) {
+                            dupes.push(sorted_index[i]);
+                            prevStr = sorted_index[i];
+                        }
+                    }
+                    console.log(sorted_index);
+                    console.log(dupes);
+                    dupeString = dupes.join();
+                    document.getElementById("dupes").classList.remove("hidden");
+                    document.getElementById("dupes").innerHTML = "The following indices contained duplicates that will be dropped at random. <br />" + dupeString 
+            }
+            document.getElementById("runModal").style.display = 'block'
+            return true;
+          });
     });
-
     function isAPIAvailable() {
       // Check for the various File API support.
       if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -239,11 +281,16 @@ function popValueModal() {
 
 function dataCapture() {
     console.log(indices);
-    let index = data[colnames[indices[0]]];
+    let subinfo = document.getElementById("subinfo");
+    undroppedIndex = data[colnames[indices[0]]];
     for (let i = 1; i < indices.length; i++) {
-        index = mergeCols(index, data[colnames[indices[i]]])
+        undroppedIndex = mergeCols(undroppedIndex, data[colnames[indices[i]]])
     }
-    index = dropDuplicates(index);
+    index = dropDuplicates(undroppedIndex);
+    hasDuplicates = false;
+    console.log(data[0].length)
+    console.log(index.length)
+    document.getElementById("dupes").classList.add("hidden");
     document.getElementById("count").innerText = index.length;
     if (document.getElementById("indexModal").style.display == "block") {
         document.getElementById("warning").style.display = "none";
@@ -251,14 +298,20 @@ function dataCapture() {
     if (index.length == data[0].length) {
         document.getElementById("info").style.color = "green";
         document.getElementById("success").innerText = "Success!";
-        document.getElementById("warning").innerText = "Success! You have encapsulated all " + data[0].length + " data points!";
+        document.getElementById("warning").innerText = "Success! You have encapsulated all " + data[0].length + " data points! Press Next to proceed!";
         document.getElementById("warning").style.color = "green";
+        subinfo.innerText = "";
     }
+    else if (index.length > data[0].length - 10) {
+        console.log("here we are!")
+        hasDuplicates = true;
+        subinfo.innerText = "A visualization can be still created by removing duplicate indices. To proceed while removing duplicates, press Next.";
+    }   
     else {
         document.getElementById("info").style.color = "red";
         document.getElementById("warning").style.color = "red";
         document.getElementById("success").innerText = "";
-
+        subinfo.innerText = "";
         if (document.getElementById("indexModal").style.display == "none") {
             document.getElementById("warning").style.display = "block";
         }
@@ -476,12 +529,16 @@ function dropDuplicates(arr){
 function display(upload1, upload2) {
     document.getElementById(upload1).classList.toggle('hidden');
     if (upload1 === 'longform') {
+        isLongform = true;
+        isWideform = false;
         document.getElementById('lfFile').required = true;
         document.getElementById('dataFile').required = false;
         document.getElementById('row_mdFile').required = false;
         document.getElementById('col_mdFile').required = false;
     }
     else {
+        isWideform = true;
+        isLongform = false;
         document.getElementById('lfFile').required = false;
         document.getElementById('dataFile').required = true;
         document.getElementById('row_mdFile').required = true;
@@ -496,3 +553,4 @@ function reset_html(id) {
       $('#lfFile').bind('change', handleFileSelect);
     }
 }
+

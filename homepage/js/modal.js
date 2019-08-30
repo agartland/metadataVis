@@ -38,12 +38,17 @@
     // Get the <span> element that closes the modal
     var metaSpan = document.getElementById("close-modal2");
     var metaExit = document.getElementById("next3");
-
+    var loadingClose = document.getElementById("close-modal4");
 
     // When the user clicks the button, open the modal
     btn.onclick = function() {
         metaModal.style.display = "block";
     }
+
+    loadingClose.onclick = function() {
+        document.getElementById("runModal").style.display = "none";
+    }
+
 
     // When the user clicks on <span> (x), close the modal
     metaSpan.onclick = function() {
@@ -75,7 +80,7 @@
         reflectChanges("row-modal-index", "rowindex");
         reflectChanges("col-modal-index", "colindex");
         if (parseInt(document.getElementById("count").innerText) != parseInt(document.getElementById("total").innerText)) {
-            alert("You have not supplied enough columns to your row/column indices to make a MetaVis visualization!");
+            alert("You have not supplied enough columns to uniquely capture all data points. A visualization will still be created by dropping duplicate indices.");
             let warning = document.getElementById("warning");
             warning.style.display = "block";
             warning.innerText = "Warning! " + document.getElementById("info").innerText;
@@ -107,7 +112,7 @@
                 if (boxes[i].checked) {
                     arr.push(boxes[i].value);
                 }
-            }['ptid', 'visitno']
+            }
             console.log(arr)
             $("#" + select).multipleSelect("setSelects", arr);
         }
@@ -128,4 +133,6 @@
         $("#value").multipleSelect("setSelects", ['delta']);
         console.log($("#value").multipleSelect("getSelects"));
         indexModal.style.display = "none";
+        introspectData();
+        metaModal.style.display = 'block';
     }

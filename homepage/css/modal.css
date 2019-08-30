@@ -13,6 +13,21 @@
     min-width: 400px;
 }
 
+.modal-header {
+    justify-content: left
+}
+
+.modal-header .close {
+    margin: -1rem -1rem auto -1rem
+}
+
+.loading {
+    margin: auto;
+    padding-top: 40px;
+    height: 100px;
+    width: 64px;
+}
+
 #info {
     color: red;
     font-style: italic;
@@ -46,6 +61,7 @@
 }
 
 .warning {
+    width: 450px;
     margin-bottom: 0px;
     color: red;
     font-style: italic;

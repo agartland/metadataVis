@@ -17,15 +17,18 @@ def generateData(Nptids, Nfeat, Npmd=5, Nmmd=5):
         base[:, i] = (base[:, i] * sigma2_i) * mu_i
 
     """Create meta-data for each PTID"""
-    ptidMD = pd.DataFrame(np.random.choice(['White', 'Asian', 'Black'], size=Nptids), index=ptidInd, columns=['Race'])
+    pmd_range = range(1, Npmd)
+    ptidMD = pd.DataFrame(np.random.randn(Nptids) * 10 + 50, index=ptidInd, columns=['1'])
     ptidMD.index.name = 'PtID'
-    ptidMD.loc[:, 'Sex'] = [{0:'Male', 1:'Female'}[int(np.round(i))] for i in np.random.rand(Nptids)]
-    ptidMD.loc[:, 'Age'] = np.random.randn(Nptids) * 10 + 50
+    for i in pmd_range:
+        ptidMD.loc[:, i] = np.random.randn(Nptids) * 100
 
     """Create meta-data for each measurment"""
-    mMD = pd.DataFrame(np.random.choice(['A', 'B', 'C', 'D'], size=Nfeat), index=featInd, columns=['Clade'])
-    mMD.loc[:, 'Temp'] = np.random.randn(Nfeat) * 10 + 72
+    mmd_range = range(1, Nmmd)
+    mMD = pd.DataFrame(np.random.randn(Nfeat) * 10 + 50, index=featInd, columns=['1'])
     mMD.index.name = 'Feature'
+    for i in mmd_range:
+        mMD.loc[:, i] = np.random.randn(Nfeat) * 100
 
     baseDf = pd.DataFrame(base, columns=featInd, index=ptidInd)
     baseDf.index.name = 'PtID'

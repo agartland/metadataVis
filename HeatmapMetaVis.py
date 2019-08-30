@@ -15,7 +15,7 @@ from metaVis import *
 import numpy as np
 import logging
 
-logger = logging.getLogger('spam_application')
+logger = logging.getLogger('debug_logger')
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
 fh = logging.FileHandler('spam2.log')
@@ -67,7 +67,7 @@ def error_check(data, ptid_md, measures_md):
 # Generates the heatmap html at config.tmp_dir/config.output_file
 def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
                      metric='euclidean', method='complete', transform='none',
-                     standardize=True, impute=True):
+                     standardize=True, impute=True, params=['', '', '']):
     # TODO - Metavis currently does not work without imputing
 
     # if (longform is not None and rx is not None):
@@ -91,7 +91,7 @@ def gen_heatmap_html(data=None, row_md=None, col_md=None, raw_data=None,
                                          method=method,
                                          standardize=standardize,
                                          impute=impute)
-    sources = initSources(data, ptid_md, measures_md, raw_data, transform=transform)
+    sources = initSources(data, ptid_md, measures_md, raw_data, transform=transform, params=params)
 
     cbDict = initCallbacks(sources)
 
@@ -131,21 +131,21 @@ def _errorDisplay(data, row_md, col_md):
             rowmd_df = pd.DataFrame({"Columns from Row Metadata": rowmd_names})
             html = template.render(title="Mismatched row counts", message=message, tables=[data_row_df.to_html(), rowmd_df.to_html()],
                                    titles=['na', "Rows from Data", "Columns from Row Metadata"])
-    na_err, data_na = _checkNA(data)
-    if na_err is True:
-        has_error = True
-        message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
-        if (len(data_na[0]) > 20):
-            print(data_na[0][:20])
-            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0][:20], data_na[1][:20])]
-            print(na_inds)
-            message += "The indices of the first 20 are shown below."
-        else:
-            na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
-        na_df = pd.DataFrame(na_inds)
-        html = template.render(title="Data contains NA Values", message=message,
-                               tables=[na_df.to_html()],
-                               titles=['na', "Data Indices with NA Values"])
+    # na_err, data_na = _checkNA(data)
+    # if na_err is True:
+    #     has_error = True
+    #     message = "Error: Your Base Data table contains " + str(len(data_na[0])) + " NA values. "
+    #     if (len(data_na[0]) > 20):
+    #         print(data_na[0][:20])
+    #         na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0][:20], data_na[1][:20])]
+    #         print(na_inds)
+    #         message += "The indices of the first 20 are shown below."
+    #     else:
+    #         na_inds = ["({}, {})".format(b_, a_) for a_, b_ in zip(data_na[0], data_na[1])]
+    #     na_df = pd.DataFrame(na_inds)
+    #     html = template.render(title="Data contains NA Values", message=message,
+    #                            tables=[na_df.to_html()],
+    #                            titles=['na', "Data Indices with NA Values"])
     name_err, name_loc = _checkNames(data_colnames, data_rownames, rowmd_names, colmd_names)
     if name_err is True:
         has_error = True
@@ -226,7 +226,7 @@ if __name__ == '__main__':
 
     # Importing files as dataframes
     #
-    data = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-responsesNA.csv'), index_col=0)
+    data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses.csv'), index_col=0)
     measures_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metacols.csv'), index_col=0)
     ptid_md = pd.read_csv(op.join(home, 'metadataVis', 'data/test_data/misnamed_indices', 'MetaViz-metarows.csv'), index_col=0)
     # raw_data = pd.read_csv(op.join(home, 'metadataVis', 'data', 'MetaViz-responses_raw.csv'), index_col=0)
@@ -280,10 +280,10 @@ if __name__ == '__main__':
                                              metric='euclidean',
                                              method='ward',
                                              standardize=False,
-                                             impute=False)
+                                             impute=True)
 
         # Creating overall data source
-        sources = initSources(data, ptid_md, measures_md, raw_data, transform='none')
+        sources = initSources(data, ptid_md, measures_md, raw_data, transform="b'power'", params=["0", "2, 2", "1, 1"])
 
         cbDict = initCallbacks(sources)
         p = generateLayout(sources, cbDict, rowDend, colDend)

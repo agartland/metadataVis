@@ -1,14 +1,10 @@
-$(document).ready(function(){
+$(window).bind("load", function(){
 document.getElementById("x_leg_label").classList.remove("hidden");
-console.log(document.querySelector("#p_selector select").value);
-document.querySelector("#x_leg_label b").innerText = "Column Legend: " + document.querySelector("#m_selector select").value;
-document.querySelector("#y_leg_label b").innerText = "Row Legend: " + document.querySelector("#p_selector select").value;
+// console.log(document.querySelector("#p_selector select").value);
 document.getElementById("y_leg_label").classList.remove("hidden");
 
 document.getElementById("x_leg_label2").classList.remove("hidden");
 document.getElementById("y_leg_label2").classList.remove("hidden");
-document.querySelector("#x_leg_label2 b").innerText = "Column Legend: " + document.querySelectorAll("#m_selector select")[1].value;
-document.querySelector("#y_leg_label2 b").innerText = "Row Legend: " + document.querySelectorAll("#p_selector select")[1].value;
 /**
  * This object controls the nav bar. Implement the add and remove
  * action over the elements of the nav bar that we want to change.
@@ -84,4 +80,15 @@ window.onscroll = function(e) {
  * could be load with scroll down set.
  */
 offSetManager();
+
+
+function updateLegendTitles() {
+    document.querySelector("#x_leg_label b").innerText = "Column Legend: " + document.querySelector("#m_selector select").value;
+    document.querySelector("#y_leg_label b").innerText = "Row Legend: " + document.querySelector("#p_selector select").value;
+    document.querySelector("#x_leg_label2 b").innerText = "Column Legend: " + document.querySelectorAll("#m_selector select")[1].value;
+    document.querySelector("#y_leg_label2 b").innerText = "Row Legend: " + document.querySelectorAll("#p_selector select")[1].value;
+}
+
+window.setTimeout(updateLegendTitles, 2000)
+
 });

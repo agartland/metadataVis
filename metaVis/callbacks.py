@@ -197,7 +197,7 @@ _js = dict(box_select="""
         // @param {BK model} table - BK model of datatable to be populated 
         function pop_table(inds_arr, src, table) {
             let names = src.column_names;
-
+    
             console.log(names);
             for (let i = 0; i < inds_arr.length; i++) {
                 let dir = inds_arr[i];
@@ -326,6 +326,7 @@ _js = dict(box_select="""
         m_legend.selected.indices = [];
         p_legend2.selected.indices = [];
         m_legend2.selected.indices = [];
+        console.log(m_legend.data)
         p_col_names = p_table.column_names;
         for (i = 0; i < p_col_names.length; i++) {
             p_table.data[p_col_names[i]] = [];
@@ -470,6 +471,46 @@ _js = dict(box_select="""
 
     """,
         p_legend="""
+       // Generates corresponding barchart
+        // @param {BK model} legend - legend to reference when creating the barchart
+        // @param {String} colname - metadata column name
+        // @param {String} total - reference string to get total counts of respective bar
+        // @param {CDS} meta_source - metadata source
+        // @param {array} inds_arr - array of min inds of row/column
+        function gen_barchart(legend, colname, total, meta_source, inds_arr) {
+            let count_dict = {};
+            // Resetting former sources
+            for (let i = 0; i < legend.data['names'].length; i++) {
+              count_dict[legend.data['names'][i]] = 0;
+            }
+            let metacol_name = storage.data[colname];
+            let metacol = [];
+            // count array of metadata columns
+            for (let j = 0; j < inds_arr.length; j++) {
+            metacol.push(meta_source.data[metacol_name][inds_arr[j]]);   
+            }
+            // dictionary of number of appearances for each column 
+            for (let k = 0; k < metacol.length; k++) {
+              let entry = metacol[k];
+              count_dict[entry] = count_dict[entry] + 1;
+            }
+            let count_list = [];
+            // converting dictionary of counts into a list of counts
+            for (var key in count_dict) {
+              count_list.push(count_dict[key]);
+            }
+            let nonselect_arr = [];
+            legend.data['sel_count'] = count_list;
+            // finding inverse of counts for selected, using it as basis for nonselect
+            for (let ii = 0; ii < storage.data[total].length; ii++) {
+              nonselect_arr.push(storage.data[total][ii] - count_list[ii]);
+            }
+            legend.data['nonsel_count'] = nonselect_arr;
+        }   
+        
+        //gen_barchart(m_legend, "m_colname", "total_colbar", measure, reduced_inds);
+        //gen_barchart(p_legend, "p_colname", "total_rowbar", ptid, reduced_inds);
+        
         console.log("here");
         console.log(storage.data['p_legend_index']);
         console.log(p_legend.selected.indices[0]);
@@ -531,8 +572,6 @@ _js = dict(box_select="""
                 }
                 console.log(p_col);
                 for (i = 0; i < ptid.data[p_colname].length; i++) {
-                    console.log(ptid.data[p_col][i])
-                    console.log(p_legend.data['names'][p_dict[p_col]]);
                     if (ptid.data[p_col][i] == row_name) {
                         row_reduced_inds.push(i);
                     }
@@ -615,12 +654,17 @@ _js = dict(box_select="""
         source.selected.indices = total_inds;
         console.log(source.selected.indices);
         source.change.emit();
+        console.log("row names");
+        console.log(row_names);
         for (let j = 0; j < row_reduced_inds.length; j++) {
             let col = row_reduced_inds[j];
             for (let k = 0; k < row_names.length; k++) {
+                console.log(ptid.data[row_names[k]][col]);
                 p_table.data[row_names[k]].push(ptid.data[row_names[k]][col]);
             }
         }
+        gen_barchart(p_legend, "p_colname", "total_rowbar", ptid, row_reduced_inds);
+
         console.log(p_table.data);
         source.change.emit();
         console.log("final source")
@@ -688,8 +732,6 @@ _js = dict(box_select="""
                 }
                 console.log(p_col);
                 for (i = 0; i < ptid.data[p_colname].length; i++) {
-                    console.log(ptid.data[p_col][i])
-                    console.log(p_legend.data['names'][p_dict[p_col]]);
                     if (ptid.data[p_col][i] == row_name) {
                         row_reduced_inds.push(i);
                     }
@@ -773,9 +815,14 @@ _js = dict(box_select="""
         source.selected.indices = total_inds;
         console.log(source.selected.indices);
         source.change.emit();
-        for (let j = 0; j < col_reduced_inds.length; j++) {
+        console.log(measure.column_names);
+        console.log(m_table.data);
+        for (let j = 1; j < col_reduced_inds.length; j++) {
             let col = col_reduced_inds[j];
-            for (let k = 0; k < col_names.length; k++) {
+            for (let k = 0; k < col_names.length - 5; k++) {
+                console.log("m_table");
+                console.log(col_names[k])
+                console.log(measure.data[col_names[k]]);
                 m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
             }
         }
@@ -904,7 +951,6 @@ _js = dict(box_select="""
                     for (let k = 0; k < measure.data[m_colname].length; k++) {
                         if (measure.data[m_col][k] ==  col_name) {
                             col_reduced_inds.push(k);
-                            console.log("pushing col ind");
                         }
                     }
                 }
@@ -947,7 +993,6 @@ _js = dict(box_select="""
         p_legend2.change.emit();
         p_table.change.emit();
         p_data_table.change.emit();
-        m_table.change.emit();
         """,
         m_legend2 = """
             console.log("here");
@@ -1098,7 +1143,7 @@ _js = dict(box_select="""
             source.selected.indices = total_inds;
             for (let j = 0; j < col_reduced_inds.length; j++) {
                 let col = col_reduced_inds[j];
-                for (let k = 0; k < col_names.length; k++) {
+                for (let k = 0; k < col_names.length - 5; k++) {
                     m_table.data[col_names[k]].push(measure.data[col_names[k]][col]);
                 }
             }
